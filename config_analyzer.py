@@ -320,4 +320,5 @@ def config_infer(config_path):
     return { 'images': img, 'source_captions': src_cap, "references": ref }
 
 if __name__ == "__main__":
-    print(config_infer('/home/sam/thesis-code/enc-dec-test.ini'))
+    print(config_infer('/home/sam/thesis-code/macaque/tests/enc-dec-test.ini'))
+    print(config_infer('/home/sam/thesis-code/macaque/tests/no-infer.ini'))
