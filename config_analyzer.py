@@ -11,6 +11,10 @@ For examples which runners are present, what are the names of the corresponding 
 what is the input data_series ...
 """
 
+SUPPORTED_READERS = ["numpy_reader", "imagenet_reader", "image_reader.image_reader"]
+HINTS_TARGET = ["target", "reference", "ref"]
+HINTS_SOURCE = ["source", "src"]
+
 def _unify_series(series):
     section_pat = re.compile(r'.*<([^>]*)>.*')
     string_pat = re.compile(r'"[^"]*"')
@@ -144,15 +148,70 @@ def _substitute_vars(config):
     return config
 
 def _get_value(cfg_parser, sec, opt):
-    """Returns `None` if the section doesn't contain the fiven option. 
+    """Returns `None` if the section doesn't contain the given option. 
     """
     return cfg_parser.get(sec, opt) if cfg_parser.has_option(sec, opt) else None
 
 def _has_value(cfg_parser, sec, opt, val):
-    if cfg_parser.has_option(sec, opt) and cfg_parser.get(sec, opt) == val:
+    if cfg_parser.has_option(sec, opt) \
+    and cfg_parser.get(sec, opt) == val:
         return True
     else:
         return False
+
+def _infere_from_map(data_map, cfg_parser):
+    """Needs docs.
+    """
+    def match_string(y):
+        patt = re.compile(r'"[^"]*"')
+        m = patt.match(y)
+        if m is not None and m.group(0) == y:
+            return True
+        return False
+
+    def match_hint(x, hints):
+        for h in hints:
+            if x.startswith(h):
+                return True
+        return False
+
+    def match_section(y):
+        patt = re.compile(r'\s*\(\s*"[^"]+"\s*,\s*<([^>]*)>\s*\)\s*')
+        m = patt.match(y)
+        if m is not None:
+            return m.group(1)
+        return None
+
+    # filter only string sources
+    hyp = list(filter(lambda x: match_string(x[1]), data_map))
+    # attempt to match series names from HINTS_*
+    ref = list(filter(lambda x: match_hint(x[0], HINTS_TARGET), hyp))
+    src = list(filter(lambda x: match_hint(x[0], HINTS_SOURCE), hyp))
+
+    ref = [r[0] for r in ref]
+    src = [s[0] for s in src]
+
+    # filter (str, sec) couples
+    hyp = map(lambda x: (x[0], match_section(x[1])), data_map)
+    hyp = filter(lambda x: x[1] is not None, hyp)
+    # attempt to match readers from SUPPORTED_READERS
+    img = []
+    for series, section in hyp:
+        val = _get_value(cfg_parser, section, opt='class')
+        if val:
+            for reader in SUPPORTED_READERS:
+                if reader in val:
+                    img.append((series, reader, section))
+
+    img = set(img)
+    ref = set(ref)
+    src = set(src)
+
+    img = list(img)[0] if bool(img) else None
+    ref = list(ref)[0] if bool(ref) else None
+    src = list(src)[0] if bool(src) else None
+
+    return (img, src, ref)
 
 def infere_data_correspondence(config_path):
     # Attempt to parse the information of interest from the config
@@ -232,8 +291,6 @@ def create_fake_config(prefix,
 def config_infer(config_path):
     """Needs documentation.
     """
-    concl = {}
-
     with open(config_path, 'r', encoding='utf-8') as cf:
         cfg_lines = cf.readlines()
 
@@ -256,11 +313,11 @@ def config_infer(config_path):
     sources = [_parse_sources(s) for s in sources]
     sources = _flatten(sources)
 
-    # data_cor = zip(series, sources)
-    # text_ds, reader_ds, other_ds = _unify_series(data_cor)
+    # to list for re-iterability
+    data_map = list(zip(series, sources))
 
-    return concl
-
+    img, src_cap, ref = _infere_from_map(data_map, cfg)
+    return { 'images': img, 'source_captions': src_cap, "references": ref }
 
 if __name__ == "__main__":
-    config_infer('/home/sam/thesis-code/enc-dec-test.ini')
+    print(config_infer('/home/sam/thesis-code/enc-dec-test.ini'))

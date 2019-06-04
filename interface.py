@@ -50,12 +50,12 @@ class NeuralMonkeyModelInterface(ModelInterface):
 
         # try to infere the correspondence between data and model inputs
         concl_dict = config_infer(config_path)
-        if concl_dict['images']:
+        if concl_dict['images'] is not None:
             self._img_series = concl_dict['images']['series']
             self._img_reader = concl_dict['images']['reader']
-        if concl_dict['source_captions']:
+        if concl_dict['source_captions'] is not None:
             self._src_cap_series = concl_dict['src_captions']
-        if concl_dict['references']:
+        if concl_dict['references'] is not None:
             self._ref_series = concl_dict['references']
 
         # potentially remove dataset sections from the config
