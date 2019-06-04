@@ -1,10 +1,14 @@
+#!/usr/bin/env python3
+
 import argparse
 import os
 
 import numpy as np
-from neuralmonkey.experiment import Experiment
 from neuralmonkey.dataset import Dataset
+from neuralmonkey.experiment import Experiment
+from neuralmonkey.run import load_runtime_config
 
+from config_analyzer import infere_data_correspondence, create_fake_config
 from datagen import PathGenerator
 from feature_extractor import NeuralMonkeyFeatureExtractor
 from model_interface import NeuralMonkeyModelInterface
@@ -46,18 +50,37 @@ def main():
 
     args = parser.parse_args()
 
-    datagen = PathGenerator(prefix=args.images_dir, img_paths=args.images_list, batch_size=args.batch_size)
-    feature_extractor = NeuralMonkeyFeatureExtractor(datagen,
-                                                    net=args.encoder_net,
-                                                    slim_models=args.slim_models_path,
-                                                    model_checkpoint=args.encoder_checkpoint,
-                                                    conv_map=args.spatial_layer)
-    feature_extractor.initialize()
-    interface = NeuralMonkeyModelInterface(config_path=args.nm_model_config_path,
-                                        variables_path=args.nm_variables_path,
-                                        feature_extractor=feature_extractor)
-    interface.initialize()
-    interface.run()
+    if args.nm_model_config_path is not None:
+        text_ds, reader_ds, other_ds, edit_cfg, cfg_parser = infere_data_correspondence(args.nm_model_config_path)
+
+    data_config = create_fake_config(prefix=args.images_dir,
+                                    files=args.images_list,
+                                    series=reader_ds[0][0],
+                                    reader=reader_ds[0][1],
+                                    configparser=cfg_parser)
+    
+    with open('data.ini', 'w', encoding='utf-8') as outf:
+        outf.writelines(data_config)
+
+    datasets_model = load_runtime_config('data.ini')
+    exp = Experiment(config_path=edit_cfg)
+    exp.build_model()
+    exp.load_variables(datasets_model.variables)
+
+    for dataset in datasets_model.test_datasets:
+        print(exp.run_model(dataset, write_out=False))
+    # datagen = PathGenerator(prefix=args.images_dir, img_paths=args.images_list, batch_size=args.batch_size)
+    # feature_extractor = NeuralMonkeyFeatureExtractor(datagen,
+    #                                                 net=args.encoder_net,
+    #                                                 slim_models=args.slim_models_path,
+    #                                                 model_checkpoint=args.encoder_checkpoint,
+    #                                                 conv_map=args.spatial_layer)
+    # feature_extractor.initialize()
+    # interface = NeuralMonkeyModelInterface(config_path=args.nm_model_config_path,
+    #                                     variables_path=args.nm_variables_path,
+    #                                     feature_extractor=feature_extractor)
+    # interface.initialize()
+    # interface.run()
 
 
 if __name__ == "__main__":

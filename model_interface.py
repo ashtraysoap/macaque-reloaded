@@ -2,6 +2,7 @@ import numpy as np
 from neuralmonkey.dataset import Dataset
 from neuralmonkey.experiment import Experiment
 
+from dataset import merge_datasets
 from feature_extractor import NeuralMonkeyFeatureExtractor
 
 class ModelInterface:
@@ -9,10 +10,30 @@ class ModelInterface:
         pass
 
     def initialize(self):
-        pass
+        raise NotImplementedError()
 
-    def run(self):
-        pass
+    def run_on_dataset(self, dataset):
+        results = []
+        for batch in dataset:
+            b = self.format_batch(batch)
+            out = self.run_on_batch(b)
+            results.extend(out)
+        out = self.reconstruct_dataset(results)
+        d = merge_datasets(dataset, out)
+        return (d, out)
+
+    def format_batch(self, batch):
+        """Processes the batch into a from acceptable by the model.
+        """
+        raise NotImplementedError()
+
+    def run_on_batch(self, batch):
+        """Runs the model on the batch
+        """
+        raise NotImplementedError()
+
+    def reconstruct_dataset(self, data):
+        raise NotImplementedError()
 
 class NeuralMonkeyModelInterface(ModelInterface):
     def __init__(self,
