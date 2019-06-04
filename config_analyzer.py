@@ -2,7 +2,6 @@ import re
 from configparser import ConfigParser
 from neuralmonkey.config.parsing import parse_file
 
-import pdb
 """
 Given a Neural Monkey configuration file try to draw as much inferences as possible.
 Return a structure describing what remains ambiguous and requires futher specification
@@ -31,6 +30,16 @@ def _unify_series(series):
                 unmatched_ds.append((serie, source))
     # remove duplicates by set(), make indexible by list()
     return (list(set(text_ds)), list(set(complex_ds)), list(set(unmatched_ds)))
+
+def _flatten(lol):
+    """Flattens a list of lists.
+    """
+    return [i for lis in lol for i in lis]
+
+def _append(ss, s):
+    if s is not None:
+        ss.append(s)
+    return ss
 
 def _parse_sections(s):
     return re.findall(r'<([^>]*)>', s)
@@ -68,7 +77,7 @@ def _parse_sources(s):
             src += c
     return srcs
 
-def _substitute_vars(strings, var_dict):
+def _sub_vars(strings, var_dict):
     def parse_line(line):
         in_var = False
         in_str = False
@@ -116,17 +125,43 @@ def _substitute_vars(strings, var_dict):
         result.append(l)
     return result
 
+def _get_dataset_sections(config):
+    secs = []
+    for option in ['train_dataset', 'val_dataset', 'test_datasets']:
+        if config.has_option('main', option):
+            sec = config.get('main', option)
+            secs.append(sec)
+    secs = [_parse_sections(s) for s in secs]
+    secs = _flatten(secs)
+    return secs
+
+def _substitute_vars(config):
+    raw_cfg, _ = parse_file(config)
+    var_dict = raw_cfg['vars'] if raw_cfg['vars'] is not None else None
+
+    if var_dict is not None:
+        config = _sub_vars(config, var_dict)
+    return config
+
+def _get_value(cfg_parser, sec, opt):
+    """Returns `None` if the section doesn't contain the fiven option. 
+    """
+    return cfg_parser.get(sec, opt) if cfg_parser.has_option(sec, opt) else None
+
+def _has_value(cfg_parser, sec, opt, val):
+    if cfg_parser.has_option(sec, opt) and cfg_parser.get(sec, opt) == val:
+        return True
+    else:
+        return False
+
 def infere_data_correspondence(config_path):
     # Attempt to parse the information of interest from the config
     
     with open(config_path, 'r', encoding='utf-8') as cf:
         config = cf.readlines()
 
-    raw_cfg, _ = parse_file(config)
-    var_dict = raw_cfg['vars'] if raw_cfg['vars'] is not None else None
+    config = _substitute_vars(config)
 
-    if var_dict is not None:
-        config = _substitute_vars(config, var_dict)
     cfg = ConfigParser()
     cfg.read_file(config)
     
@@ -194,5 +229,38 @@ def create_fake_config(prefix,
     config = [c + '\n' for c in config]
     return config
 
+def config_infer(config_path):
+    """Needs documentation.
+    """
+    concl = {}
+
+    with open(config_path, 'r', encoding='utf-8') as cf:
+        cfg_lines = cf.readlines()
+
+    cfg_lines = _substitute_vars(cfg_lines)
+
+    cfg = ConfigParser()
+    cfg.read_file(cfg_lines)
+
+    secs = _get_dataset_sections(cfg)
+
+    series, sources = [], []
+    for sec in secs:
+        if _has_value(cfg, sec, opt='class', val='dataset.load'):
+            series = _append(series, _get_value(cfg, sec, opt='series'))
+            sources = _append(sources, _get_value(cfg, sec, opt='data'))
+
+    series = [_parse_series(s) for s in series]
+    series = _flatten(series)
+
+    sources = [_parse_sources(s) for s in sources]
+    sources = _flatten(sources)
+
+    # data_cor = zip(series, sources)
+    # text_ds, reader_ds, other_ds = _unify_series(data_cor)
+
+    return concl
+
+
 if __name__ == "__main__":
-    infere_data_correspondence('/home/sam/thesis-code/enc-dec-test.ini')
+    config_infer('/home/sam/thesis-code/enc-dec-test.ini')
