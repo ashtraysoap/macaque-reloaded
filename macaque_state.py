@@ -23,7 +23,13 @@ class MacaqueState():
         self._model_interfaces[ifc.name] = ifc
 
     def add_dataset(self, ds):
-        if self._datasets[ds.name] is not None:
+        if ds.name in self._datasets:
             raise ValueError("A dataset with this name is already used.")
         
         self._datasets[ds.name] = ds
+
+    def update_dataset(self, name, ds):
+        if name not in self._datasets:
+            raise ValueError("There is no dataset with name {}".format(name))
+
+        self._datasets[name] = ds

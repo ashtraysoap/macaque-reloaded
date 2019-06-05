@@ -44,6 +44,9 @@ class ModelInterface:
     def reconstruct_dataset(self, data):
         raise NotImplementedError()
 
+    def to_json(self):
+        raise NotImplementedError()
+
 class NeuralMonkeyModelInterface(ModelInterface):
     def __init__(self, config_path, vars_path):
         if not os.path.isfile(config_path):

@@ -2,6 +2,9 @@ import json
 
 from flask import Flask, render_template, request
 
+import feature_extractor
+from data import Dataset
+
 APP = Flask(__name__)
 STATE = None
 APP.config['state'] = STATE
@@ -16,13 +19,14 @@ def init():
 
 @APP.route('/add_dataset', methods=['POST'])
 def add_dataset():
-    json_data = request.get_json(force=True)
+    json_data = _get_json_from_request()
+    # assume json_data is not a string
+    ds = Dataset(name=json_data['name'],
+                prefix=json_data['prefix'],
+                batch_size=json_data['batch_size'])
 
-    # create dataset from json constructor params
-    # register dataset in state
-    # convert dataset to json
-
-    return json.dumps(json_data)
+    STATE.add_dataset(ds)
+    return ds.to_json()
 
 @APP.route()
 def add_model():
@@ -33,14 +37,17 @@ def add_model():
 
     pass
 
-@APP.route()
+@APP.route('/run_model_on_dataset', methods=['POST'])
 def run_model_on_dataset():
+    json_data = _get_json_from_request()
 
-    # from json received get model and dataset ids
-    # run model on dataset
-    # convert output dataset to json
-
-    pass
+    ds = json_data['dataset']
+    m = STATE.model_interfaces[json_data['model']]
+    
+    new_ds, out_ds = m.run_on_dataset(STATE.datasets[ds])
+    
+    STATE.update_dataset(name=ds, ds=new_ds)
+    return out_ds.to_json()
 
 @APP.route()
 def update_user():
@@ -53,9 +60,28 @@ def update_user():
 
 @APP.route()
 def attach_encoder_to_model():
+    json_data = _get_json_from_request()
 
-    # construct a feature extractor from the json
-    # attach it to the model
-    # convert model to json and return
+    if json_data['encoder_type'] == "tf-slim":
+        net_type = json_data['net_type']
+        slim_path = json_data['slim_path']
+        ckpt_path = json_data['ckpt_path']
+        conv_layer = json_data['conv_layer']
+        vector = json_data['vector']
 
-    pass
+        fe = feature_extractor.NeuralMonkeyFeatureExtractor(
+            net=net_type,
+            slim_models=slim_path,
+            model_checkpoint=ckpt_path,
+            conv_map=conv_layer,
+            vector=vector)
+        
+        model_ifc = STATE.model_interfaces[json_data['model']]
+        model_ifc.feature_extractor = fe
+    else:
+        raise NotImplementedError("Maybe later")
+    
+    return model_ifc.to_json()
+
+def _get_json_from_request():
+    return request.get_json(force=True)

@@ -6,6 +6,11 @@ class DataInstance:
     def __init__(self, idx, source):
         self._idx = idx
         self._source = source
+        self._caption = None
+        self._references = []
+        self._source_caption = None
+        self._alignments = None
+        self._beam_search_output = None
 
     @property
     def idx(self):
@@ -71,7 +76,8 @@ class Dataset:
         self._count = len(self._elements)
 
     def to_json(self):
-        pass
+        return json.dumps(self, cls=DatasetEncoder)
+        
 
     def _create_offspring(self):
         return Dataset(name=self.name,
@@ -90,8 +96,23 @@ def dataset_from_json(json_str):
 
 class DatasetEncoder(json.JSONEncoder):
     def default(self, dataset):
-        return ""
+        instance_encoder = DataInstanceEncoder()
+        return {
+            "name": dataset.name,
+            "prefix": dataset.prefix,
+            "batch_size": dataset.batch_size,
+            "count": dataset.count,
+            "elements": [instance_encoder.default(e) for e in dataset.elements]
+        }
 
 class DataInstanceEncoder(json.JSONEncoder):
-    def default(self, data_instance):
-        return ""
+    def default(self, inst):
+        return {
+            "id": inst.idx,
+            "source": inst.source,
+            "caption": inst._caption,
+            "source_caption": inst._source_caption,
+            "references": inst._references,
+            "alignments": inst._alignments,
+            "beam_search_output": inst._beam_search_output
+        }
