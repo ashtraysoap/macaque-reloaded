@@ -128,7 +128,7 @@ def _infere_from_map(data_map, cfg_parser):
     src = list(src)[0] if bool(src) else None
 
     if img:
-        img = { 'images': img[0], 'reader': img[1], 'section': img[2] }
+        img = { 'series': img[0], 'reader': img[1], 'section': img[2] }
 
     return (img, src, ref)
 
