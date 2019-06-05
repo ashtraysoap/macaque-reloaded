@@ -3,6 +3,7 @@ import json
 from flask import Flask, render_template, request
 
 import feature_extractor
+import interface
 from data import Dataset
 
 APP = Flask(__name__)
@@ -20,7 +21,7 @@ def init():
 @APP.route('/add_dataset', methods=['POST'])
 def add_dataset():
     json_data = _get_json_from_request()
-    # assume json_data is not a string
+
     ds = Dataset(name=json_data['name'],
                 prefix=json_data['prefix'],
                 batch_size=json_data['batch_size'])
@@ -30,12 +31,16 @@ def add_dataset():
 
 @APP.route()
 def add_model():
+    json_data = _get_json_from_request()
 
-    # create model interface from json received
-    # register the model interface in state
-    # convert the model ifc to json
-
-    pass
+    if json_data['model_type'] == "neural_monkey":
+        ifc = interface.NeuralMonkeyModelInterface(
+            config_path=json_data['config_path'],
+            vars_path=json_data['vars_path'])
+        STATE.add_model_interface(ifc)
+        return ifc.to_json()
+    else:
+        raise NotImplementedError()
 
 @APP.route('/run_model_on_dataset', methods=['POST'])
 def run_model_on_dataset():
@@ -78,10 +83,9 @@ def attach_encoder_to_model():
         
         model_ifc = STATE.model_interfaces[json_data['model']]
         model_ifc.feature_extractor = fe
+        return model_ifc.to_json()
     else:
         raise NotImplementedError("Maybe later")
-    
-    return model_ifc.to_json()
 
 def _get_json_from_request():
     return request.get_json(force=True)
