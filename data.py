@@ -1,3 +1,4 @@
+import json
 import os
 from warnings import warn
 
@@ -86,3 +87,11 @@ def merge_datasets(d1, d2):
 
 def dataset_from_json(json_str):
     raise NotImplementedError()
+
+class DatasetEncoder(json.JSONEncoder):
+    def default(self, dataset):
+        return ""
+
+class DataInstanceEncoder(json.JSONEncoder):
+    def default(self, data_instance):
+        return ""
