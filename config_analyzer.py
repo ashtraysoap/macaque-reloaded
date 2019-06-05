@@ -15,25 +15,122 @@ SUPPORTED_READERS = ["numpy_reader", "imagenet_reader", "image_reader.image_read
 HINTS_TARGET = ["target", "reference", "ref"]
 HINTS_SOURCE = ["source", "src"]
 
-def _unify_series(series):
-    section_pat = re.compile(r'.*<([^>]*)>.*')
-    string_pat = re.compile(r'"[^"]*"')
+def config_infer(config_path):
+    """Needs documentation.
+    """
+    with open(config_path, 'r', encoding='utf-8') as cf:
+        cfg_lines = cf.readlines()
 
-    text_ds = []
-    complex_ds = []
-    unmatched_ds = []
-    for serie, source in series:
-        m = string_pat.match(source)
-        if m is not None and source == m.group(0):
-            text_ds.append(serie)
+    cfg_lines = _substitute_vars(cfg_lines)
+
+    cfg = ConfigParser()
+    cfg.read_file(cfg_lines)
+
+    secs = _get_dataset_sections(cfg)
+
+    series, sources = [], []
+    for sec in secs:
+        if _has_value(cfg, sec, opt='class', val='dataset.load'):
+            series = _append(series, _get_value(cfg, sec, opt='series'))
+            sources = _append(sources, _get_value(cfg, sec, opt='data'))
+
+    series = [_parse_series(s) for s in series]
+    series = _flatten(series)
+
+    sources = [_parse_sources(s) for s in sources]
+    sources = _flatten(sources)
+
+    # to list for re-iterability
+    data_map = list(zip(series, sources))
+
+    img, src_cap, ref = _infere_from_map(data_map, cfg)
+    return { 'images': img, 'source_captions': src_cap, "references": ref }
+
+def create_fake_config(prefix,
+                        files,
+                        series,
+                        dataset_name="macaque_dataset",
+                        reader=None,
+                        configparser=None):
+    config = []
+    config.append("[main]")
+    config.append("test_datasets=[<{}>]".format(dataset_name))
+    config.append("")
+    config.append("[{}]".format(dataset_name))
+    config.append("class=dataset.load")
+    config.append("series=[\"{}\"]".format(series))
+    config.append("data=[(\"{}\", <{}>)]".format(files, reader))
+
+    if reader is None:
+        config = [c + '\n' for c in config] 
+        return config
+    
+    config.append("")
+    config.append("[{}]".format(reader))
+    for opt in configparser.options(reader):
+        if opt == "prefix":
+            config.append("prefix=\"{}\"".format(prefix))
         else:
-            m = section_pat.match(source)
-            if m is not None:
-                complex_ds.append((serie, m.group(1)))
-            else:
-                unmatched_ds.append((serie, source))
-    # remove duplicates by set(), make indexible by list()
-    return (list(set(text_ds)), list(set(complex_ds)), list(set(unmatched_ds)))
+            config.append("{}={}".format(opt, configparser.get(reader, opt)))
+    config = [c + '\n' for c in config]
+    return config
+
+def _infere_from_map(data_map, cfg_parser):
+    """Needs docs.
+    """
+    def match_string(y):
+        patt = re.compile(r'"[^"]*"')
+        m = patt.match(y)
+        if m is not None and m.group(0) == y:
+            return True
+        return False
+
+    def match_hint(x, hints):
+        for h in hints:
+            if x.startswith(h):
+                return True
+        return False
+
+    def match_section(y):
+        patt = re.compile(r'\s*\(\s*"[^"]+"\s*,\s*<([^>]*)>\s*\)\s*')
+        m = patt.match(y)
+        if m is not None:
+            return m.group(1)
+        return None
+
+    # filter only string sources
+    hyp = list(filter(lambda x: match_string(x[1]), data_map))
+    # attempt to match series names from HINTS_*
+    ref = list(filter(lambda x: match_hint(x[0], HINTS_TARGET), hyp))
+    src = list(filter(lambda x: match_hint(x[0], HINTS_SOURCE), hyp))
+
+    ref = [r[0] for r in ref]
+    src = [s[0] for s in src]
+
+    # filter (str, sec) couples
+    hyp = map(lambda x: (x[0], match_section(x[1])), data_map)
+    hyp = filter(lambda x: x[1] is not None, hyp)
+    # attempt to match readers from SUPPORTED_READERS
+    img = []
+    for series, section in hyp:
+        val = _get_value(cfg_parser, section, opt='class')
+        if val:
+            for reader in SUPPORTED_READERS:
+                if reader in val:
+                    img.append((series, reader, section))
+
+    img = set(img)
+    ref = set(ref)
+    src = set(src)
+
+    img = list(img)[0] if bool(img) else None
+    ref = list(ref)[0] if bool(ref) else None
+    src = list(src)[0] if bool(src) else None
+
+    if img:
+        img = { 'images': img[0], 'reader': img[1], 'section': img[2] }
+
+    return (img, src, ref)
 
 def _flatten(lol):
     """Flattens a list of lists.
@@ -158,166 +255,6 @@ def _has_value(cfg_parser, sec, opt, val):
         return True
     else:
         return False
-
-def _infere_from_map(data_map, cfg_parser):
-    """Needs docs.
-    """
-    def match_string(y):
-        patt = re.compile(r'"[^"]*"')
-        m = patt.match(y)
-        if m is not None and m.group(0) == y:
-            return True
-        return False
-
-    def match_hint(x, hints):
-        for h in hints:
-            if x.startswith(h):
-                return True
-        return False
-
-    def match_section(y):
-        patt = re.compile(r'\s*\(\s*"[^"]+"\s*,\s*<([^>]*)>\s*\)\s*')
-        m = patt.match(y)
-        if m is not None:
-            return m.group(1)
-        return None
-
-    # filter only string sources
-    hyp = list(filter(lambda x: match_string(x[1]), data_map))
-    # attempt to match series names from HINTS_*
-    ref = list(filter(lambda x: match_hint(x[0], HINTS_TARGET), hyp))
-    src = list(filter(lambda x: match_hint(x[0], HINTS_SOURCE), hyp))
-
-    ref = [r[0] for r in ref]
-    src = [s[0] for s in src]
-
-    # filter (str, sec) couples
-    hyp = map(lambda x: (x[0], match_section(x[1])), data_map)
-    hyp = filter(lambda x: x[1] is not None, hyp)
-    # attempt to match readers from SUPPORTED_READERS
-    img = []
-    for series, section in hyp:
-        val = _get_value(cfg_parser, section, opt='class')
-        if val:
-            for reader in SUPPORTED_READERS:
-                if reader in val:
-                    img.append((series, reader, section))
-
-    img = set(img)
-    ref = set(ref)
-    src = set(src)
-
-    img = list(img)[0] if bool(img) else None
-    ref = list(ref)[0] if bool(ref) else None
-    src = list(src)[0] if bool(src) else None
-
-    return (img, src, ref)
-
-def infere_data_correspondence(config_path):
-    # Attempt to parse the information of interest from the config
-    
-    with open(config_path, 'r', encoding='utf-8') as cf:
-        config = cf.readlines()
-
-    config = _substitute_vars(config)
-
-    cfg = ConfigParser()
-    cfg.read_file(config)
-    
-    # remove dataset sections from the config
-    secs = []
-    for option in ['train_dataset', 'val_dataset', 'test_datasets']:
-        if cfg.has_option('main', option):
-            sec = cfg.get('main', option)
-            secs.append(sec)
-            cfg.remove_option('main', option)
-
-    secs = [_parse_sections(s) for s in secs]
-    secs = [i for sec in secs for i in sec]
-
-    # parse dataset sections to extract <series, sources> correspondence 
-    series = []
-    sources = []
-    se = None
-    so = None
-    for sec in secs:
-        if cfg.has_option(sec, 'class') \
-        and cfg.get(sec, 'class') == "dataset.load":
-            se = cfg.get(sec, 'series') if cfg.has_option(sec, 'series') else None
-            so = cfg.get(sec, 'data') if cfg.has_option(sec, 'data') else None
-        if se is not None:
-            se = _parse_series(se)
-            series.extend(se)
-        if so is not None:
-            so = _parse_sources(so)
-            sources.extend(so)
-    data_cor = zip(series, sources)
-    text_ds, reader_ds, other_ds = _unify_series(data_cor)
-
-    out_conf_fp = 'macaque.ini'
-    with open(out_conf_fp, mode='w', encoding='utf-8') as out_conf:
-        cfg.write(out_conf, space_around_delimiters=False)
-    return (text_ds, reader_ds, other_ds, out_conf_fp, cfg)
-
-def create_fake_config(prefix,
-                        files,
-                        series,
-                        dataset_name="macaque_dataset",
-                        reader=None,
-                        configparser=None):
-    config = []
-    config.append("[main]")
-    config.append("test_datasets=[<{}>]".format(dataset_name))
-    config.append("")
-    config.append("[{}]".format(dataset_name))
-    config.append("class=dataset.load")
-    config.append("series=[\"{}\"]".format(series))
-    config.append("data=[(\"{}\", <{}>)]".format(files, reader))
-
-    if reader is None:
-        config = [c + '\n' for c in config] 
-        return config
-    
-    config.append("")
-    config.append("[{}]".format(reader))
-    for opt in configparser.options(reader):
-        if opt == "prefix":
-            config.append("prefix=\"{}\"".format(prefix))
-        else:
-            config.append("{}={}".format(opt, configparser.get(reader, opt)))
-    config = [c + '\n' for c in config]
-    return config
-
-def config_infer(config_path):
-    """Needs documentation.
-    """
-    with open(config_path, 'r', encoding='utf-8') as cf:
-        cfg_lines = cf.readlines()
-
-    cfg_lines = _substitute_vars(cfg_lines)
-
-    cfg = ConfigParser()
-    cfg.read_file(cfg_lines)
-
-    secs = _get_dataset_sections(cfg)
-
-    series, sources = [], []
-    for sec in secs:
-        if _has_value(cfg, sec, opt='class', val='dataset.load'):
-            series = _append(series, _get_value(cfg, sec, opt='series'))
-            sources = _append(sources, _get_value(cfg, sec, opt='data'))
-
-    series = [_parse_series(s) for s in series]
-    series = _flatten(series)
-
-    sources = [_parse_sources(s) for s in sources]
-    sources = _flatten(sources)
-
-    # to list for re-iterability
-    data_map = list(zip(series, sources))
-
-    img, src_cap, ref = _infere_from_map(data_map, cfg)
-    return { 'images': img, 'source_captions': src_cap, "references": ref }
 
 if __name__ == "__main__":
     print(config_infer('/home/sam/thesis-code/macaque/tests/enc-dec-test.ini'))
