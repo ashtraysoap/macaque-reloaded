@@ -1,9 +1,13 @@
 import os
 from enum import Enum
+
+import numpy as np
+import neuralmonkey.dataset as dataset
 from neuralmonkey.experiment import Experiment
 
 from config_analyzer import config_infer
-from dataset import merge_datasets
+from data import merge_datasets
+from feature_extractor import NeuralMonkeyFeatureExtractor
 
 class Task(Enum):
     Unknown = 0
@@ -67,31 +71,59 @@ class NeuralMonkeyModelInterface(ModelInterface):
         if concl_dict['references'] is not None:
             self._ref_series = concl_dict['references']
 
+        self._feature_extractor = None
+
         # potentially remove dataset sections from the config
 
         self._exp = Experiment(config_path=config_path)
         self._exp.build_model()
         self._exp.load_variables([vars_path])
 
+    @property
+    def task(self):
+        return self._task
+
+    @property
+    def decoder_only(self):
+        return True if self._img_reader == "numpy_reader" else False
+
+    @feature_extractor.setter
+    def feature_extractor(self, value):
+        self._feature_extractor = value
+
     def format_batch(self, batch):
         """Processes the batch into a form acceptable by the model.
 
         Args:
-            batch: An array of `DataInstance` objects as yielded from `Dataset`.
+            batch: A `Dataset` class instance.
         Returns:
-            A Neural Monkey Dataset of a form the model expects.
+            A Neural Monkey Dataset of a form that the model expects.
         """
         if self._task == Task.ImageCaptioning:
-            pass
+            if self._img_reader == "numpy_reader":
+                if not self._feature_extractor:
+                    raise ValueError("Feature extractor is None.")
+                
+                feature_maps = self._feature_extractor.extract_features(batch)
+                
+                return dataset.Dataset("macaque_data",
+                        {self._img_series: np.array(feature_maps)},
+                        {})
+                
+            elif self._img_reader == "imagenet_reader":
+                # process for imagenet
+                raise NotImplementedError()
+            else:
+                raise ValueError("Unsupported reader {}.".format(self._img_reader))
         elif self._task == Task.MultimodalTranslation:
-            pass
+            raise NotImplementedError()
 
     def run_on_batch(self, batch):
-        out = self._exp.run_model(dataset=batch, write_out=False)
-        return out
+        return self._exp.run_model(dataset=batch, write_out=False)
 
     def reconstruct_dataset(self, data):
         pass
+
 
 if __name__ == "__main__":
     ifc = NeuralMonkeyModelInterface('tests/enc-dec-test.ini', '../enc-dec-test/variables.data')
