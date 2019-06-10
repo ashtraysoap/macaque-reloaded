@@ -130,10 +130,12 @@ class AddDatasetTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            name: "",
             imgDir: "",
             imgSrcs: "",
             srcCaps: "",
-            refCaps: ""
+            refCaps: "",
+            batchSize: 32
         }
         this.handleChange = this.handleChange.bind(this);
         this.submitDatasetConfig = this.submitDatasetConfig.bind(this);
@@ -150,9 +152,18 @@ class AddDatasetTab extends React.Component {
         // let s = this.state;
         // s[refCaps] = refs;
         // this.props.onSubmit(s);
-        console.log('Clicked dat button')
-        // fetch dataset from the server ??
-        // do validation before ?? 
+        console.log('Clicked dat button. Fetching...');
+         
+        const s = this.state;
+        fetch('/add_dataset', {
+            method: 'POST',
+            body: JSON.stringify(s),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json())
+        .then(response => console.log('Success:', JSON.stringify(response)))
+        .catch(error => console.log('Error:', error));
     }
 
     render() {
@@ -160,6 +171,10 @@ class AddDatasetTab extends React.Component {
             <div>
                 <label>Add a new Dataset</label>
                 <form>
+                    <label>
+                        Dataset name:
+                        <input name="name" type="text" value={this.state.name} onChange={(e) => this.handleChange("name", e)} />
+                    </label>
                     <label>
                         Image directory: 
                         <input name="imgDir" type="text" value={this.state.imgDir} onChange={(e) => this.handleChange("imgDir", e)} />
@@ -175,6 +190,10 @@ class AddDatasetTab extends React.Component {
                     <label>
                         Reference captions: 
                         <textarea name="refCaps" value={this.state.refCaps} onChange={(e) => this.handleChange("refCaps", e)} />
+                    </label>
+                    <label>
+                        Batch size:
+                        <input name="batchSize" type="number" value={this.state.batchSize} onChange={(e) => this.handleChange("batchSize", e)} />
                     </label>
                 </form>
                 <button type="button" onClick={this.submitDatasetConfig} >Create dataset</button>
