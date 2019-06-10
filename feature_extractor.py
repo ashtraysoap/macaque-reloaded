@@ -6,7 +6,7 @@ from neuralmonkey.dataset import Dataset
 from neuralmonkey.encoders.imagenet_encoder import ImageNet
 from neuralmonkey.readers.image_reader import single_image_for_imagenet
 
-from dataset import Dataset as MacaqueDataset
+from data import Dataset as MacaqueDataset
 
 class FeatureExtractor():
     def __init__(self):

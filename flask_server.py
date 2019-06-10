@@ -2,8 +2,8 @@ import json
 
 from flask import Flask, render_template, request
 
-import feature_extractor
-import interface
+#import feature_extractor
+#import interface
 from data import Dataset
 
 APP = Flask(__name__)
@@ -11,6 +11,7 @@ STATE = None
 APP.config['state'] = STATE
 
 def start_server(macaque_state):
+    global STATE
     STATE = macaque_state
     APP.run()
 
@@ -22,14 +23,18 @@ def init():
 def add_dataset():
     json_data = _get_json_from_request()
 
+    print(json_data)
     ds = Dataset(name=json_data['name'],
-                prefix=json_data['prefix'],
-                batch_size=json_data['batch_size'])
+                prefix=json_data['imgDir'],
+                batch_size=json_data['batchSize'])
+    
+    srcs = open(json_data['imgSrcs'], 'r', encoding='utf-8')
+    ds.initialize(sources=srcs)
 
     STATE.add_dataset(ds)
     return ds.to_json()
 
-@APP.route()
+@APP.route('/add_model', methods=['POST'])
 def add_model():
     json_data = _get_json_from_request()
 
@@ -54,7 +59,7 @@ def run_model_on_dataset():
     STATE.update_dataset(name=ds, ds=new_ds)
     return out_ds.to_json()
 
-@APP.route()
+@APP.route('/update_user', methods=['POST'])
 def update_user():
 
     # parse the received json
@@ -63,7 +68,7 @@ def update_user():
 
     pass
 
-@APP.route()
+@APP.route('/attach_encoder', methods=['POST'])
 def attach_encoder_to_model():
     json_data = _get_json_from_request()
 
