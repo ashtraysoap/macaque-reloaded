@@ -4,6 +4,7 @@ class App extends React.Component {
         this.handleNavClick = this.handleNavClick.bind(this);
         this.state = {
             models: props.state.models,
+            datasets: props.state.datasets,
             selected_tab: 'home'
         }
     }
@@ -14,7 +15,9 @@ class App extends React.Component {
     
     render() {
         let models = this.state.models;
-        let names = models.map((model) => model.name);
+        let datasets = this.state.datasets;
+        let model_names = models.map((model) => model.name);
+        let dataset_names = datasets.map((ds) => ds.name);
         let selected_tab = this.state.selected_tab;
         let tab;
 
@@ -25,20 +28,31 @@ class App extends React.Component {
             'add metric': <AddMetricTab />
         };
 
-        let navs = names.map((name) =>
+        let model_navs = model_names.map((name) =>
+            <NavElement key={name} textsauce={name} onClick={this.handleNavClick} />
+        );
+        let dataset_navs = dataset_names.map((name) =>
             <NavElement key={name} textsauce={name} onClick={this.handleNavClick} />
         );
 
-        navs.unshift(<NavElement key="home" textsauce="home" onClick={this.handleNavClick} />);
+        let navs = [<NavElement key="home" textsauce="home" onClick={this.handleNavClick} />];
+        navs = navs.concat(model_navs).concat(dataset_navs);
+        //navs.unshift(<NavElement key="home" textsauce="home" onClick={this.handleNavClick} />);
         navs.push(<NavElement key="add metric" textsauce="add metric" onClick={this.handleNavClick} />);
         navs.push(<NavElement key="add model" textsauce="add model" onClick={this.handleNavClick} />);
         navs.push(<NavElement key="add dataset" textsauce="add dataset" onClick={this.handleNavClick} />);
         //const def_navs = 
 
-        console.log(names);
+        function get_element(where) {
+            return where.filter((x) => x.name === selected_tab)[0];
+        }
 
         if (default_tabs.hasOwnProperty(selected_tab)) {
             tab = default_tabs[selected_tab];
+        } else if (model_names.includes(selected_tab)) {
+            tab = <ModelTab model={get_element(models)} />;
+        } else if (dataset_names.includes(selected_tab)) {
+            tab = <DatasetTab dataset={get_element(datasets)} />;
         } else {
             tab = <Tab text={selected_tab} />;
         }
@@ -86,6 +100,20 @@ function Tab(props) {
     );
 }
 
+function DatasetTab(props) {
+    let elements = props.dataset.elements.map((e) => <div key={e.id}>{e.srcPath}</div>);
+    
+    return (
+        <div>
+            {elements}
+        </div>
+    );
+}
+
+function ModelTab(props) {
+    return <div>Meh for now</div>;
+}
+
 function HomeTab() {
     return <Tab text="This is the home tab" />;
 }
@@ -98,18 +126,33 @@ function AddMetricTab() {
     return <Tab text="Options for adding a new metric" />;
 }
 
-// function AddDatasetTab() {
-//     //return <Tab text="Options for adding a new dataset" />;
-//     return (
-//         <div>
-
-//         </div>
-//     );
-// }
-
 class AddDatasetTab extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            imgDir: "",
+            imgSrcs: "",
+            srcCaps: "",
+            refCaps: ""
+        }
+        this.handleChange = this.handleChange.bind(this);
+        this.submitDatasetConfig = this.submitDatasetConfig.bind(this);
+    }
+
+    handleChange(name, event) {
+        let s = this.state;
+        s[name] = event.target.value;
+        this.setState(s);
+    }
+
+    submitDatasetConfig() {
+        // let refs = this.state.refCaps.split(/\r?\n/);
+        // let s = this.state;
+        // s[refCaps] = refs;
+        // this.props.onSubmit(s);
+        console.log('Clicked dat button')
+        // fetch dataset from the server ??
+        // do validation before ?? 
     }
 
     render() {
@@ -117,12 +160,24 @@ class AddDatasetTab extends React.Component {
             <div>
                 <label>Add a new Dataset</label>
                 <form>
-                    <label>Image directory: <input name="img_sources" type="text" /></label>
-                    <label>Image sources: <input name="img_sources" type="text" /></label>
-                    <label>Source captions: <input name="src_captions" type="text" /></label>
-                    <label>Reference captions: <textarea name="references" /></label>
+                    <label>
+                        Image directory: 
+                        <input name="imgDir" type="text" value={this.state.imgDir} onChange={(e) => this.handleChange("imgDir", e)} />
+                    </label>
+                    <label>
+                        Image sources: 
+                        <input name="imgSrcs" type="text" value={this.state.imgSrcs} onChange={(e) => this.handleChange("imgSrcs", e)} />
+                    </label>
+                    <label>
+                        Source captions: 
+                        <input name="srcCaps" type="text" value={this.srcCaps} onChange={(e) => this.handleChange("srcCaps", e)} />
+                    </label>
+                    <label>
+                        Reference captions: 
+                        <textarea name="refCaps" value={this.state.refCaps} onChange={(e) => this.handleChange("refCaps", e)} />
+                    </label>
                 </form>
-                <button type="button">Load dataset</button>
+                <button type="button" onClick={this.submitDatasetConfig} >Create dataset</button>
             </div>
         );
     }
@@ -133,7 +188,19 @@ const state = {
     models: [
         {name: 'Model A'},
         {name: 'Model B'}
-    ]
+    ],
+    datasets: [
+    {
+        name: 'Dataset X',
+        elements: [
+            {id:0, srcPath: "/home/img_0.jpg"},
+            {id:1, srcPath: "/london/img_1.jpg"},
+            {id:2, srcPath: "/paris/texas/img_2.jpg"}
+        ]
+    },{
+        name: 'Dataset Y',
+        elements: []
+    }]
 };
           
 ReactDOM.render(
