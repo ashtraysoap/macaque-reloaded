@@ -9,6 +9,47 @@ from config_analyzer import config_infer
 from data import merge_datasets
 from feature_extractor import NeuralMonkeyFeatureExtractor
 
+def create_model_interface(json_config):
+    """Based on the data model, create an adequate model interface
+    including preprocessing, feature extraction, and decoding
+    """
+    if json_config['preprocessing']:
+        prepro_opts = json_config['preprocessing']
+        method = prepro_opts['method']
+        if method == 'none':
+            pass
+        elif method == 'source':
+            pass
+    
+    if json_config['featureExtractor']:
+        enc_opts = json_config['featureExtractor']
+        if enc_opts['method'] == 'tf-slim':
+            pass
+        elif enc_opts['method'] == 'keras':
+            pass
+        elif enc_opts['method'] == 'source':
+            pass
+        elif enc_opts['method'] == 'none':
+            pass
+        else:
+            raise ValueError("Unsupported feature extractor type %s." % enc_opts['method'])
+
+    if json_config['model']:
+        model_opts = json_config['model']
+        if model_opts['method'] == 'neural-monkey':
+            pass
+            config_path = model_opts['configPath']
+            vars_path = model_opts['varsPath']
+            model_ifc = NeuralMonkeyModelInterface(config_path=config_path,
+                vars_path=vars_path)
+        elif model_opts['method'] == 'tf-source':
+            pass
+        elif model_opts['method'] == 'source':
+            pass
+        else:
+            raise ValueError("Unsupported model type %s." % model_opts['method'])
+    
+
 class Task(Enum):
     Unknown = 0
     ImageCaptioning = 1

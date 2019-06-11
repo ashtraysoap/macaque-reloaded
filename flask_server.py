@@ -5,6 +5,7 @@ from flask import Flask, render_template, request
 #import feature_extractor
 #import interface
 from data import Dataset
+from interface import create_model_interface
 
 APP = Flask(__name__)
 STATE = None
@@ -38,14 +39,18 @@ def add_dataset():
 def add_model():
     json_data = _get_json_from_request()
 
-    if json_data['model_type'] == "neural_monkey":
-        ifc = interface.NeuralMonkeyModelInterface(
-            config_path=json_data['config_path'],
-            vars_path=json_data['vars_path'])
-        STATE.add_model_interface(ifc)
-        return ifc.to_json()
-    else:
-        raise NotImplementedError()
+    ifc = create_model_interface(json_data)
+    STATE.add_model_interface(ifc)
+    return ifc.to_json
+
+    # if json_data['model_type'] == "neural_monkey":
+    #     ifc = interface.NeuralMonkeyModelInterface(
+    #         config_path=json_data['config_path'],
+    #         vars_path=json_data['vars_path'])
+    #     STATE.add_model_interface(ifc)
+    #     return ifc.to_json()
+    # else:
+    #     raise NotImplementedError()
 
 @APP.route('/run_model_on_dataset', methods=['POST'])
 def run_model_on_dataset():
