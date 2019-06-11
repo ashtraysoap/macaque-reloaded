@@ -24,7 +24,16 @@ def create_model_interface(json_config):
     if json_config['featureExtractor']:
         enc_opts = json_config['featureExtractor']
         if enc_opts['method'] == 'tf-slim':
-            pass
+            
+            net_type = enc_opts['netType']
+            model_ckpt = enc_opts['modelCkpt']
+            slim_path = "/home/sam/Documents/CodeBox/BC/code/lib/tensorflow-models/research/slim"
+            feature_map = enc_opts['featureMap']
+
+            feat_extr = NeuralMonkeyFeatureExtractor(net=net_type,
+                slim_models=slim_path,
+                model_checkpoint=model_ckpt,
+                conv_map=feature_map)
         elif enc_opts['method'] == 'keras':
             pass
         elif enc_opts['method'] == 'source':
@@ -37,7 +46,6 @@ def create_model_interface(json_config):
     if json_config['model']:
         model_opts = json_config['model']
         if model_opts['method'] == 'neural-monkey':
-            pass
             config_path = model_opts['configPath']
             vars_path = model_opts['varsPath']
             model_ifc = NeuralMonkeyModelInterface(config_path=config_path,
@@ -48,6 +56,9 @@ def create_model_interface(json_config):
             pass
         else:
             raise ValueError("Unsupported model type %s." % model_opts['method'])
+
+    model_ifc.feature_extractor = feat_extr
+    return model_ifc
     
 
 class Task(Enum):
