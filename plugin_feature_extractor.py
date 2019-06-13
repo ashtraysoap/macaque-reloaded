@@ -33,11 +33,14 @@ class PluginFeatureExtractor(FeatureExtractor):
         if not hasattr(module, INTERFACE_CLASS):
             raise ValueError("The plugin file does not contain the class %s." % INTERFACE_CLASS)
 
-        self._modelWrapper = getattr(module, INTERFACE_CLASS)
+        wrapper_class = getattr(module, INTERFACE_CLASS)
+        self._modelWrapper = wrapper_class()
 
-        if not hasattr(self._modelWrapper, INTERFACE_METHOD):
+        if not hasattr(wrapper_class, INTERFACE_METHOD):
             raise ValueError("The class {} in {} does not have a method {}."
                 .format(INTERFACE_CLASS, plugin_path, INTERFACE_METHOD))
 
 def extract_features(self, dataset):
-    pass
+    prefix = dataset.prefix
+    elems = dataset.elements
+    paths = [os.path.join(prefix, e.source) for e in elems]
