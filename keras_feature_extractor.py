@@ -25,7 +25,7 @@ MODELS = {
 }
 
 class KerasFeatureExtractor(FeatureExtractor):
-    def __init__(self, net_id, width=224, height=224):
+    def __init__(self, net_id):
         if not net_id in MODELS:
             raise ValueError("Unsupported network %s." % net_id)
 
