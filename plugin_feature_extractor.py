@@ -1,11 +1,21 @@
+from enum import Enum
 from importlib import import_module
 import os
 import sys
 
 from feature_extractor import FeatureExtractor
 
-INTERFACE_CLASS = "FeatureExtractorWrapper"
-INTERFACE_METHOD = "run"
+class InterfaceMethod(Enum):
+    RunOnPaths = 0
+    RunOnImages = 1
+    RunOnDataset = 2
+
+IFC_CLASS = "FeatureExtractorWrapper"
+IFC_METHODS = {
+    InterfaceMethod.RunOnPaths: 'run_on_paths',
+    InterfaceMethod.RunOnImages: 'run_on_images',
+    InterfaceMethod.RunOnDataset: 'run_on_dataset'
+}
 
 class PluginFeatureExtractor(FeatureExtractor):
     def __init__(self, plugin_path):
@@ -16,11 +26,11 @@ class PluginFeatureExtractor(FeatureExtractor):
             raise ValueError("The plugin file has to contain a Python file extension.")
         
         # importing requires the '.py' stripped
-        plugin_path = plugin_path[:-3]
+        module_path = plugin_path[:-3]
         
-        if plugin_path[0] == '/':
+        if module_path[0] == '/':
             # `plugin_path` is given in absolute terms
-            path_split = os.path.split(plugin_path)
+            path_split = os.path.split(module_path)
             directory = path_split[0]
             source = path_split[1]
             sys.path.append(directory)
@@ -28,19 +38,47 @@ class PluginFeatureExtractor(FeatureExtractor):
         else:
             if not '' in sys.path:
                 sys.path.append('')
-            module = import_module(plugin_path)
+            module = import_module(module_path)
         
-        if not hasattr(module, INTERFACE_CLASS):
-            raise ValueError("The plugin file does not contain the class %s." % INTERFACE_CLASS)
+        if not hasattr(module, IFC_CLASS):
+            raise ValueError("The plugin file does not contain the class %s." % IFC_CLASS)
 
-        wrapper_class = getattr(module, INTERFACE_CLASS)
-        self._modelWrapper = wrapper_class()
+        wrapper_class = getattr(module, IFC_CLASS)
+        self._model_wrapper = wrapper_class()
 
-        if not hasattr(wrapper_class, INTERFACE_METHOD):
-            raise ValueError("The class {} in {} does not have a method {}."
-                .format(INTERFACE_CLASS, plugin_path, INTERFACE_METHOD))
+        if hasattr(wrapper_class, IFC_METHODS[InterfaceMethod.RunOnPaths]):
+            self._method_id = InterfaceMethod.RunOnPaths
+        elif hasattr(wrapper_class, IFC_METHODS[InterfaceMethod.RunOnImages]):
+            self._method = InterfaceMethod.RunOnImages
+        elif hasattr(wrapper_class, IFC_METHODS[InterfaceMethod.RunOnDataset]):
+            self._method = InterfaceMethod.RunOnDataset
+        else:
+            raise ValueError("The class {} in {} does not provide any of the interface methods."
+                .format(IFC_CLASS, plugin_path))
+
+        self._method = getattr(self._model_wrapper, IFC_METHODS[self._method_id])
 
 def extract_features(self, dataset):
-    prefix = dataset.prefix
     elems = dataset.elements
-    paths = [os.path.join(prefix, e.source) for e in elems]
+    results = []
+    
+    if self._method_id == InterfaceMethod.RunOnPaths:
+        prefix = dataset.prefix
+        paths = [os.path.join(prefix, e.source) for e in elems]
+        results = self._method(paths)
+    elif self._method_id == InterfaceMethod.RunOnImages:
+        # raw images
+        if dataset.preprocessed_images:
+            imgs = [e.prepro_img for e in elems]
+        # preprocessed images
+        elif dataset.raw_images:
+            imgs = [e.raw_img for e in elems]
+        else:
+            raise RuntimeError("Dataset does not contain any image data.")
+        results = self._method(imgs)
+    elif self._method_id == InterfaceMethod.RunOnDataset:
+        results = self._method(dataset)
+    else:
+        raise RuntimeError()
+
+    return results
