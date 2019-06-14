@@ -7,43 +7,16 @@ from neuralmonkey.experiment import Experiment
 
 from config_analyzer import config_infer
 from data import merge_datasets
-from feature_extractor import NeuralMonkeyFeatureExtractor
+from feature_extractors import create_feature_extractor
 
-def create_model_interface(json_config):
-    """Based on the data model, create an adequate model interface
-    including preprocessing, feature extraction, and decoding
-    """
-    if json_config['preprocessing']:
-        prepro_opts = json_config['preprocessing']
-        method = prepro_opts['method']
-        if method == 'none':
-            pass
-        elif method == 'source':
-            pass
-    
-    if json_config['featureExtractor']:
-        enc_opts = json_config['featureExtractor']
-        if enc_opts['method'] == 'tf-slim':
-            
-            net_type = enc_opts['netType']
-            model_ckpt = enc_opts['modelCkpt']
-            slim_path = "/home/sam/Documents/CodeBox/BC/code/lib/tensorflow-models/research/slim"
-            feature_map = enc_opts['featureMap']
+def create_prepro(prepro_config):
+    method = prepro_config['method']
+    if method == 'none':
+        pass
+    elif method == 'source':
+        pass
 
-            feat_extr = NeuralMonkeyFeatureExtractor(net=net_type,
-                slim_models=slim_path,
-                model_checkpoint=model_ckpt,
-                conv_map=feature_map)
-        elif enc_opts['method'] == 'keras':
-            pass
-        elif enc_opts['method'] == 'source':
-            pass
-        elif enc_opts['method'] == 'none':
-            pass
-        else:
-            raise ValueError("Unsupported feature extractor type %s." % enc_opts['method'])
-
-    if json_config['model']:
+def create_model_wrapper(model_config):
         model_opts = json_config['model']
         if model_opts['method'] == 'neural-monkey':
             config_path = model_opts['configPath']
@@ -57,9 +30,23 @@ def create_model_interface(json_config):
         else:
             raise ValueError("Unsupported model type %s." % model_opts['method'])
 
-    model_ifc.feature_extractor = feat_extr
+
+def create_model_interface(json_config):
+    model_ifc = ModelInterface()
+
+    if json_config['preprocessing']:
+        prepro = create_prepro(json_config['preprocessing'])
+        model_ifc.attach_prepro(prepro)
+
+    if json_config['featureExtractor']:
+        feature_ext = create_feature_extractor(json_config['featureExtractor'])
+        model_ifc.attach_feature_extractor(feature_ext)
+
+    if json_config['model']:
+        model = create_model_wrapper(json_config['model'])
+        model_ifc.attach_model(model)
+
     return model_ifc
-    
 
 class Task(Enum):
     Unknown = 0
