@@ -8,27 +8,8 @@ from neuralmonkey.experiment import Experiment
 from config_analyzer import config_infer
 from data import merge_datasets
 from feature_extractors import create_feature_extractor
-
-def create_prepro(prepro_config):
-    method = prepro_config['method']
-    if method == 'none':
-        pass
-    elif method == 'source':
-        pass
-
-def create_model_wrapper(model_config):
-        model_opts = json_config['model']
-        if model_opts['method'] == 'neural-monkey':
-            config_path = model_opts['configPath']
-            vars_path = model_opts['varsPath']
-            model_ifc = NeuralMonkeyModelInterface(config_path=config_path,
-                vars_path=vars_path)
-        elif model_opts['method'] == 'tf-source':
-            pass
-        elif model_opts['method'] == 'source':
-            pass
-        else:
-            raise ValueError("Unsupported model type %s." % model_opts['method'])
+from model_wrappers import create_model_wrapper
+from preprocessing import create_prepro
 
 
 def create_model_interface(json_config):
