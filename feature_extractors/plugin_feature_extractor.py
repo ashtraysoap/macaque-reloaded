@@ -49,9 +49,9 @@ class PluginFeatureExtractor(FeatureExtractor):
         if hasattr(wrapper_class, IFC_METHODS[InterfaceMethod.RunOnPaths]):
             self._method_id = InterfaceMethod.RunOnPaths
         elif hasattr(wrapper_class, IFC_METHODS[InterfaceMethod.RunOnImages]):
-            self._method = InterfaceMethod.RunOnImages
+            self._method_id = InterfaceMethod.RunOnImages
         elif hasattr(wrapper_class, IFC_METHODS[InterfaceMethod.RunOnDataset]):
-            self._method = InterfaceMethod.RunOnDataset
+            self._method_id = InterfaceMethod.RunOnDataset
         else:
             raise ValueError("The class {} in {} does not provide any of the interface methods."
                 .format(IFC_CLASS, plugin_path))
