@@ -11,9 +11,9 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
     def __init__(self,
                 config_path,
                 vars_path,
-                images_series=None,
-                features_series=None,
-                src_captions_series=None):
+                image_series="",
+                feature_series="",
+                src_caption_series=""):
 
         if not os.path.isfile(config_path):
             raise ValueError("File {} does not exist.".format(config_path))
@@ -22,9 +22,9 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
 
         self._config_path = config_path
         self._vars_path = vars_path
-        self._images_series = images_series
-        self._feature_series = features_series
-        self._src_captions_series = src_captions_series
+        self._image_series = image_series
+        self._feature_series = feature_series
+        self._src_caption_series = src_caption_series
 
         self._exp = Experiment(config_path=config_path)
         self._exp.build_model()
@@ -34,7 +34,8 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
     def run(self, dataset):        
         elems = dataset.elements
 
-        if self._images_series is not None:
+        # enc-dec model (runs on images)
+        if self._image_series:
             if dataset.preprocessed_images:
                 imgs = [e.prepro_img for e in elems]
             elif dataset.raw_images:
@@ -42,11 +43,22 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
             else:
                 dataset.load_raw_imgs()
                 imgs = [e.raw_img for e in elems]
-            ds = Dataset("macaque_data", {self._images_series: np.array(imgs)}, {})
+            
+            if self._src_caption_series:
+                # handle multimodal translation case
+                pass
+            else:
+                ds = Dataset("macaque_data", {self._image_series: np.array(imgs)}, {})
 
-        elif self._feature_series is not None:
+        # dec-only model (runs on feature maps)
+        elif self._feature_series:
             if dataset.features:
                 feats = [e.feature_map for e in elems]
+            
+            if self._src_caption_series:
+                # handle multimodal translation case
+                pass
+            else:
                 ds = Dataset("macaque_data", {self._feature_series: np.array(feats)}, {})
 
         return self._exp.run_model(dataset=ds, write_out=False)
