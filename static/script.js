@@ -185,27 +185,33 @@ class AddDatasetTab extends React.Component {
                         Dataset name:
                         <input name="name" type="text" value={this.state.name} onChange={(e) => this.handleChange("name", e)} />
                     </label>
+                    <br/>
                     <label>
                         Image directory: 
                         <input name="imgDir" type="text" value={this.state.imgDir} onChange={(e) => this.handleChange("imgDir", e)} />
                     </label>
+                    <br/>
                     <label>
                         Image sources: 
                         <input name="imgSrcs" type="text" value={this.state.imgSrcs} onChange={(e) => this.handleChange("imgSrcs", e)} />
                     </label>
+                    <br/>
                     <label>
                         Source captions: 
                         <input name="srcCaps" type="text" value={this.srcCaps} onChange={(e) => this.handleChange("srcCaps", e)} />
                     </label>
+                    <br/>
                     <label>
                         Reference captions: 
                         <textarea name="refCaps" value={this.state.refCaps} onChange={(e) => this.handleChange("refCaps", e)} />
                     </label>
+                    <br/>
                     <label>
                         Batch size:
                         <input name="batchSize" type="number" value={this.state.batchSize} onChange={(e) => this.handleChange("batchSize", e)} />
                     </label>
                 </form>
+                <br/>
                 <button type="button" onClick={this.submitDatasetConfig} >Create dataset</button>
             </div>
         );

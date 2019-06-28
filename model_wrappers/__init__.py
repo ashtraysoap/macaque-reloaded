@@ -8,14 +8,15 @@ class ModelType(Enum):
     Plugin = "plugin"
 
 def create_model_wrapper(model_config):
-    model_type = model_config['model_type']
+    model_type = model_config['type']
     if model_type == ModelType.NeuralMonkey:
         
-        config_path = model_config['configPath']
-        vars_path = model_config['varsPath']
-        image_series = model_config['imageSeries']
-        feature_series = model_config['featureSeries']
-        src_caption_series = model_config['srcCaptionSeries']
+        nm_config = model_config['neuralMonkey']
+        config_path = nm_config['configPath']
+        vars_path = nm_config['varsPath']
+        image_series = nm_config['imageSeries']
+        feature_series = nm_config['featureSeries']
+        src_caption_series = nm_config['srcCaptionSeries']
 
         model = NeuralMonkeyModelWrapper(config_path=config_path,
                 vars_path=vars_path,
@@ -24,9 +25,10 @@ def create_model_wrapper(model_config):
                 src_caption_series=src_caption_series)
 
     elif model_type == ModelType.Plugin:
-        plugin_path = model_config['pluginPath']
+        plugin_config = model_config['plugin']
+        src_path = plugin_config['sourcePath']
         
-        model = PluginModelWrapper(plugin_path=plugin_path)
+        model = PluginModelWrapper(plugin_path=src_path)
 
     else:
         raise ValueError("Unsupported model type %s." % model_type)

@@ -75,6 +75,9 @@ class ModelInterface:
             results.extend(out)
         return results
 
+    def to_json(self):
+        raise NotImplementedError()
+
     def _preprocess(self, dataset):
         return self._preprocessing(dataset)
 

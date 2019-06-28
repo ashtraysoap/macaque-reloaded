@@ -13,10 +13,10 @@ class FeatureExtractorId(Enum):
     Plugin = "plugin"
 
 def create_feature_extractor(extractor_config):
-    extractor_id = extractor_config['method']
+    extractor_id = extractor_config['type']
 
     if extractor_id == FeatureExtractorId.Slim:
-        slim_config = extractor_config['tf-slim']
+        slim_config = extractor_config['tfSlim']
         net_type = slim_config['netType']
         model_ckpt = slim_config['modelCkpt']
         feature_map = slim_config['featureMap']
