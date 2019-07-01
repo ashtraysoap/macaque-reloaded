@@ -17,7 +17,7 @@ class MacaqueState():
         return self._user
 
     def add_model_interface(self, ifc):
-        if self._model_interfaces[ifc.name] is not None:
+        if ifc.name in self._model_interfaces:
             raise ValueError("An interface with this name is already used.")
         
         self._model_interfaces[ifc.name] = ifc

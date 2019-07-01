@@ -4,7 +4,7 @@ from .neural_monkey_model_wrapper import NeuralMonkeyModelWrapper
 from .plugin_model_wrapper import PluginModelWrapper
 
 class ModelType(Enum):
-    NeuralMonkey = "neural-monkey"
+    NeuralMonkey = "neuralmonkey"
     Plugin = "plugin"
 
 def create_model_wrapper(model_config):

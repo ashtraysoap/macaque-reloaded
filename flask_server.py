@@ -39,7 +39,7 @@ def add_model():
 
     ifc = create_model_interface(json_data)
     STATE.add_model_interface(ifc)
-    return ifc.to_json
+    return ifc.to_json()
 
 @APP.route('/run_model_on_dataset', methods=['POST'])
 def run_model_on_dataset():

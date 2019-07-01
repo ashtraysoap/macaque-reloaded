@@ -231,6 +231,7 @@ class TaskForm extends React.Component {
             // modelConfig holds the configuration which is sent to
             // the server for constructing a new model interface.
             modelConfig: {
+                name: "LamaodeL",
                 preprocessing: {
                     // Todo
                 },
@@ -251,8 +252,8 @@ class TaskForm extends React.Component {
                 model: {
                     type: 'neuralmonkey',
                     neuralMonkey: {
-                        configPath: '',
-                        varsPath: '',
+                        configPath: '/home/sam/Documents/CodeBox/BC/code/enc-dec-test/original.ini',
+                        varsPath: '/home/sam/Documents/CodeBox/BC/code/enc-dec-test/variables.data',
                         imageSeries: '',
                         featureSeries: '',
                         srcCaptionSeries: ''
@@ -367,6 +368,7 @@ class TaskForm extends React.Component {
 
         return (
             <div>
+            {/* model name textfield */}
                 <PreprocessingForm preproCfg={preproCfg}
                                     preproCfgOpts={preproOpts} 
                                     onCfgChange={this.handlePreproChange}
