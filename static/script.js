@@ -3,6 +3,7 @@ class App extends React.Component {
         super(props);
         this.handleNavClick = this.handleNavClick.bind(this);
         this.addDataset = this.addDataset.bind(this);
+        this.addModel = this.addModel.bind(this);
         this.state = {
             models: props.state.models,
             datasets: props.state.datasets,
@@ -19,6 +20,12 @@ class App extends React.Component {
         datasets.push(dataset);
         this.setState({datasets: datasets});
     }
+
+    addModel(model) {
+        let models = this.state.models;
+        models.push(model);
+        this.setState({models: models});
+    }
     
     render() {
         let models = this.state.models;
@@ -30,7 +37,7 @@ class App extends React.Component {
 
         const default_tabs = {
             'home': <HomeTab />,
-            'add model': <AddModelTab />,
+            'add model': <AddModelTab onSubmit={this.addModel} />,
             'add dataset': <AddDatasetTab onSubmit={this.addDataset} />,
             'add metric': <AddMetricTab />
         };
@@ -218,7 +225,7 @@ class AddDatasetTab extends React.Component {
 function AddModelTab(props) {
     return (
         <div>
-            <TaskForm />
+            <TaskForm onSubmit={props.onSubmit}/>
         </div>
     );
 }
@@ -316,10 +323,10 @@ class TaskForm extends React.Component {
         };
 
         this.submitModelConfig = this.submitModelConfig.bind(this);
-        this.handleChange = this.handleChange.bind(this);
         this.handlePreproChange = this.handlePreproChange.bind(this);
         this.handleFeatureChange = this.handleFeatureChange.bind(this);
         this.handleModelChange = this.handleModelChange.bind(this);
+        this.handleModelNameChange = this.handleModelNameChange.bind(this);
     }
 
     submitModelConfig() {         
@@ -339,10 +346,6 @@ class TaskForm extends React.Component {
         .catch(error => console.log('Error:', error));
     }
 
-    handleChange() {
-        this.setState();
-    }
-
     handlePreproChange(cfg) {
         this.setState({ preprocessing: cfg });
     }
@@ -353,6 +356,12 @@ class TaskForm extends React.Component {
 
     handleModelChange(cfg) {
         this.setState({ model: cfg });
+    }
+
+    handleModelNameChange(e) {
+        let s = this.state;
+        s.modelConfig.name = e.target.value;
+        this.setState(s);
     }
 
     render() {
@@ -368,7 +377,13 @@ class TaskForm extends React.Component {
 
         return (
             <div>
-            {/* model name textfield */}
+                <form>
+                    model name: <input type="text" 
+                                        name="name" 
+                                        value={cfg.name} 
+                                        onChange={this.handleModelNameChange} />
+                </form>
+                <hr/>
                 <PreprocessingForm preproCfg={preproCfg}
                                     preproCfgOpts={preproOpts} 
                                     onCfgChange={this.handlePreproChange}
@@ -641,12 +656,20 @@ class NeuralMonkeyModel extends React.Component {
         const imageSerieChange = (e) => this.handleChange('imageSeries', e.target.value);
         const featureSerieChange = (e) => this.handleChange('featureSeries', e.target.value);
         const srcCaptionSerieChange = (e) => this.handleChange('srcCaptionSeries', e.target.value);
+        const configPathChange = (e) => this.handleChange('configPath', e.target.value);
+        const varsPathChange = (e) => this.handleChange('varsPath', e.target.value);
 
         return (
             <div>
                 <form>
-                    configuration file: <input type="text" name="config" /><br/>
-                    variables file: <input type="text" name="vars" /><br/>
+                    configuration file: <input type="text" name="config" 
+                                                value={cfg.configPath} 
+                                                onChange={configPathChange} />
+                                    <br/>
+                    variables file: <input type="text" name="vars" 
+                                                value={cfg.varsPath} 
+                                                onChange={varsPathChange} />
+                                    <br/>
                     image series: <input type="checkbox" name="imageSeries" />
                                     <input type="text" 
                                             value={cfg.imageSeries} 
