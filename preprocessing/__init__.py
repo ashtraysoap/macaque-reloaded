@@ -10,14 +10,14 @@ class PreproMethodId(Enum):
 
 def create_prepro(prepro_config):
     method = prepro_config['method']
-    if method == PreproMethodId.Rescale:
+    if method == PreproMethodId.Rescale.value:
         prepro_func = dummy_prepro
-    elif method == PreproMethodId.Plugin:
+    elif method == PreproMethodId.Plugin.value:
         src_path = prepro_config['pluginPath']
         prepro_func = create_prepro_func(src_path)
-    elif method == PreproMethodId.VGGPrepro:
+    elif method == PreproMethodId.VGGPrepro.value:
         prepro_func = dummy_prepro
-    elif method == PreproMethodId.ResNetPrepro:
+    elif method == PreproMethodId.ResNetPrepro.value:
         prepro_func = dummy_prepro
     else:
         raise ValueError("Unsupported preprocessing type {}.".format(method))

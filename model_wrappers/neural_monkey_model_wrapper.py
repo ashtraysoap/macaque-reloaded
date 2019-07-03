@@ -17,8 +17,6 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
 
         if not os.path.isfile(config_path):
             raise ValueError("File {} does not exist.".format(config_path))
-        if not os.path.isfile(vars_path):
-            raise ValueError("File {} does not exist.".format(vars_path))
 
         self._config_path = config_path
         self._vars_path = vars_path

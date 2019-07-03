@@ -30,7 +30,7 @@ class KerasFeatureExtractor(FeatureExtractor):
             raise ValueError("Unsupported network %s." % net_id)
 
         enc_spec = MODELS[net_id]
-        module = import_module('keras.application.' + enc_spec.module)
+        module = import_module('keras.applications.' + enc_spec.module)
         model_constr = getattr(module, enc_spec.net) 
         self._model = model_constr(weights='imagenet', include_top=False, pooling=None)
         self._preprocess_input = getattr(module, 'preprocess_input')

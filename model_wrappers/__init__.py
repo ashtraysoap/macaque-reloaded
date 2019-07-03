@@ -4,12 +4,12 @@ from .neural_monkey_model_wrapper import NeuralMonkeyModelWrapper
 from .plugin_model_wrapper import PluginModelWrapper
 
 class ModelType(Enum):
-    NeuralMonkey = "neural-monkey"
+    NeuralMonkey = "neuralmonkey"
     Plugin = "plugin"
 
 def create_model_wrapper(model_config):
     model_type = model_config['type']
-    if model_type == ModelType.NeuralMonkey:
+    if model_type == ModelType.NeuralMonkey.value:
         
         nm_config = model_config['neuralMonkey']
         config_path = nm_config['configPath']
@@ -24,7 +24,7 @@ def create_model_wrapper(model_config):
                 feature_series=feature_series,
                 src_caption_series=src_caption_series)
 
-    elif model_type == ModelType.Plugin:
+    elif model_type == ModelType.Plugin.value:
         plugin_config = model_config['plugin']
         src_path = plugin_config['sourcePath']
         

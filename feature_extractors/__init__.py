@@ -15,7 +15,7 @@ class FeatureExtractorId(Enum):
 def create_feature_extractor(extractor_config):
     extractor_id = extractor_config['type']
 
-    if extractor_id == FeatureExtractorId.Slim:
+    if extractor_id == FeatureExtractorId.Slim.value:
         slim_config = extractor_config['tfSlim']
         net_type = slim_config['netType']
         model_ckpt = slim_config['modelCkpt']
@@ -25,12 +25,12 @@ def create_feature_extractor(extractor_config):
                     model_checkpoint=model_ckpt,
                     conv_map=feature_map)
 
-    elif extractor_id == FeatureExtractorId.Keras:
+    elif extractor_id == FeatureExtractorId.Keras.value:
         keras_config = extractor_config['keras']
         net_type = keras_config['netType']
         extractor = KerasFeatureExtractor(net_id=net_type)
 
-    elif extractor_id == FeatureExtractorId.Plugin:
+    elif extractor_id == FeatureExtractorId.Plugin.value:
         plugin_config = extractor_config['plugin']
         src_path = plugin_config['sourcePath']
         extractor = PluginFeatureExtractor(plugin_path=src_path)
