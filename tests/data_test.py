@@ -11,6 +11,13 @@ def make_test_dataset():
                 prefix=TEST_PREFIX,
                 batch_size=8)
 
+def make_initialized_test_dataset():
+    ds = Dataset(name=TEST_NAME,
+                prefix=TEST_PREFIX,
+                batch_size=8)
+    ds.initialize(fp=TEST_SOURCES)
+    return ds
+
 def test_dataset_constructor():
     ds = make_test_dataset()
     assert isinstance(ds, Dataset) == True
