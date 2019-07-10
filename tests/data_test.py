@@ -32,4 +32,11 @@ def test_init_no_args():
     paths = os.listdir(TEST_PREFIX)
     assert ds.count == len(paths)
 
+def test_iter():
+    ds = make_test_dataset()
+    count = ds.count
+    x = 0
+    for batch in ds:
+        x += len(batch)
+    assert x == count
     
