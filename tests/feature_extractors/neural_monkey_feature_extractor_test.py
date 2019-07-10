@@ -32,4 +32,5 @@ def test_neural_monkey_feature_extractor_extract_features():
         ds = make_initialized_test_dataset()
 
         results = ext.extract_features(dataset=ds)
-        assert results is not None
+        assert isinstance(results, np.ndarray) == True
+        assert results.shape[0] == ds.count
