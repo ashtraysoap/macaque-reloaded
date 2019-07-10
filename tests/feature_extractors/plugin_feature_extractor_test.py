@@ -23,9 +23,7 @@ def test_plugin_feature_extractor_construct_absolute_path():
     assert isinstance(ext, PluginFeatureExtractor) == True
 
 def test_plugin_feature_extractor_run_on_dataset():
-    path = os.getcwd()
-    path = os.path.join(path, TEST_PLUGIN_PATH_DATASETS)
-    ext = PluginFeatureExtractor(plugin_path=path)
+    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH_DATASETS)
     ds = make_initialized_test_dataset()
 
     results = ext.extract_features(dataset=ds)
@@ -33,18 +31,14 @@ def test_plugin_feature_extractor_run_on_dataset():
 
 def test_plugin_feature_extractor_run_on_images():
     # TODO: dataset lacks required functionality
-    path = os.getcwd()
-    path = os.path.join(path, TEST_PLUGIN_PATH_IMAGES)
-    ext = PluginFeatureExtractor(plugin_path=path)
+    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH_IMAGES)
     ds = make_initialized_test_dataset()
 
     results = ext.extract_features(dataset=ds)
     assert results is not None
 
 def test_plugin_feature_extractor_run_on_paths():
-    path = os.getcwd()
-    path = os.path.join(path, TEST_PLUGIN_PATH_PATHS)
-    ext = PluginFeatureExtractor(plugin_path=path)
+    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH_PATHS)
     ds = make_initialized_test_dataset()
 
     results = ext.extract_features(dataset=ds)
