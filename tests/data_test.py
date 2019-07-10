@@ -11,7 +11,7 @@ def make_test_dataset():
                 prefix=TEST_PREFIX,
                 batch_size=8)
 
-def test_constructor():
+def test_dataset_constructor():
     ds = make_test_dataset()
     assert isinstance(ds, Dataset) == True
     assert ds.name == TEST_NAME
@@ -26,17 +26,26 @@ def test_dataset_init():
     count = len(srcs)
     assert ds.count == count
 
-def test_init_no_args():
+def test_dataset_init_fp():
+    ds = make_test_dataset()
+    ds.initialize(fp=TEST_SOURCES)
+    srcs = open(TEST_SOURCES, 'r').readlines()
+    count = len(srcs)
+    assert ds.count == count
+
+def test_dataset_init_no_args():
     ds = make_test_dataset()
     ds.initialize()
     paths = os.listdir(TEST_PREFIX)
     assert ds.count == len(paths)
 
-def test_iter():
+def test_dataset_iter():
     ds = make_test_dataset()
+    ds.initialize(fp=TEST_SOURCES)
+
     count = ds.count
     x = 0
     for batch in ds:
-        x += len(batch)
+        x += len(batch.elements)
     assert x == count
     
