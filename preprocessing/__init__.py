@@ -7,6 +7,7 @@ class PreproMethodId(Enum):
     Rescale = "rescale"
     VGGPrepro = "vggPrepro"
     ResNetPrepro = "resnetPrepro"
+    Null = "none"
 
 def create_prepro(prepro_config):
     method = prepro_config['method']
@@ -19,6 +20,8 @@ def create_prepro(prepro_config):
         prepro_func = dummy_prepro
     elif method == PreproMethodId.ResNetPrepro.value:
         prepro_func = dummy_prepro
+    elif method == PreproMethodId.Null.value:
+        return None
     else:
         raise ValueError("Unsupported preprocessing type {}.".format(method))
 

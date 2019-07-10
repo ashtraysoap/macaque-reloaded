@@ -11,6 +11,7 @@ class FeatureExtractorId(Enum):
     Keras = "keras"
     Slim = "tf-slim"
     Plugin = "plugin"
+    Null = "none"
 
 def create_feature_extractor(extractor_config):
     extractor_id = extractor_config['type']
@@ -34,6 +35,9 @@ def create_feature_extractor(extractor_config):
         plugin_config = extractor_config['plugin']
         src_path = plugin_config['sourcePath']
         extractor = PluginFeatureExtractor(plugin_path=src_path)
+
+    elif extractor_id == FeatureExtractorId.Null.value:
+        return None
 
     else:
         raise ValueError("Unsupported feature extractor type %s." % extractor_id)
