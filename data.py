@@ -64,16 +64,18 @@ class Dataset:
     def elements(self):
         return self._elements
 
-    def initialize(self, sources=None):
-        if not sources:
-            srcs = os.listdir(self.prefix) 
-        else:
-            srcs = [os.path.join(self.prefix, src) for src in sources]
+    def initialize(self, sources=None, fp=None):
+        if not sources and not fp:
+            sources = os.listdir(self.prefix) 
         
-        if len(srcs) == 0:
+        if fp is not None:
+            with open(fp, 'r') as f:
+                sources = [src.rstrip() for src in f.readlines()]
+
+        if len(sources) == 0:
             warn("Directory {} is empty. Dataset does not contain any elements.".format(self.prefix))
 
-        for i, src in enumerate(srcs):
+        for i, src in enumerate(sources):
             elem = DataInstance(i, os.path.join(self.prefix, src))
             self._elements.append(elem)
 
