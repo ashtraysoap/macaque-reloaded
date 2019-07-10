@@ -52,6 +52,10 @@ class Dataset:
     def batch_size(self):
         return self._batch_size
 
+    @batch_size.setter
+    def batch_size(self, val):
+        self._batch_size = val
+
     @property
     def prefix(self):
         return self._prefix
