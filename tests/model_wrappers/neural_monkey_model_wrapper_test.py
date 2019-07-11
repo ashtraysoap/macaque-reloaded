@@ -4,7 +4,7 @@ from model_wrappers import NeuralMonkeyModelWrapper
 def create_neural_monkey_model_wrapper():
     return NeuralMonkeyModelWrapper(
         config_path="./tests/data/enc-dec-test.ini",
-        vars_path="../enc-dec-test/variables.data.final",
+        vars_path="./tests/data/enc-dec-test/variables.data.final",
         image_series="images",
         feature_series="",
         src_caption_series="")
