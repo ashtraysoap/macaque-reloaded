@@ -1,6 +1,9 @@
 from tests.data_test import make_initialized_test_dataset
 from model_wrappers import NeuralMonkeyModelWrapper
 
+TEST_PREFIX = "./tests/data/flickr8k_sample_feats"
+TEST_SOURCES = "./tests/data/flickr8k_sample_feats.txt"
+
 def create_neural_monkey_model_wrapper_enc_dec():
     return NeuralMonkeyModelWrapper(
         config_path="./tests/data/enc-dec-test.ini",
@@ -34,5 +37,6 @@ def test_neural_monkey_model_wrapper_enc_dec_run():
 def test_neural_monkey_model_wrapper_dec_only_run():
     model = create_neural_monkey_model_wrapper_dec_only()
     ds = make_initialized_test_dataset()
+    ds.attach_features_from_file_list(prefix=TEST_PREFIX, sources=TEST_SOURCES)
     results = model.run(ds)
     assert results is not None

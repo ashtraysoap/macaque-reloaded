@@ -46,17 +46,17 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
                 # handle multimodal translation case
                 pass
             else:
-                ds = Dataset("macaque_data", {self._image_series: np.array(imgs)}, {})
+                ds = Dataset("macaque_data", {self._image_series: lambda: np.array(imgs)}, {})
 
         # dec-only model (runs on feature maps)
         elif self._feature_series:
-            if dataset.features:
+            if dataset.feature_maps:
                 feats = [e.feature_map for e in elems]
             
             if self._src_caption_series:
                 # handle multimodal translation case
                 pass
             else:
-                ds = Dataset("macaque_data", {self._feature_series: np.array(feats)}, {})
+                ds = Dataset("macaque_data", {self._feature_series: lambda: np.array(feats)}, {})
 
         return self._exp.run_model(dataset=ds, write_out=False)
