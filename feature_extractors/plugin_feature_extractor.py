@@ -3,6 +3,8 @@ from importlib import import_module
 import os
 import sys
 
+import numpy as np
+
 from .feature_extractor import FeatureExtractor
 
 class InterfaceMethod(Enum):
@@ -82,5 +84,10 @@ class PluginFeatureExtractor(FeatureExtractor):
             results = self._method(dataset)
         else:
             raise RuntimeError()
+
+        if isinstance(results, list):
+            results = np.array(results)
+        elif not isinstance(results, np.ndarray):
+            raise RuntimeError("Features are neither a list nor a numpy array.")
 
         return results

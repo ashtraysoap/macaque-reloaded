@@ -81,4 +81,11 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
                 {self._data_id: lambda: np.array(images)},
                 {})
         feed_dict = self._imagenet.feed_dict(ds)
-        return self._session.run(self._fetch, feed_dict=feed_dict)
+
+        results = self._session.run(self._fetch, feed_dict=feed_dict)
+        if isinstance(results, list):
+            results = np.array(results)
+        elif not isinstance(results, np.ndarray):
+            raise RuntimeError("Features are neither a list nor a numpy array.")
+
+        return results

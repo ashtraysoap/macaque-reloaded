@@ -22,6 +22,5 @@ def test_keras_feature_extractor_extract_features():
     ds.initialize(fp=TEST_SOURCES)
 
     result = ext.extract_features(dataset=ds)
-    assert isinstance(result, list) == True
-    assert isinstance(result[0], np.ndarray) == True
+    assert isinstance(result, np.ndarray) == True
     assert len(result) == ds.count

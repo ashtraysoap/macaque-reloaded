@@ -37,6 +37,10 @@ class KerasFeatureExtractor(FeatureExtractor):
         self._input_size = enc_spec.input_size
 
     def extract_features(self, dataset):
+        """
+        Returns:
+            A numpy array of extracted features.
+        """
         elems = dataset.elements
         paths = [e.source for e in elems]
 
@@ -46,4 +50,4 @@ class KerasFeatureExtractor(FeatureExtractor):
         xs = [np.expand_dims(x, axis=0) for x in xs]
         xs = [self._preprocess_input(x) for x in xs]
 
-        return [self._model.predict(x) for x in xs]
+        return np.array([self._model.predict(x) for x in xs])
