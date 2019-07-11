@@ -38,9 +38,11 @@ class PluginModelWrapper(ModelWrapper):
             sys.path.append(directory)
             module = import_module(source)
         else:
-            if not '' in sys.path:
-                sys.path.append('')
-            module = import_module(module_path)
+            path_split = os.path.split(module_path)
+            cwd = os.getcwd()
+            directory = os.path.join(cwd, path_split[0])
+            sys.path.append(directory)
+            module = import_module(path_split[1])
         
         if not hasattr(module, IFC_CLASS):
             raise ValueError("The plugin file does not contain the class %s." % IFC_CLASS)

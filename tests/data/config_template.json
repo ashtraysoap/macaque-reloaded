@@ -1,0 +1,33 @@
+{
+    "name": "",
+    "preprocessing": {
+
+    },
+    "featureExtractor": {
+        "type": "",
+        "tfSlim": {
+            "netType": "",
+            "modelCkpt": "",
+            "featureMap": ""
+        },
+        "keras": {
+            "netType": ""
+        },
+        "plugin": {
+            "sourcePath": ""
+        }
+    },
+    "model": {
+        "type": "",
+        "neuralMonkey": {
+            "configPath": "",
+            "varsPath": "",
+            "imageSeries": "",
+            "featureSeries": "",
+            "srcCaptionSeries": ""
+        },
+        "plugin": {
+            "sourcePath": ""
+        }
+    }
+}

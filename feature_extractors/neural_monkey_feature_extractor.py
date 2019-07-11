@@ -67,9 +67,8 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
         Returns:
             A list of numpy arrays, the extracted feature maps.
         """
-        prefix = dataset.prefix
         elems = dataset.elements
-        paths = [os.path.join(prefix, e.source) for e in elems]
+        paths = [e.source for e in elems]
 
         images = [single_image_for_imagenet(img_path,
                 self._net_spec.input_size[0], 

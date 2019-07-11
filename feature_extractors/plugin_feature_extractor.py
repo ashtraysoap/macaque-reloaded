@@ -36,9 +36,11 @@ class PluginFeatureExtractor(FeatureExtractor):
             sys.path.append(directory)
             module = import_module(source)
         else:
-            if not '' in sys.path:
-                sys.path.append('')
-            module = import_module(module_path)
+            path_split = os.path.split(module_path)
+            cwd = os.getcwd()
+            directory = os.path.join(cwd, path_split[0])
+            sys.path.append(directory)
+            module = import_module(path_split[1])
         
         if not hasattr(module, IFC_CLASS):
             raise ValueError("The plugin file does not contain the class %s." % IFC_CLASS)
@@ -58,27 +60,27 @@ class PluginFeatureExtractor(FeatureExtractor):
 
         self._method = getattr(self._model_wrapper, IFC_METHODS[self._method_id])
 
-def extract_features(self, dataset):
-    elems = dataset.elements
-    results = []
+    def extract_features(self, dataset):
+        elems = dataset.elements
+        results = []
     
-    if self._method_id == InterfaceMethod.RunOnPaths:
-        prefix = dataset.prefix
-        paths = [os.path.join(prefix, e.source) for e in elems]
-        results = self._method(paths)
-    elif self._method_id == InterfaceMethod.RunOnImages:
-        # raw images
-        if dataset.preprocessed_images:
-            imgs = [e.prepro_img for e in elems]
-        # preprocessed images
-        elif dataset.raw_images:
-            imgs = [e.raw_img for e in elems]
+        if self._method_id == InterfaceMethod.RunOnPaths:
+            prefix = dataset.prefix
+            paths = [os.path.join(prefix, e.source) for e in elems]
+            results = self._method(paths)
+        elif self._method_id == InterfaceMethod.RunOnImages:
+            # raw images
+            if dataset.preprocessed_images:
+                imgs = [e.prepro_img for e in elems]
+            # preprocessed images
+            elif dataset.raw_images:
+                imgs = [e.raw_img for e in elems]
+            else:
+                raise RuntimeError("Dataset does not contain any image data.")
+            results = self._method(imgs)
+        elif self._method_id == InterfaceMethod.RunOnDataset:
+            results = self._method(dataset)
         else:
-            raise RuntimeError("Dataset does not contain any image data.")
-        results = self._method(imgs)
-    elif self._method_id == InterfaceMethod.RunOnDataset:
-        results = self._method(dataset)
-    else:
-        raise RuntimeError()
+            raise RuntimeError()
 
-    return results
+        return results

@@ -66,7 +66,7 @@ class App extends React.Component {
         } else if (model_names.includes(selected_tab)) {
             tab = <ModelTab model={get_element(models)} />;
         } else if (dataset_names.includes(selected_tab)) {
-            tab = <DatasetTab dataset={get_element(datasets)} />;
+            tab = <DatasetTab dataset={get_element(datasets)} models={models} />;
         } else {
             tab = <Tab text={selected_tab} />;
         }
@@ -82,7 +82,6 @@ class App extends React.Component {
   }
   
 function Nav(props) {
-    console.log(props.navs);
     return (
         <div>
             <h1>Le titulok</h1>
@@ -119,7 +118,81 @@ function DatasetTab(props) {
     
     return (
         <div>
+            <RunOnDatasetTab dataset={props.dataset} models={props.models} />
+            <hr/>
             {elements}
+        </div>
+    );
+}
+
+class RunOnDatasetTab extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { selectedModels: {}, selectedMetrics: {} };
+        this.props.models.forEach((m) => this.state.selectedModels[m.name] = true);
+
+        this.handleRunModelsClick = this.handleRunModelsClick.bind(this);
+        this.handleEvaluateMetricsClick = this.handleEvaluateMetricsClick.bind(this);
+        this.onModelChange = this.onModelChange.bind(this);
+    }
+
+    handleRunModelsClick() {         
+        const modelEntries = Object.entries(this.state.selectedModels);
+        let modelNames = modelEntries.filter((x) => x[1] === true).map((x) => x[0]);
+        let msg = {
+            dataset: this.props.dataset.name,
+            models: modelNames
+        };
+        console.log(msg);
+
+        fetch('/run_model_on_dataset', {
+            method: 'POST',
+            body: JSON.stringify(msg),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json())
+        .then(response => {
+            console.log('Success:', JSON.stringify(response));
+            this.props.onSubmit(response);
+        })
+        .catch(error => console.log('Error:', error));
+    }
+
+    handleEvaluateMetricsClick() {
+
+    }
+
+    onModelChange(model) {
+        let models = this.state.selectedModels;
+        models[model] = !models[model];
+        this.setState({ selectedModels: models });
+    }
+
+    render() {
+        // debug log to know which models are selected, later change div appearence by css on clicks
+        console.log(this.state.selectedModels);
+
+        const modelCheckBoxes = this.props.models.map((m) => 
+            <CheckBoxElement key={m.name} value={m.name} onModelChange={() => this.onModelChange(m.name)} />);
+
+        return (
+            <div>
+                {modelCheckBoxes}
+                <button onClick={this.handleRunModelsClick} >Run models on dataset</button>
+                <hr/>
+                {/* {metrics} */}
+                <button onClick={this.handleRunModelsClick} >Evaluate metrics on dataset</button>
+            </div>
+        );
+    }
+}
+
+function CheckBoxElement(props) {
+    return (
+        <div onClick={props.onModelChange}>
+            {props.value}
+            <br/>
         </div>
     );
 }
@@ -159,11 +232,7 @@ class AddDatasetTab extends React.Component {
     }
 
     submitDatasetConfig() {
-        // let refs = this.state.refCaps.split(/\r?\n/);
-        // let s = this.state;
-        // s[refCaps] = refs;
-        // this.props.onSubmit(s);
-        console.log('Clicked dat button. Fetching...');
+        console.log('Fetching...');
          
         const s = this.state;
         fetch('/add_dataset', {
@@ -216,7 +285,7 @@ class AddDatasetTab extends React.Component {
                     </label>
                 </form>
                 <br/>
-                <button type="button" onClick={this.submitDatasetConfig} >Create dataset</button>
+                <button onClick={this.submitDatasetConfig} >Create dataset</button>
             </div>
         );
     }

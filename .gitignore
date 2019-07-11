@@ -1,0 +1,16 @@
+__pycache__/
+
+feature_extractors/__pycache__/
+model_wrappers/__pycache__/
+preprocessing/__pycache__/
+
+experimental/
+data.ini
+list.txt
+macaque.ini
+react-ex-3/
+tensorflow-models
+wrappers/
+
+.vscode/
+
