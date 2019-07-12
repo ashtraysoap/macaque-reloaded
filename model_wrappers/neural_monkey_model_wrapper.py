@@ -13,7 +13,10 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
                 vars_path,
                 image_series="",
                 feature_series="",
-                src_caption_series=""):
+                src_caption_series="",
+                caption_series="",
+                alignments_series="",
+                bs_graph_series=""):
 
         if not os.path.isfile(config_path):
             raise ValueError("File {} does not exist.".format(config_path))
@@ -23,6 +26,9 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         self._image_series = image_series
         self._feature_series = feature_series
         self._src_caption_series = src_caption_series
+        self._caption_series = caption_series
+        self._alignments_series = alignments_series
+        self._bs_graph_series = bs_graph_series
 
         self._exp = Experiment(config_path=config_path)
         self._exp.build_model()
@@ -65,12 +71,25 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
 
         runners_results, output_series = self._exp.run_model(dataset=ds, write_out=False)
 
-        # at this point a correspondence between NM exp's output series and 
-        # `caption` `alignments` `beam_search_output_graph` is required
+        if self._caption_series:
+            captions = output_series[self._caption_series]
+        else:
+            captions = [None] * dataset.count
+        if self._alignments_series:
+            alignments = output_series[self._alignments_series]
+        else:
+            alignments = [None] * dataset.count
+        if self._bs_graph_series:
+            bs_graph_output = output_series[self._bs_graph_series]
+        else:
+            bs_graph_output = [None] * dataset.count
+        
+        results = []
+        for c, a, b in zip(captions, alignments, bs_graph_output):
+            results.append({
+                'caption': c,
+                'alignments': a,
+                'beam_search_output_graph': b
+            })
 
-        mock_result = {
-            'caption': [],
-            'alignments': [],
-            'beam_search_output_graph': None
-        }
-        return [mock_result for e in dataset.elements]
+        return results
