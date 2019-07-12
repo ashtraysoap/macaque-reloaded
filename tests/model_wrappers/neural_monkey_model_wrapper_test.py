@@ -32,11 +32,15 @@ def test_neural_monkey_model_wrapper_enc_dec_run():
     model = create_neural_monkey_model_wrapper_enc_dec()
     ds = make_initialized_test_dataset()
     results = model.run(ds)
-    assert results is not None
+    assert isinstance(results, list) == True
+    assert len(results) == ds.count
+    assert isinstance(results[-1], dict) == True
 
 def test_neural_monkey_model_wrapper_dec_only_run():
     model = create_neural_monkey_model_wrapper_dec_only()
     ds = make_initialized_test_dataset()
     ds.attach_features_from_file_list(prefix=TEST_PREFIX, sources=TEST_SOURCES)
     results = model.run(ds)
-    assert results is not None
+    assert isinstance(results, list) == True
+    assert len(results) == ds.count
+    assert isinstance(results[-1], dict) == True

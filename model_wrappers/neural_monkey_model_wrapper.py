@@ -64,4 +64,14 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
             else:
                 ds = Dataset("macaque_data", {self._feature_series: lambda: np.array(feats)}, {})
 
-        return self._exp.run_model(dataset=ds, write_out=False)
+        runners_results, output_series = self._exp.run_model(dataset=ds, write_out=False)
+
+        # at this point a correspondence between NM exp's output series and 
+        # `caption` `alignments` `beam_search_output_graph` is required
+
+        mock_result = {
+            'caption': [],
+            'alignments': [],
+            'beam_search_output_graph': None
+        }
+        return [mock_result for e in dataset.elements]
