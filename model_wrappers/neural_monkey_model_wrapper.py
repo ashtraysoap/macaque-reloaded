@@ -29,7 +29,12 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         self._exp.load_variables([vars_path])
 
 
-    def run(self, dataset):        
+    def run(self, dataset):
+        """
+        Returns:
+            A list of dictionaries. Each dictionary contains the keys
+            `caption`, `alignments`, `beam_search_output_graph`.
+        """
         elems = dataset.elements
 
         # enc-dec model (runs on images)

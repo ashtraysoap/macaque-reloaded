@@ -29,23 +29,31 @@ def test_plugin_model_wrapper_run_on_dataset():
     model = PluginModelWrapper(plugin_path=TEST_PLUGIN_PATH_DATASET)
     ds = make_initialized_test_dataset()
     results = model.run(dataset=ds)
-    assert results is not None
+    assert isinstance(results, list) == True
+    assert ds.count == len(results)
+    assert isinstance(results[-1], dict) == True
 
 def test_plugin_model_wrapper_run_on_features():
     model = PluginModelWrapper(plugin_path=TEST_PLUGIN_PATH_FEATURES)
     ds = make_initialized_test_dataset()
     ds.attach_features_from_file_list(prefix=TEST_PREFIX, sources=TEST_SOURCES)
     results = model.run(dataset=ds)
-    assert results is not None
+    assert isinstance(results, list) == True
+    assert ds.count == len(results)
+    assert isinstance(results[-1], dict) == True
 
 def test_plugin_model_wrapper_run_on_images():
     model = PluginModelWrapper(plugin_path=TEST_PLUGIN_PATH_IMAGES)
     ds = make_initialized_test_dataset()
     results = model.run(dataset=ds)
-    assert results is not None
+    assert isinstance(results, list) == True
+    assert ds.count == len(results)
+    assert isinstance(results[-1], dict) == True
 
 def test_plugin_model_wrapper_run_on_paths():
     model = PluginModelWrapper(plugin_path=TEST_PLUGIN_PATH_PATHS)
     ds = make_initialized_test_dataset()
     results = model.run(dataset=ds)
-    assert results is not None
+    assert isinstance(results, list) == True
+    assert ds.count == len(results)
+    assert isinstance(results[-1], dict) == True
