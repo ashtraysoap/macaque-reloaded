@@ -2,6 +2,7 @@ import json
 import os
 from warnings import warn
 
+from PIL import Image
 import numpy as np
 
 class DataInstance:
@@ -14,6 +15,7 @@ class DataInstance:
         self._alignments = None
         self._beam_search_output = None
 
+        self._image = None
         self._prepro_img = None
         self._feature_map = None
 
@@ -24,6 +26,14 @@ class DataInstance:
     @property
     def source(self):
         return self._source
+
+    @property
+    def image(self):
+        return self._image
+
+    @image.setter
+    def image(self, val):
+        self._image = val
 
     @property
     def prepro_img(self):
@@ -48,6 +58,7 @@ class Dataset:
         self._batch_size = batch_size
         self._elements = []
         self._count = 0
+        self._images = False
         self._feature_maps = False
         self._preprocessed_imgs = False
 
@@ -88,6 +99,10 @@ class Dataset:
         return self._elements
 
     @property
+    def images(self):
+        return self._images
+
+    @property
     def feature_maps(self):
         return self._feature_maps
 
@@ -114,7 +129,16 @@ class Dataset:
 
     def to_json(self):
         return json.dumps(self, cls=DatasetEncoder)
-        
+
+    def load_images(self):
+        """
+        For each element loads the image associated with
+        its `source` attribute. Images are in the PIL format.
+        """
+        for e in self.elements:
+            e.image = Image.open(e.source)
+        self._images = True
+
     def attach_prepro_images(self, images):
         """
         Args:

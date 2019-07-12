@@ -39,13 +39,12 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
 
         # enc-dec model (runs on images)
         if self._image_series:
-            if dataset.preprocessed_images:
+            if dataset.preprocessed_imgs:
                 imgs = [e.prepro_img for e in elems]
-            elif dataset.raw_images:
-                imgs = [e.raw_img for e in elems]
             else:
-                dataset.load_raw_imgs()
-                imgs = [e.raw_img for e in elems]
+                if not dataset.images:
+                    dataset.load_images()
+                imgs = [e.image for e in elems]
             
             if self._src_caption_series:
                 # handle multimodal translation case

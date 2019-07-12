@@ -82,14 +82,12 @@ class PluginModelWrapper(ModelWrapper):
             x = paths
         
         elif self._method_id == InterfaceMethod.RunOnImages:
-            # preprocessed images
-            if dataset.preprocessed_images:
+            if dataset.preprocessed_imgs:
                 imgs = [e.prepro_img for e in elems]
-            # raw images
-            elif dataset.raw_images:
-                imgs = [e.raw_img for e in elems]
             else:
-                raise RuntimeError("Dataset does not contain any image data.")
+                if not dataset.images:
+                    dataset.load_images()
+                imgs = [e.image for e in elems]
             x = imgs
         
         elif self._method_id == InterfaceMethod.RunOnFeatures:
