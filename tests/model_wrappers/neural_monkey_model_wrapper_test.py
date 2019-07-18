@@ -18,7 +18,8 @@ def create_neural_monkey_model_wrapper_dec_only():
         vars_path="./tests/data/output/dec-only-test/variables.data.final",
         image_series="",
         feature_series="feature_maps",
-        src_caption_series="")
+        src_caption_series="",
+        caption_series="greedy_caption")
 
 def test_neural_monkey_model_wrapper_constructor_enc_dec():
     model = create_neural_monkey_model_wrapper_enc_dec()
