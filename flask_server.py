@@ -44,14 +44,13 @@ def add_model():
 @APP.route('/run_model_on_dataset', methods=['POST'])
 def run_model_on_dataset():
     json_data = _get_json_from_request()
-
+    print(json_data)
     ds = json_data['dataset']
-    m = STATE.model_interfaces[json_data['model']]
-    
-    new_ds, out_ds = m.run_on_dataset(STATE.datasets[ds])
-    
-    STATE.update_dataset(name=ds, ds=new_ds)
-    return out_ds.to_json()
+    for m_id in json_data['models']:
+        m = STATE.model_interfaces[m_id]
+        new_ds, out_ds = m.run_on_dataset(STATE.datasets[ds])
+        STATE.update_dataset(name=ds, ds=new_ds)
+    return new_ds.to_json()
 
 @APP.route('/update_user', methods=['POST'])
 def update_user():
