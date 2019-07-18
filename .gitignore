@@ -11,6 +11,7 @@ macaque.ini
 react-ex-3/
 tensorflow-models
 wrappers/
+tests/data/output/
 
 .vscode/
 
