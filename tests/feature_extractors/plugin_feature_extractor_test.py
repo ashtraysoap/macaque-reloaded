@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 from feature_extractors import PluginFeatureExtractor
 from tests.data_test import make_initialized_test_dataset
 
@@ -27,7 +29,7 @@ def test_plugin_feature_extractor_run_on_dataset():
     ds = make_initialized_test_dataset()
 
     results = ext.extract_features(dataset=ds)
-    assert results is not None
+    assert isinstance(results, np.ndarray)
 
 def test_plugin_feature_extractor_run_on_images():
     # TODO: dataset lacks required functionality
@@ -35,11 +37,11 @@ def test_plugin_feature_extractor_run_on_images():
     ds = make_initialized_test_dataset()
 
     results = ext.extract_features(dataset=ds)
-    assert results is not None
+    assert isinstance(results, np.ndarray)
 
 def test_plugin_feature_extractor_run_on_paths():
     ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH_PATHS)
     ds = make_initialized_test_dataset()
 
     results = ext.extract_features(dataset=ds)
-    assert results is not None
+    assert isinstance(results, np.ndarray)

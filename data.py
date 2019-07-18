@@ -2,6 +2,9 @@ import json
 import os
 from warnings import warn
 
+from PIL import Image
+import numpy as np
+
 class DataInstance:
     def __init__(self, idx, source):
         self._idx = idx
@@ -12,6 +15,10 @@ class DataInstance:
         self._alignments = None
         self._beam_search_output = None
 
+        self._image = None
+        self._prepro_img = None
+        self._feature_map = None
+
     @property
     def idx(self):
         return self._idx
@@ -20,6 +27,30 @@ class DataInstance:
     def source(self):
         return self._source
 
+    @property
+    def image(self):
+        return self._image
+
+    @image.setter
+    def image(self, val):
+        self._image = val
+
+    @property
+    def prepro_img(self):
+        return self._prepro_img
+
+    @prepro_img.setter
+    def prepro_img(self, val):
+        self._prepro_img = val
+
+    @property
+    def feature_map(self):
+        return self._feature_map
+
+    @feature_map.setter
+    def feature_map(self, val):
+        self._feature_map = val
+
 class Dataset:
     def __init__(self, name, prefix, batch_size):
         self._name = name
@@ -27,6 +58,9 @@ class Dataset:
         self._batch_size = batch_size
         self._elements = []
         self._count = 0
+        self._images = False
+        self._feature_maps = False
+        self._preprocessed_imgs = False
 
         if not os.path.isdir(prefix):
             raise ValueError("Directory {} does not exist.".format(prefix))
@@ -64,6 +98,18 @@ class Dataset:
     def elements(self):
         return self._elements
 
+    @property
+    def images(self):
+        return self._images
+
+    @property
+    def feature_maps(self):
+        return self._feature_maps
+
+    @property
+    def preprocessed_imgs(self):
+        return self._preprocessed_imgs
+
     def initialize(self, sources=None, fp=None):
         if not sources and not fp:
             sources = os.listdir(self.prefix) 
@@ -83,7 +129,67 @@ class Dataset:
 
     def to_json(self):
         return json.dumps(self, cls=DatasetEncoder)
+
+    def load_images(self):
+        """
+        For each element loads the image associated with
+        its `source` attribute. Images are in the PIL format.
+        """
+        for e in self.elements:
+            e.image = Image.open(e.source)
+        self._images = True
+
+    def attach_prepro_images(self, images):
+        """
+        Args:
+            images: ??????????
+        """
+        # TODO: check validity of args
+
+        for elem, img in zip(self.elements, images):
+            elem.prepro_img = img
+        self._preprocessed_imgs = True
+
+    def attach_features(self, features):
+        """
+        Args:
+            features: A numpy array of feature maps.
+        """
+        for elem, fm in zip(self.elements, features):
+            elem.feature_map = fm
+        self._feature_maps = True
+
+    def attach_features_from_file_list(self, prefix="", sources=None):
+        """
+            Requires documentation.
+        """
+        if not sources:
+            srcs = os.listdir(prefix)
+        else:
+            if not os.path.isfile(sources):
+                raise ValueError("File {} does not exits.".format(sources))
+            srcs = [l.rstrip() for l in open(sources, 'r').readlines()]
         
+        srcs = [os.path.join(prefix, src) for src in srcs]
+
+        if not len(srcs) == self.count:
+            raise ValueError("Number of elements and feature maps does not match.")
+
+        def load_feature_map(fp):
+            if fp[-4:] == '.npy':
+                x = np.load(fp)
+            elif fp[-4:] == '.npz':
+                x = np.load(fp)
+                x = x[x.files[0]]
+            else:
+                raise ValueError("Unsupported file format for features in {}".format(fp))
+            return x
+
+        fmaps = map(load_feature_map, srcs)
+
+        for elem, fm in zip(self.elements, fmaps):
+            elem.feature_map = fm
+        self._feature_maps = True
 
     def _create_offspring(self):
         return Dataset(name=self.name,

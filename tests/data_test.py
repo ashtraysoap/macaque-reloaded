@@ -1,10 +1,15 @@
 import os
 
+import numpy as np
+
 from data import Dataset
 
 TEST_PREFIX = "./tests/data/flickr8k_sample_imgs"
 TEST_SOURCES = "./tests/data/flickr8k_sample_imgs.txt"
 TEST_NAME = "test_ds"
+
+TEST_FEATURES_PREFIX = "./tests/data/flickr8k_sample_feats"
+TEST_FEATURES_SOURCES = "./tests/data/flickr8k_sample_feats.txt"
 
 def make_test_dataset():
     return Dataset(name=TEST_NAME,
@@ -56,3 +61,12 @@ def test_dataset_iter():
         x += len(batch.elements)
     assert x == count
     
+def test_dataset_attach_features_from_file():
+    ds = make_initialized_test_dataset()
+    ds.attach_features_from_file_list(prefix=TEST_FEATURES_PREFIX,
+        sources=TEST_FEATURES_SOURCES)
+    fm = ds.elements[-1].feature_map
+
+    assert ds.feature_maps == True
+    assert isinstance(fm, np.ndarray) == True
+    assert len(fm.shape) == 3

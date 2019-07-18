@@ -65,35 +65,45 @@ class PluginModelWrapper(ModelWrapper):
         self._method = getattr(self._model_wrapper, IFC_METHODS[self._method_id])
 
     def run(self, dataset):
+        """
+        Returns:
+            A list of dictionaries. Each dictionary contains the keys
+            `caption`, `alignments`, `beam_search_output_graph`.
+        """
+
+        def run_model(inputs):
+            return self._method(inputs)
+
         elems = dataset.elements
-        results = []
     
         if self._method_id == InterfaceMethod.RunOnPaths:
             prefix = dataset.prefix
             paths = [os.path.join(prefix, e.source) for e in elems]
-            results = self._method(paths)
+            x = paths
         
         elif self._method_id == InterfaceMethod.RunOnImages:
-            # raw images
-            if dataset.preprocessed_images:
+            if dataset.preprocessed_imgs:
                 imgs = [e.prepro_img for e in elems]
-            # preprocessed images
-            elif dataset.raw_images:
-                imgs = [e.raw_img for e in elems]
             else:
-                raise RuntimeError("Dataset does not contain any image data.")
-            results = self._method(imgs)
+                if not dataset.images:
+                    dataset.load_images()
+                imgs = [e.image for e in elems]
+            x = imgs
         
         elif self._method_id == InterfaceMethod.RunOnFeatures:
             if dataset.feature_maps:
                 features = [e.feature_map for e in elems]
             else:
                 raise RuntimeError("Dataset does not contain any feature maps.")
-            results = self._method(features)
+            x = features
             
         elif self._method_id == InterfaceMethod.RunOnDataset:
-            results = self._method(dataset)
+            x = dataset
         
         else:
             raise RuntimeError()
-        return results
+
+        y = run_model(x)
+        # validate results
+
+        return y

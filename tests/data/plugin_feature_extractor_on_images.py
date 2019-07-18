@@ -1,4 +1,4 @@
 class FeatureExtractorWrapper:
 
     def run_on_images(self, images):
-        return 42
+        return [42]

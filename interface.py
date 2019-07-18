@@ -81,22 +81,25 @@ class ModelInterface:
         results = []
 
         for batch in dataset:
-            if self._preprocessing:
-                batch = self._preprocess(batch)
-            if self._feature_extractor:
-                batch = self._extract_features(batch)
+            batch = self._preprocess(batch) if self._preprocessing else batch
+            batch = self._extract_features(batch) if self._feature_extractor else batch
             out = self._run_model(batch)
             results.extend(out)
+            
         return results
 
     def to_json(self):
         return json.dumps(self, cls=ModelInterfaceEncoder)
 
     def _preprocess(self, dataset):
-        return self._preprocessing(dataset)
+        prepro_imgs = self._preprocessing(dataset)
+        dataset.attach_prepro_images(prepro_imgs)
+        return
 
     def _extract_features(self, dataset):
-        return self._feature_extractor.extract_features(dataset)
+        features = self._feature_extractor.extract_features(dataset)
+        dataset.attach_features(features)
+        return
 
     def _run_model(self, dataset):
         return self._model_wrapper.run(dataset)
