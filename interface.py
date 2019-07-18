@@ -85,7 +85,11 @@ class ModelInterface:
             batch = self._extract_features(batch) if self._feature_extractor else batch
             out = self._run_model(batch)
             results.extend(out)
-            
+        # out is a list of {result dict}
+        # results is list of {result dict}
+
+        # Two possibilities: return results / return updated dataset
+
         return results
 
     def to_json(self):
