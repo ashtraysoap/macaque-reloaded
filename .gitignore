@@ -13,5 +13,7 @@ tensorflow-models
 wrappers/
 tests/data/output/
 
+node_modules/
+
 .vscode/
 
