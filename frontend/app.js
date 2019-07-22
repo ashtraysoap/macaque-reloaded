@@ -13,8 +13,17 @@ import { Navigation } from './nav.js';
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = props.state;
+
         this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
+        this.addDataset = this.addDataset.bind(this);
+
+        this.state = props.state;
+        this.state.defaultTabs = {
+            "About": <AboutTab />,
+            "Add Dataset": <AddDatasetTab onSubmit={this.addDataset}/>,
+            "Add Metric": <AddMetricTab />,
+            "Add Model": <AddModelTab />
+        }
     }
 
     handleSelectedTabChange(tabKey) {
@@ -40,6 +49,12 @@ class App extends React.Component {
         }
 
         return null;
+    }
+
+    addDataset(dataset) {
+        let datasets = this.state.datasets;
+        datasets.push(dataset);
+        this.setState({datasets: datasets});
     }
 
     render() {
@@ -68,12 +83,6 @@ let state = {
     models: [],
     datasets: [],
     metrics: [],
-    defaultTabs: {
-        "About": <AboutTab />,
-        "Add Dataset": <AddDatasetTab />,
-        "Add Metric": <AddMetricTab />,
-        "Add Model": <AddModelTab />
-    },
     selectedTab: "About",
 }
 

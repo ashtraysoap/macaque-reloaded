@@ -22,13 +22,11 @@ class InformativeInput extends React.Component {
                 <input type="text" value={this.props.value} onChange={this.props.handleChange} />
                 {this.state.clicked &&
                     <div>
-                        <hr/>
                         {this.props.hint}
                     </div>
                 }
                 {this.props.error &&
                     <div>
-                        <hr/>
                         {this.props.error}
                     </div>
                 }
