@@ -1,11 +1,15 @@
 import json
+import os
 
 from flask import Flask, render_template, request
 
 from data import Dataset
 from interface import create_model_interface
 
-APP = Flask(__name__)
+# Create the Flask server.
+static_path = os.path.abspath('dist')
+APP = Flask(__name__, static_folder=static_path)
+# Create a binding from the server instance to a Macaque state.
 STATE = None
 APP.config['state'] = STATE
 
