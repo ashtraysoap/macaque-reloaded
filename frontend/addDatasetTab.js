@@ -11,7 +11,8 @@ class AddDatasetTab extends React.Component {
             name: "",
             prefix: "",
             sources: "",
-            references: []
+            references: [],
+            batchSize: 32
         }
         this.handleChange = this.handleChange.bind(this);
         this.addReference = this.addReference.bind(this);
@@ -48,7 +49,7 @@ class AddDatasetTab extends React.Component {
         }).then(res => res.json())
         .then(response => {
             console.log('Success:', JSON.stringify(response));
-            this.props.onSubmit(response);
+            this.props.onServerResponse(response);
         })
         .catch(error => console.log('Error:', error));
     }
@@ -103,7 +104,7 @@ class AddDatasetTab extends React.Component {
 }
 
 AddDatasetTab.propTypes = {
-    onSubmit: PropTypes.func.isRequired
+    onServerResponse: PropTypes.func.isRequired
 };
 
 export { AddDatasetTab };
