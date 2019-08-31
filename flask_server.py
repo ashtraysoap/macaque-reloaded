@@ -28,10 +28,12 @@ def add_dataset():
 
     print(json_data)
     ds = Dataset(name=json_data['name'],
-                prefix=json_data['imgDir'],
+                prefix=json_data['prefix'],
                 batch_size=json_data['batchSize'])
     
-    srcs = open(json_data['imgSrcs'], 'r', encoding='utf-8')
+    srcs = None
+    if json_data['sources'] != "":
+        srcs = open(json_data['sources'], 'r', encoding='utf-8')
     ds.initialize(sources=srcs)
 
     STATE.add_dataset(ds)

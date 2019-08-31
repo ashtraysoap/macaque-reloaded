@@ -35,6 +35,21 @@ class InformativeInput extends React.Component {
     }
 }
 
+function TableRow(props) {
+    const divStyle = {
+        display: 'inline-block',
+        margin: '3px'
+    }
+
+    const es = props.entries.map(e => <div key={e.toString()} style={divStyle}>{e}</div>);
+
+    return (
+        <div>
+            {es}
+        </div>
+    );
+}
+
 InformativeInput.propTypes = {
     name: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
@@ -42,6 +57,10 @@ InformativeInput.propTypes = {
     handleChange: PropTypes.func.isRequired,
     hint: PropTypes.string,
     error: PropTypes.string
-}
+};
 
-export { InformativeInput };
+TableRow.propTypes = {
+    entries: PropTypes.arrayOf(PropTypes.string).isRequired
+};
+
+export { InformativeInput, TableRow };

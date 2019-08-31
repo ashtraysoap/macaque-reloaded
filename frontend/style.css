@@ -1,3 +1,20 @@
+.instanceView {
+    background-color: white;
+    display: inline-block;
+    width: 50vw;
+    height: 50vh;
+}
+
 .ladybug {
     background-color: antiquewhite
+}
+
+.transparentLayer {
+    width: 100vw;
+    height: 100vh;
+    background: rgba(128, 128, 128, 0.1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
 }

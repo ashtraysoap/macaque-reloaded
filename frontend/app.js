@@ -16,13 +16,14 @@ class App extends React.Component {
 
         this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
         this.addDataset = this.addDataset.bind(this);
+        this.addModel = this.addModel.bind(this);
 
         this.state = props.state;
         this.state.defaultTabs = {
             "About": <AboutTab />,
-            "Add Dataset": <AddDatasetTab onSubmit={this.addDataset}/>,
+            "Add Dataset": <AddDatasetTab onServerResponse={this.addDataset}/>,
             "Add Metric": <AddMetricTab />,
-            "Add Model": <AddModelTab />
+            "Add Model": <AddModelTab onServerResponse={this.addModel}/>
         }
     }
 
@@ -39,11 +40,11 @@ class App extends React.Component {
         if (defaults[id])
             return defaults[id];
         
-        if (models.include(id)) {
+        if (models.includes(id)) {
             const m = s.models.filter(m => m.name === id)[0];
             return <ModelTab model={m} />
         }
-        if (datasets.include(id)) {
+        if (datasets.includes(id)) {
             const d = s.datasets.filter(d => d.name === id)[0];
             return <DatasetTab dataset={d} />
         }
@@ -52,22 +53,27 @@ class App extends React.Component {
     }
 
     addDataset(dataset) {
-        let datasets = this.state.datasets;
-        datasets.push(dataset);
-        this.setState({datasets: datasets});
+        let ds = this.state.datasets;
+        ds.push(dataset);
+        this.setState({datasets: ds});
+    }
+
+    addModel(model) {
+        let ms = this.state.models;
+        ms.push(model)
+        this.setState({ models: ms });
     }
 
     render() {
-        const s = this.state;
-        const ms = s.models.map(m => m.name);
-        const ds = s.datasets.map(d => d.name);
-        const defaults = Object.keys(s.defaultTabs);
+        const models = this.state.models.map(m => m.name);
+        const datasets = this.state.datasets.map(d => d.name);
+        const defaults = Object.keys(this.state.defaultTabs);
 
         return (
             <div>
                 <Navigation
-                    datasetNames={ds} 
-                    modelNames={ms} 
+                    datasetNames={datasets} 
+                    modelNames={models} 
                     defaultNames={defaults}
                     onSelectedChange={this.handleSelectedTabChange}
                 />
@@ -81,7 +87,20 @@ class App extends React.Component {
 
 let state = {
     models: [],
-    datasets: [],
+    datasets: [
+        {
+            name: "Kafek",
+            elements: []
+        },
+        {
+            name: "Chuckset",
+            elements: []
+        },
+        {
+            name: "SheltiaSet",
+            elements: []
+        }
+    ],
     metrics: [],
     selectedTab: "About",
 }
