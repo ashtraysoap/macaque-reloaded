@@ -1,5 +1,4 @@
-### macaque
----
+# Macaque
 
 *This repository is a part of my bachelor's thesis. Currently, it is neither running nor is it open to outside contributions.*
 
