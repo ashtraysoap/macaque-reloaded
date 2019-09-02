@@ -23,8 +23,8 @@ class App extends React.Component {
         this.state.defaultTabs = {
             "About": <AboutTab />,
             "Add Dataset": <AddDatasetTab onServerResponse={this.addDataset}/>,
-            "Add Metric": <AddMetricTab />,
-            "Add Model": <AddModelTab onServerResponse={this.addModel}/>
+            "Add Model": <AddModelTab onServerResponse={this.addModel}/>,
+            "Add Metric": <AddMetricTab />
         }
     }
 
