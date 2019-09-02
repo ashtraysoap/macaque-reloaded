@@ -20,8 +20,8 @@ class DataInstanceView extends React.Component {
 class DataInstanceEntry extends React.Component {
     
     render() {
-        let entries = ['cat', 'eats', 'dog', '...^.^'];
-
+        let entries = [this.props.dataInstance.source]
+        
         return (
             <div onClick={this.props.handleClick}>
                 <TableRow entries={entries}/>
@@ -84,9 +84,12 @@ class DatasetTab extends React.Component {
 
     render() {
         const view = this.showingElementView ? <DataInstanceView /> : null;
+        const elements = this.props.dataset.elements.map((e => <DataInstanceEntry key={e.id} 
+            dataInstance={e} handleClick={() => {}}/>));
+
         return (
             <div>
-                <DataInstanceEntry handleClick={() => this.showView(0)}/>
+                {elements}
                 {view}
             </div>
         );
