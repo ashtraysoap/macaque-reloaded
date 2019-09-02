@@ -6,6 +6,7 @@ import { AddDatasetTab } from './addDatasetTab.js';
 import { AddMetricTab } from './addMetricTab.js';
 import { AddModelTab } from './addModelTab.js';
 import { DatasetTab } from './datasetTab.js';
+import { Header } from './header.js';
 import { ModelTab } from './modelTab.js';
 import { Navigation } from './nav.js';
 
@@ -71,6 +72,8 @@ class App extends React.Component {
 
         return (
             <div>
+                <Header />
+                <hr/>
                 <Navigation
                     datasetNames={datasets} 
                     modelNames={models} 
@@ -86,7 +89,14 @@ class App extends React.Component {
 }
 
 let state = {
-    models: [],
+    models: [
+        {
+            name: "Alonzo"
+        },
+        {
+            name: "Enzo"
+        }
+    ],
     datasets: [
         {
             name: "Kafek",
