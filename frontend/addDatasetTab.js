@@ -8,9 +8,9 @@ class AddDatasetTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "",
-            prefix: "",
-            sources: "",
+            name: "flickr8k",
+            prefix: "/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/flickr8k_sample_imgs",
+            sources: "/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/flickr8k_sample_imgs.txt",
             references: [],
             batchSize: 32
         }

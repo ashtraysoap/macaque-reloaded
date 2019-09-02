@@ -1,19 +1,7 @@
 import React from 'react';
 
 
-// function AddModelTab() {
-//     return MockTab();
-// }
-
-function AddModelTab(props) {
-    return (
-        <div>
-            <TaskForm onSubmit={props.onServerResponse}/>
-        </div>
-    );
-}
-
-class TaskForm extends React.Component {
+class AddModelTab extends React.Component {
     constructor(props) {
         super(props);
 
@@ -21,7 +9,7 @@ class TaskForm extends React.Component {
             // modelConfig holds the configuration which is sent to
             // the server for constructing a new model interface.
             modelConfig: {
-                name: "LamaodeL",
+                name: "Shaun The Great White",
                 preprocessing: {
                     // Todo
                 },
@@ -42,8 +30,8 @@ class TaskForm extends React.Component {
                 model: {
                     type: 'neuralmonkey',
                     neuralMonkey: {
-                        configPath: '/home/sam/Documents/CodeBox/BC/code/enc-dec-test/original.ini',
-                        varsPath: '/home/sam/Documents/CodeBox/BC/code/enc-dec-test/variables.data',
+                        configPath: '/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/output/enc-dec-test/original.ini',
+                        varsPath: '/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/output/enc-dec-test/variables.data',
                         imageSeries: '',
                         featureSeries: '',
                         srcCaptionSeries: ''
@@ -114,7 +102,7 @@ class TaskForm extends React.Component {
 
     submitModelConfig() {         
         const cfg = this.state.modelConfig;
-        console.log(cfg);
+        console.log("Sending configuration:\n" + cfg);
         fetch('/add_model', {
             method: 'POST',
             body: JSON.stringify(cfg),
@@ -124,7 +112,7 @@ class TaskForm extends React.Component {
         }).then(res => res.json())
         .then(response => {
             console.log('Success:', JSON.stringify(response));
-            this.props.onSubmit(response);
+            this.props.onServerResponse(response);
         })
         .catch(error => console.log('Error:', error));
     }
