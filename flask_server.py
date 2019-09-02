@@ -33,8 +33,10 @@ def add_dataset():
     
     srcs = None
     if json_data['sources'] != "":
-        srcs = open(json_data['sources'], 'r', encoding='utf-8')
-    ds.initialize(sources=srcs)
+        srcs = open(json_data['sources'], 'r', encoding='utf-8').readlines()
+        ds.initialize(sources=srcs)
+    else:
+        ds.initialize()
 
     STATE.add_dataset(ds)
     return ds.to_json()
