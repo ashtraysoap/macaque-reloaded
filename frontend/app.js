@@ -97,20 +97,7 @@ let state = {
             name: "Enzo"
         }
     ],
-    datasets: [
-        {
-            name: "Kafek",
-            elements: []
-        },
-        {
-            name: "Chuckset",
-            elements: []
-        },
-        {
-            name: "SheltiaSet",
-            elements: []
-        }
-    ],
+    datasets: [],
     metrics: [],
     selectedTab: "About",
 }
