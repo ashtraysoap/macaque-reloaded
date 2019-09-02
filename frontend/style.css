@@ -1,3 +1,13 @@
+body {
+    font-family: sans-serif;
+}
+
+.datasetNavElement {
+}
+
+.defaultNavElement {
+}
+
 .instanceView {
     background-color: white;
     display: inline-block;
@@ -5,8 +15,20 @@
     height: 50vh;
 }
 
-.ladybug {
-    background-color: antiquewhite
+.modelNavElement {
+}
+
+.nav {
+    display: table;
+    margin: 30px;
+}
+
+.navElement {
+    display: inline;
+    border: solid black;
+    border-radius: 12px;
+    margin: 5px;
+    padding: 10px;
 }
 
 .transparentLayer {
