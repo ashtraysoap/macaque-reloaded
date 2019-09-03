@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { DatasetMenu } from './datasetMenu.js';
 import { TableRow } from './utils.js';
 
 import './style.css';
@@ -88,9 +89,17 @@ class DatasetTab extends React.Component {
             dataInstance={e} handleClick={() => {}}/>));
 
         return (
-            <div>
-                {elements}
-                {view}
+            <div style={{display: "table"}}>
+                <div style={{display: "table-cell"}}>
+                    {elements}
+                    {view}
+                </div>
+                <div style={{display: "table-cell"}}>
+                    <DatasetMenu 
+                        datasetName={this.props.dataset.name}
+                        modelNames={this.props.modelNames}
+                    />
+                </div>
             </div>
         );
     }
@@ -100,7 +109,8 @@ DatasetTab.propTypes = {
     dataset: PropTypes.shape({
         name: PropTypes.string,
         elements: PropTypes.array
-    }).isRequired
+    }).isRequired,
+    modelNames: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 DataInstanceEntry.propTypes = {

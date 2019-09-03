@@ -15,9 +15,11 @@ class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
         this.addDataset = this.addDataset.bind(this);
         this.addModel = this.addModel.bind(this);
+        this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
+        this.idToTab = this.idToTab.bind(this);
+
 
         this.state = props.state;
         this.state.defaultTabs = {
@@ -47,7 +49,7 @@ class App extends React.Component {
         }
         if (datasets.includes(id)) {
             const d = s.datasets.filter(d => d.name === id)[0];
-            return <DatasetTab dataset={d} />
+            return <DatasetTab dataset={d} modelNames={this.state.models.map((m) => m.name)}/>
         }
 
         return null;
@@ -91,10 +93,7 @@ class App extends React.Component {
 let state = {
     models: [
         {
-            name: "Alonzo"
-        },
-        {
-            name: "Enzo"
+            name: 'Enzo'
         }
     ],
     datasets: [],
