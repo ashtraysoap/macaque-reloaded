@@ -3,7 +3,7 @@ import os
 
 from flask import Flask, render_template, request
 
-from data import Dataset
+from data import create_dataset
 from interface import create_model_interface
 
 # Create the Flask server.
@@ -25,26 +25,15 @@ def init():
 @APP.route('/add_dataset', methods=['POST'])
 def add_dataset():
     json_data = _get_json_from_request()
-
-    print(json_data)
-    ds = Dataset(name=json_data['name'],
-                prefix=json_data['prefix'],
-                batch_size=json_data['batchSize'])
-    
-    srcs = None
-    if json_data['sources'] != "":
-        srcs = open(json_data['sources'], 'r', encoding='utf-8').readlines()
-        ds.initialize(sources=srcs)
-    else:
-        ds.initialize()
-
+    # validate json_data
+    ds = create_dataset(json_data)
     STATE.add_dataset(ds)
     return ds.to_json()
 
 @APP.route('/add_model', methods=['POST'])
 def add_model():
     json_data = _get_json_from_request()
-
+    # validate json_data
     ifc = create_model_interface(json_data)
     STATE.add_model_interface(ifc)
     return ifc.to_json()
@@ -52,46 +41,22 @@ def add_model():
 @APP.route('/run_model_on_dataset', methods=['POST'])
 def run_model_on_dataset():
     json_data = _get_json_from_request()
-    print(json_data)
     ds = json_data['dataset']
     for m_id in json_data['models']:
         m = STATE.model_interfaces[m_id]
-        new_ds, out_ds = m.run_on_dataset(STATE.datasets[ds])
-        STATE.update_dataset(name=ds, ds=new_ds)
-    return new_ds.to_json()
+        # new_ds, out_ds = m.run_on_dataset(STATE.datasets[ds])
+        # STATE.update_dataset(name=ds, ds=new_ds)
+        print(m.run_on_dataset(STATE.datasets[ds]))
+    # return new_ds.to_json()
+    return
 
 @APP.route('/update_user', methods=['POST'])
 def update_user():
-
-    # parse the received json
-    # update the user
-    # convert user to json and send
-
     pass
 
 @APP.route('/attach_encoder', methods=['POST'])
 def attach_encoder_to_model():
-    json_data = _get_json_from_request()
-
-    if json_data['encoder_type'] == "tf-slim":
-        net_type = json_data['net_type']
-        slim_path = json_data['slim_path']
-        ckpt_path = json_data['ckpt_path']
-        conv_layer = json_data['conv_layer']
-        vector = json_data['vector']
-
-        fe = feature_extractor.NeuralMonkeyFeatureExtractor(
-            net=net_type,
-            slim_models=slim_path,
-            model_checkpoint=ckpt_path,
-            conv_map=conv_layer,
-            vector=vector)
-        
-        model_ifc = STATE.model_interfaces[json_data['model']]
-        model_ifc.feature_extractor = fe
-        return model_ifc.to_json()
-    else:
-        raise NotImplementedError("Maybe later")
+    pass
 
 def _get_json_from_request():
     return request.get_json(force=True)

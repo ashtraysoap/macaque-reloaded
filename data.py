@@ -5,6 +5,19 @@ from warnings import warn
 from PIL import Image
 import numpy as np
 
+def create_dataset(json_config):
+    ds = Dataset(name=json_config['name'],
+                prefix=json_config['prefix'],
+                batch_size=json_config['batchSize'])
+    srcs = None
+    if json_config['sources'] != "":
+        srcs = open(json_config['sources'], 'r', encoding='utf-8').readlines()
+        ds.initialize(sources=srcs)
+    else:
+        ds.initialize()
+    return ds
+
+
 class DataInstance:
     def __init__(self, idx, source):
         self._idx = idx
@@ -77,7 +90,7 @@ class Dataset:
     @property
     def name(self):
         return self._name
-    
+
     @property
     def count(self):
         return self._count

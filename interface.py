@@ -77,12 +77,13 @@ class ModelInterface:
         self._name = value
 
     def run_on_dataset(self, dataset):
+        # why is this line here?
         dataset.batch_size = self._batch_size
         results = []
 
         for batch in dataset:
-            batch = self._preprocess(batch) if self._preprocessing else batch
-            batch = self._extract_features(batch) if self._feature_extractor else batch
+            batch = self._preprocess(batch)
+            batch = self._extract_features(batch)
             out = self._run_model(batch)
             results.extend(out)
         # out is a list of {result dict}
@@ -96,34 +97,24 @@ class ModelInterface:
         return json.dumps(self, cls=ModelInterfaceEncoder)
 
     def _preprocess(self, dataset):
-        prepro_imgs = self._preprocessing(dataset)
-        dataset.attach_prepro_images(prepro_imgs)
-        return
+        if self._preprocessing:
+            prepro_imgs = self._preprocessing(dataset)
+            dataset.attach_prepro_images(prepro_imgs)
+        return dataset
 
     def _extract_features(self, dataset):
-        features = self._feature_extractor.extract_features(dataset)
-        dataset.attach_features(features)
-        return
+        if self._feature_extractor:
+            features = self._feature_extractor.extract_features(dataset)
+            dataset.attach_features(features)
+        return dataset
 
     def _run_model(self, dataset):
         return self._model_wrapper.run(dataset)
 
-    # def run_on_dataset(self, dataset):
-    #     results = []
-    #     for batch in dataset:
-    #         b = self.format_batch(batch)
-    #         out = self.run_on_batch(b)
-    #         results.extend(out)
-    #     out = self.reconstruct_dataset(results)
-    #     d = merge_datasets(dataset, out)
-    #     return (d, out)
-
+# TODO ; only an informative description of the model architecture, no functionality
 class ModelInterfaceEncoder(json.JSONEncoder):
     def default(self, model_ifc):
-        # return {
-        #     "preprocessing": model_ifc.preprocessing.to_json(),
-        #     "featureExtractor": model_ifc.feature_extractor.to_json(),
-        #     "model": model_ifc.model_wrapper.to_json(),
-        #     "batchSize": model_ifc.batch_size
-        # }
-        return { "name": model_ifc.name }
+        return { 
+            "name": model_ifc.name,
+            "summary": "A very wonderful and gently-kind model ready to put in some hard work."
+         }
