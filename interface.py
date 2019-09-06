@@ -77,8 +77,6 @@ class ModelInterface:
         self._name = value
 
     def run_on_dataset(self, dataset):
-        # why is this line here?
-        dataset.batch_size = self._batch_size
         results = []
 
         for batch in dataset:
