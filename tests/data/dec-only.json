@@ -1,0 +1,33 @@
+{
+    "name": "test model",
+    "preprocessing": {
+
+    },
+    "featureExtractor": {
+        "type": "none",
+        "tfSlim": {
+            "netType": "",
+            "modelCkpt": "",
+            "featureMap": ""
+        },
+        "keras": {
+            "netType": ""
+        },
+        "plugin": {
+            "sourcePath": ""
+        }
+    },
+    "model": {
+        "type": "neuralmonkey",
+        "neuralMonkey": {
+            "configPath": "./tests/data/output/dec-only-test/original.ini",
+            "varsPath": "./tests/data/output/dec-only-test/variables.data.final",
+            "imageSeries": "",
+            "featureSeries": "feature_maps",
+            "srcCaptionSeries": ""
+        },
+        "plugin": {
+            "sourcePath": ""
+        }
+    }
+}

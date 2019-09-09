@@ -2,10 +2,11 @@ import json
 
 from interface import create_model_interface, ModelInterface
 from data import Dataset
-from tests.data_test import make_initialized_test_dataset
+from tests.data_test import make_initialized_test_dataset, make_initialized_test_dataset_with_features
 
 TEST_CONFIG = "./tests/data/model.json"
 MOCK_PLUGIN_MODEL = "./tests/data/mock_plugin_model.json"
+DEC_ONLY_CONFIG = "./tests/data/dec-only.json"
 
 TEST_PREFIX = "./tests/data/flickr8k_sample_imgs"
 TEST_SOURCES = "./tests/data/flickr8k_sample_imgs.txt"
@@ -27,5 +28,12 @@ def test_interface_run_on_dataset_mock_plugin_model():
     json_model = json.load(open(MOCK_PLUGIN_MODEL))
     model = create_model_interface(json_model)
     ds = make_initialized_test_dataset()
+    res = model.run_on_dataset(ds)
+    assert res != None
+
+def test_interface_run_on_dataset_dec_only():
+    json_model = json.load(open(DEC_ONLY_CONFIG))
+    model = create_model_interface(json_model)
+    ds = make_initialized_test_dataset_with_features()
     res = model.run_on_dataset(ds)
     assert res != None

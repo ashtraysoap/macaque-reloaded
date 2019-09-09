@@ -42,7 +42,7 @@ class KerasFeatureExtractor(FeatureExtractor):
             A numpy array of extracted features.
         """
         elems = dataset.elements
-        paths = [e.source for e in elems]
+        paths = [e.source.rstrip() for e in elems]
 
         imgs = [image.load_img(p, target_size=self._input_size) 
             for p in paths]

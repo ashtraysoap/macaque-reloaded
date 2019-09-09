@@ -62,12 +62,17 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         elif self._feature_series:
             if dataset.feature_maps:
                 feats = [e.feature_map for e in elems]
+            else:
+                raise RuntimeError("The dataset does not contain any features.")
             
             if self._src_caption_series:
                 # handle multimodal translation case
                 pass
             else:
                 ds = Dataset("macaque_data", {self._feature_series: lambda: np.array(feats)}, {})
+        
+        else:
+            raise NotImplementedError()
 
         runners_results, output_series = self._exp.run_model(dataset=ds, write_out=False)
 

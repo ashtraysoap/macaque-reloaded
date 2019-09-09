@@ -23,6 +23,12 @@ def make_initialized_test_dataset():
     ds.initialize(fp=TEST_SOURCES)
     return ds
 
+def make_initialized_test_dataset_with_features():
+    ds = make_initialized_test_dataset()
+    ds.attach_features_from_file_list(prefix=TEST_FEATURES_PREFIX,
+                sources=TEST_FEATURES_SOURCES)
+    return ds
+
 def test_dataset_constructor():
     ds = make_test_dataset()
     assert isinstance(ds, Dataset) == True

@@ -44,11 +44,9 @@ def run_model_on_dataset():
     ds = json_data['dataset']
     for m_id in json_data['models']:
         m = STATE.model_interfaces[m_id]
-        # new_ds, out_ds = m.run_on_dataset(STATE.datasets[ds])
-        # STATE.update_dataset(name=ds, ds=new_ds)
-        print(m.run_on_dataset(STATE.datasets[ds]))
-    # return new_ds.to_json()
-    return
+        result = m.run_on_dataset(STATE.datasets[ds])
+        print(result)
+    return json.dumps(result)
 
 @APP.route('/update_user', methods=['POST'])
 def update_user():

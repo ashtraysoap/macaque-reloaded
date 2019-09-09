@@ -65,15 +65,15 @@ class DataInstance:
         self._feature_map = val
 
 class Dataset:
-    def __init__(self, name, prefix, batch_size):
+    def __init__(self, name, prefix, batch_size, images=False, features=False, prepro=False):
         self._name = name
         self._prefix = prefix
         self._batch_size = batch_size
         self._elements = []
         self._count = 0
-        self._images = False
-        self._feature_maps = False
-        self._preprocessed_imgs = False
+        self._images = images
+        self._feature_maps = features
+        self._preprocessed_imgs = prepro
 
         if not os.path.isdir(prefix):
             raise ValueError("Directory {} does not exist.".format(prefix))
@@ -124,6 +124,9 @@ class Dataset:
         return self._preprocessed_imgs
 
     def initialize(self, sources=None, fp=None):
+        if sources:
+            sources = [s.rstrip() for s in sources]
+
         if not sources and not fp:
             sources = os.listdir(self.prefix) 
         
@@ -207,7 +210,10 @@ class Dataset:
     def _create_offspring(self):
         return Dataset(name=self.name,
                     prefix=self.prefix,
-                    batch_size=self.batch_size)
+                    batch_size=self.batch_size,
+                    images=self._images,
+                    features=self._feature_maps,
+                    prepro=self._preprocessed_imgs)
 
     def _set_elements(self, elements):
         self._elements = elements
