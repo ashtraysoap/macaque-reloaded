@@ -18,7 +18,7 @@ class App extends React.Component {
         this.addDataset = this.addDataset.bind(this);
         this.addModel = this.addModel.bind(this);
         this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
-        this.idToTab = this.idToTab.bind(this);
+        this.getMainTab = this.getMainTab.bind(this);
 
 
         this.state = props.state;
@@ -34,8 +34,9 @@ class App extends React.Component {
         this.setState({ selectedTab: tabKey });
     }
 
-    idToTab(id) {
+    getMainTab() {
         const s = this.state;
+	const id = s.selectedTab;
         const models = s.models.map(m => m.name);
         const datasets = s.datasets.map(d => d.name);
         const defaults = s.defaultTabs;
@@ -64,7 +65,7 @@ class App extends React.Component {
     addModel(model) {
         let ms = this.state.models;
         ms.push(model)
-        this.setState({ models: ms });
+        this.setState({models: ms});
     }
 
     render() {
@@ -83,7 +84,7 @@ class App extends React.Component {
                     onSelectedChange={this.handleSelectedTabChange}
                 />
                 <hr/>
-                {this.idToTab(this.state.selectedTab)}
+                {this.getMainTab()}
             </div>
         );
     }

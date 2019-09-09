@@ -9,12 +9,12 @@ class AddModelTab extends React.Component {
             // modelConfig holds the configuration which is sent to
             // the server for constructing a new model interface.
             modelConfig: {
-                name: "Shaun The Great White",
+                name: "Klikla",
                 preprocessing: {
                     // Todo
                 },
                 featureExtractor: {
-                    type: 'keras',
+                    type: 'none',
                     tfSlim: {
                         netType: 'VGG16',
                         modelCkpt: '',
@@ -28,16 +28,16 @@ class AddModelTab extends React.Component {
                     }
                 },
                 model: {
-                    type: 'neuralmonkey',
+                    type: 'plugin',
                     neuralMonkey: {
                         configPath: '/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/output/enc-dec-test/original.ini',
                         varsPath: '/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/output/enc-dec-test/variables.data',
-                        imageSeries: '',
+                        imageSeries: 'images',
                         featureSeries: '',
                         srcCaptionSeries: ''
                     },
                     plugin: {
-                        sourcePath: ''
+                        sourcePath: '/home/sam/Documents/CodeBox/BC/code/macaque/tests/mock_plugin_model.py'
                     }
                 }
             },

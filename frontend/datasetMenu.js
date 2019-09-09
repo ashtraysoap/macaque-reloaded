@@ -35,7 +35,7 @@ class DatasetMenu extends React.Component {
     render() {
         const models = this.props.modelNames;
         const buttons = models.map(m => <div key={m} 
-            onClick={() => {this.state[m] = !this.state[m];}}>
+            onClick={() => { console.log(`Selected model: ${m}`); this.state[m] = !this.state[m];}}>
             {m}
             </div>);
 
