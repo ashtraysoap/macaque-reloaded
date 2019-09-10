@@ -9,9 +9,13 @@ import './style.css';
 class DataInstanceView extends React.Component {
     render() {
         return (
-            <div className="transparentLayer">
-                <div className="instanceView">
-                    This is a demonstrational text.
+            <div className="transparentLayer" onClick={() => {console.log("papapada"); this.props.onClick();}}>
+                <div className="instanceView" onClick={(e) => {e.stopPropagation();}}>
+                    This is a demonstrational DataInstanceView.
+                    <div style={{border: "solid blue"}}>Image</div>
+                    <div style={{border: "solid green"}}>Caption</div>
+                    <div style={{border: "solid red"}}>Beam Search Output Graph</div>
+                    <div style={{border: "solid purple"}}>Metrics Table</div>
                 </div>
             </div>
         );
@@ -84,14 +88,15 @@ class DatasetTab extends React.Component {
     }
 
     render() {
-        const view = this.showingElementView ? <DataInstanceView /> : null;
-        const elements = this.props.dataset.elements.map((e => <DataInstanceEntry key={e.id} 
-            dataInstance={e} handleClick={() => {}}/>));
+        const view = this.showingElementView ? <DataInstanceView onClick={this.closeView}/> : null;
+
+        let elems = this.props.dataset.elements;
+        elems = elems.map(e => <DataInstanceEntry key={e.id} dataInstance={e} handleClick={this.showView}/>);
 
         return (
             <div style={{display: "table"}}>
                 <div style={{display: "table-cell"}}>
-                    {elements}
+                    {elems}
                     {view}
                 </div>
                 <div style={{display: "table-cell"}}>
