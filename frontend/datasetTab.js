@@ -11,7 +11,7 @@ class DataInstanceView extends React.Component {
         const instance = this.props.dataInstance;
         return (
             <div className="transparentLayer" onClick={() => this.props.onClick()}>
-                <div className="instanceView" onClick={(e) => e.stopPropagation()}>
+                <div className="instanceView" style={{border: "solid 4px black", borderRadius: "15px"}} onClick={(e) => e.stopPropagation()}>
                     This is a demonstrational DataInstanceView.
                     <br/>
                     {instance.source}

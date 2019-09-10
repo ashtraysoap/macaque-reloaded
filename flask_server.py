@@ -42,11 +42,19 @@ def add_model():
 def run_model_on_dataset():
     json_data = _get_json_from_request()
     ds = json_data['dataset']
+    results = []
     for m_id in json_data['models']:
         m = STATE.model_interfaces[m_id]
         result = m.run_on_dataset(STATE.datasets[ds])
+        result = {
+            'runId': 1,
+            'modelId': m_id,
+            'datasetId': ds,
+            'results': result
+        }
         print(result)
-    return json.dumps(result)
+        results.append(result)
+    return json.dumps(results)
 
 @APP.route('/update_user', methods=['POST'])
 def update_user():
