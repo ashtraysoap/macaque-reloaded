@@ -8,10 +8,13 @@ import './style.css';
 
 class DataInstanceView extends React.Component {
     render() {
+        const instance = this.props.dataInstance;
         return (
-            <div className="transparentLayer" onClick={() => {console.log("papapada"); this.props.onClick();}}>
-                <div className="instanceView" onClick={(e) => {e.stopPropagation();}}>
+            <div className="transparentLayer" onClick={() => this.props.onClick()}>
+                <div className="instanceView" onClick={(e) => e.stopPropagation()}>
                     This is a demonstrational DataInstanceView.
+                    <br/>
+                    {instance.source}
                     <div style={{border: "solid blue"}}>Image</div>
                     <div style={{border: "solid green"}}>Caption</div>
                     <div style={{border: "solid red"}}>Beam Search Output Graph</div>
@@ -47,6 +50,7 @@ class DatasetTab extends React.Component {
         this.closeView = this.closeView.bind(this);
         this.moveViewLeft = this.moveViewLeft.bind(this);
         this.moveViewRight = this.moveViewRight.bind(this);
+        this.getInstance = this.getInstance.bind(this);
     }
 
     get elementCount() {
@@ -87,11 +91,17 @@ class DatasetTab extends React.Component {
         this.setState({ elemIdx: j });
     }
 
+    getInstance() {
+        let x = this.props.dataset.elements[this.state.elemIdx];
+        console.log(x); 
+        return x;
+    }
+
     render() {
-        const view = this.showingElementView ? <DataInstanceView onClick={this.closeView}/> : null;
+        const view = this.showingElementView ? <DataInstanceView dataInstance={this.getInstance()} onClick={this.closeView}/> : null;
 
         let elems = this.props.dataset.elements;
-        elems = elems.map(e => <DataInstanceEntry key={e.id} dataInstance={e} handleClick={this.showView}/>);
+        elems = elems.map(e => <DataInstanceEntry key={e.id} dataInstance={e} handleClick={() => this.showView(e.id)}/>);
 
         return (
             <div style={{display: "table"}}>
