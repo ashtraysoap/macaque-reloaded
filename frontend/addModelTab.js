@@ -9,7 +9,7 @@ class AddModelTab extends React.Component {
             // modelConfig holds the configuration which is sent to
             // the server for constructing a new model interface.
             modelConfig: {
-                name: "Klikla",
+                name: "Snufkin",
                 preprocessing: {
                     // Todo
                 },

@@ -51,7 +51,14 @@ class App extends React.Component {
         }
         if (datasets.includes(id)) {
             const d = s.datasets.filter(d => d.name === id)[0];
-            return <DatasetTab dataset={d} modelNames={this.state.models.map((m) => m.name)} onServerResponse={this.addResults}/>
+            const results = this.state.results.filter(r => r.datasetId === d);
+
+            return <DatasetTab 
+                dataset={d} 
+                modelNames={this.state.models.map((m) => m.name)} 
+                onServerResponse={this.addResults}
+                results={results}
+                />
         }
 
         return null;

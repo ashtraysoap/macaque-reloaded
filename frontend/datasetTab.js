@@ -127,6 +127,7 @@ DatasetTab.propTypes = {
         elements: PropTypes.array
     }).isRequired,
     modelNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+    results: PropTypes.array.isRequired,
     onServerResponse: PropTypes.func.isRequired
 };
 
