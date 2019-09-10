@@ -113,6 +113,7 @@ class DatasetTab extends React.Component {
                     <DatasetMenu 
                         datasetName={this.props.dataset.name}
                         modelNames={this.props.modelNames}
+                        onServerResponse={this.props.onServerResponse}
                     />
                 </div>
             </div>
@@ -125,7 +126,8 @@ DatasetTab.propTypes = {
         name: PropTypes.string,
         elements: PropTypes.array
     }).isRequired,
-    modelNames: PropTypes.arrayOf(PropTypes.string).isRequired
+    modelNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+    onServerResponse: PropTypes.func.isRequired
 };
 
 DataInstanceEntry.propTypes = {

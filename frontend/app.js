@@ -17,6 +17,7 @@ class App extends React.Component {
 
         this.addDataset = this.addDataset.bind(this);
         this.addModel = this.addModel.bind(this);
+        this.addResults = this.addResults.bind(this);
         this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
         this.getMainTab = this.getMainTab.bind(this);
 
@@ -50,7 +51,7 @@ class App extends React.Component {
         }
         if (datasets.includes(id)) {
             const d = s.datasets.filter(d => d.name === id)[0];
-            return <DatasetTab dataset={d} modelNames={this.state.models.map((m) => m.name)}/>
+            return <DatasetTab dataset={d} modelNames={this.state.models.map((m) => m.name)} onServerResponse={this.addResults}/>
         }
 
         return null;
@@ -66,6 +67,12 @@ class App extends React.Component {
         let ms = this.state.models;
         ms.push(model)
         this.setState({models: ms});
+    }
+
+    addResults(results) {
+        let res = this.state.results;
+        res = res.concat(results);
+        this.setState({results: res});
     }
 
     render() {
@@ -99,6 +106,7 @@ let state = {
     ],
     datasets: [],
     metrics: [],
+    results: [],
     selectedTab: "About",
 }
 

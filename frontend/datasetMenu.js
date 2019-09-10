@@ -50,5 +50,6 @@ class DatasetMenu extends React.Component {
 
 DatasetMenu.propTypes = {
     datasetName: PropTypes.string.isRequired,
-    modelNames: PropTypes.arrayOf(PropTypes.string).isRequired
+    modelNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+    onServerResponse: PropTypes.func.isRequired
 };
