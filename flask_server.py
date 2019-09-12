@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 
 from data import create_dataset
 from interface import create_model_interface
@@ -63,6 +63,15 @@ def update_user():
 @APP.route('/attach_encoder', methods=['POST'])
 def attach_encoder_to_model():
     pass
+
+@APP.route('/load_image/<string:dataset>/<int:element>', methods=['POST', 'GET'])
+def load_image(dataset, element):
+    print(dataset)
+    print(element)
+    d = STATE.datasets[dataset]
+    e = d.elements[element]
+    path = e.source
+    return send_file(path)
 
 def _get_json_from_request():
     return request.get_json(force=True)

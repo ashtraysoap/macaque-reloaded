@@ -1,29 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { DataInstanceView } from './dataInstanceView.js';
 import { DatasetMenu } from './datasetMenu.js';
 import { TableRow } from './utils.js';
 
 import './style.css';
 
-class DataInstanceView extends React.Component {
-    render() {
-        const instance = this.props.dataInstance;
-        return (
-            <div className="transparentLayer" onClick={() => this.props.onClick()}>
-                <div className="instanceView" style={{border: "solid 4px black", borderRadius: "15px"}} onClick={(e) => e.stopPropagation()}>
-                    This is a demonstrational DataInstanceView.
-                    <br/>
-                    {instance.source}
-                    <div style={{border: "solid blue"}}>Image</div>
-                    <div style={{border: "solid green"}}>Caption</div>
-                    <div style={{border: "solid red"}}>Beam Search Output Graph</div>
-                    <div style={{border: "solid purple"}}>Metrics Table</div>
-                </div>
-            </div>
-        );
-    }
-}
 
 class DataInstanceEntry extends React.Component {
     
@@ -98,7 +81,10 @@ class DatasetTab extends React.Component {
     }
 
     render() {
-        const view = this.showingElementView ? <DataInstanceView dataInstance={this.getInstance()} onClick={this.closeView}/> : null;
+        const view = this.showingElementView ? <DataInstanceView 
+            dataInstance={this.getInstance()} 
+            dataset={this.props.dataset.name}
+            onClick={this.closeView}/> : null;
 
         let elems = this.props.dataset.elements;
         elems = elems.map(e => <DataInstanceEntry key={e.id} dataInstance={e} handleClick={() => this.showView(e.id)}/>);
