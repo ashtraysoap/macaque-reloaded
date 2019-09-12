@@ -463,10 +463,12 @@ class NeuralMonkeyModel extends React.Component {
 }
 
 function PluginForm(props) {
+    const handleChange = (e) => { props.onChange({sourcePath: e.target.value}); };
+
     return (
         <div>
             <form>
-                plugin source: <input type="text" name="src" />
+                plugin source: <input type="text" name="src" value={props.pluginCfg.sourcePath} onCfgChange={(e) => handleChange(e)}/>
             </form>
         </div>
     );
