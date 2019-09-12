@@ -66,8 +66,6 @@ def attach_encoder_to_model():
 
 @APP.route('/load_image/<string:dataset>/<int:element>', methods=['POST', 'GET'])
 def load_image(dataset, element):
-    print(dataset)
-    print(element)
     d = STATE.datasets[dataset]
     e = d.elements[element]
     path = e.source
