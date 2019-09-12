@@ -82,10 +82,16 @@ class DatasetTab extends React.Component {
 
     render() {
         console.log(this.props.results);
+        const selectedResults = this.props.results.map(r => { return { 
+            runId: r.runId, 
+            modelId: r.modelId,
+            datasetId: this.props.dataset.name,
+            results: r.results[this.state.elemIdx]
+        } });
         const view = this.showingElementView ? <DataInstanceView 
             dataInstance={this.getInstance()} 
             dataset={this.props.dataset.name}
-            results={this.props.results}
+            results={selectedResults}
             onClick={this.closeView}/> : null;
 
         let elems = this.props.dataset.elements;

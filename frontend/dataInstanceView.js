@@ -50,7 +50,7 @@ class RunResultsView extends React.Component {
         console.log(this.props.results);
         return (
             <div>
-                <div style={{border: "solid green"}}>Caption: {this.props.results.caption}</div>
+                <div style={{border: "solid green"}}>Caption: {this.props.results.results.caption}</div>
                 <div style={{border: "solid red"}}>Beam Search Output Graph</div>
                 <div style={{border: "solid purple"}}>Metrics Table</div>
             </div>
