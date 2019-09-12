@@ -37,7 +37,7 @@ class App extends React.Component {
 
     getMainTab() {
         const s = this.state;
-	const id = s.selectedTab;
+	    const id = s.selectedTab;
         const models = s.models.map(m => m.name);
         const datasets = s.datasets.map(d => d.name);
         const defaults = s.defaultTabs;
@@ -51,7 +51,8 @@ class App extends React.Component {
         }
         if (datasets.includes(id)) {
             const d = s.datasets.filter(d => d.name === id)[0];
-            const results = this.state.results.filter(r => r.datasetId === d);
+            const results = this.state.results.filter(r => r.datasetId === d.name);
+            console.log("App -> getMainTab: ", results);
 
             return <DatasetTab 
                 dataset={d} 
@@ -77,15 +78,17 @@ class App extends React.Component {
     }
 
     addResults(results) {
+        console.log("App -> addResults: ", results);
         let res = this.state.results;
-        res = res.concat(results);
-        this.setState({results: res});
+        this.setState({results: res.concat(results)});
     }
 
     render() {
         const models = this.state.models.map(m => m.name);
         const datasets = this.state.datasets.map(d => d.name);
         const defaults = Object.keys(this.state.defaultTabs);
+
+        console.log("App -> render: ", this.state.results);
 
         return (
             <div>
@@ -106,11 +109,7 @@ class App extends React.Component {
 }
 
 let state = {
-    models: [
-        {
-            name: 'Enzo'
-        }
-    ],
+    models: [],
     datasets: [],
     metrics: [],
     results: [],

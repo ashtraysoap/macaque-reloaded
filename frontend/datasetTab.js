@@ -81,9 +81,11 @@ class DatasetTab extends React.Component {
     }
 
     render() {
+        console.log(this.props.results);
         const view = this.showingElementView ? <DataInstanceView 
             dataInstance={this.getInstance()} 
             dataset={this.props.dataset.name}
+            results={this.props.results}
             onClick={this.closeView}/> : null;
 
         let elems = this.props.dataset.elements;
