@@ -17,6 +17,8 @@ class DatasetMenu extends React.Component {
             dataset: this.props.datasetName,
             models: Object.keys(this.state).filter(x => this.state[x])
         }
+        // unselect chosen models for next time
+        this.props.modelNames.forEach(m => this.state[m] = false);
         console.log(msg);
         fetch('/run_model_on_dataset', {
             method: 'POST',

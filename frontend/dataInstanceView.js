@@ -15,7 +15,7 @@ class DataInstanceView extends React.Component {
         const instance = this.props.dataInstance;
         const results = this.props.results;
         const runsNav = (results.length === 0) ? 
-            <h3>No runs available</h3> : results.map((r) => <RunToggler key={r.id} runId={r.runId} modelId={r.modelId} onClick={() => {this.setState({runId: r.id});}}/>);
+            <h3>No runs available</h3> : results.map((r) => <RunToggler key={r.id} runId={r.runId} modelId={r.modelId} onClick={() => {this.setState({runId: (r.runId - 1)});}}/>);
         const selectedRes = (this.state.runId === null) ? null : results[this.state.runId];
         const runResultsView = (this.state.runId === null) ? null : <RunResultsView results={selectedRes}/>;
 
@@ -38,7 +38,7 @@ class DataInstanceView extends React.Component {
 
 function RunToggler(props) {
     return (
-        <div style={{display: "inline", border: "solid purple"}}>
+        <div style={{display: "inline", border: "solid purple"}} onClick={props.onClick}>
             <span>{props.runId}</span>
             <span>{props.modelId}</span>
         </div>
@@ -50,7 +50,7 @@ class RunResultsView extends React.Component {
         console.log(this.props.results);
         return (
             <div>
-                <div style={{border: "solid green"}}>Caption: {this.props.results.results.caption}</div>
+                <div style={{border: "solid green"}}>Caption: {this.props.results.modelId} says "{this.props.results.results.caption}".</div>
                 <div style={{border: "solid red"}}>Beam Search Output Graph</div>
                 <div style={{border: "solid purple"}}>Metrics Table</div>
             </div>
