@@ -22,7 +22,6 @@ class DataInstanceEntry extends React.Component {
 }
 
 class DatasetTab extends React.Component {
-    
     constructor(props) {
         super(props);
         
@@ -32,7 +31,13 @@ class DatasetTab extends React.Component {
 
         this.showView = this.showView.bind(this);
         this.closeView = this.closeView.bind(this);
+        this.moveViewLeft = this.moveViewLeft.bind(this);
+        this.moveViewRight = this.moveViewRight.bind(this);
         this.getInstance = this.getInstance.bind(this);
+    }
+
+    get showingElementView() {
+        return (this.state.elemIdx === null) ? false : true;
     }
 
     showView(idx) {
@@ -41,6 +46,28 @@ class DatasetTab extends React.Component {
 
     closeView() {
         this.setState({ elemIdx: null });
+    }
+
+    moveViewLeft() {
+        if (this.state.elemIdx === undefined)
+            return;
+        
+        const i = this.state.elemIdx;
+        const max = this.elementCount;
+        const j = (i === 0) ? max : (i - 1);
+
+        this.setState({ elemIdx: j });
+    }
+
+    moveViewRight() {
+        if (this.state.elemIdx === undefined)
+            return;
+        
+        const i = this.state.elemIdx;
+        const max = this.elementCount;
+        const j = (i === max) ? 0 : (i + 1);
+
+        this.setState({ elemIdx: j });
     }
 
     getInstance() {
