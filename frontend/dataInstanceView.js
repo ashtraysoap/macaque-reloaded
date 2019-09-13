@@ -48,9 +48,19 @@ function RunToggler(props) {
 class RunResultsView extends React.Component {
     render() {
         console.log(this.props.results);
+        const modelId = this.props.results.modelId;
+        const results = this.props.results.results;
+        const tokens = results.caption.map((t) => <div key={t.id} style={{display: "inline", padding: "3px"}} onClick={() => {console.log(t);}}>{t}</div>);
+
         return (
             <div>
-                <div style={{border: "solid green"}}>Caption: {this.props.results.modelId} says "{this.props.results.results.caption}".</div>
+                <div style={{border: "solid green"}}>
+                    Caption: {modelId} says "
+                    <div style={{display: "inline"}}>
+                        {tokens}
+                    </div>
+                    ".
+                </div>
                 <div style={{border: "solid red"}}>Beam Search Output Graph</div>
                 <div style={{border: "solid purple"}}>Metrics Table</div>
             </div>
