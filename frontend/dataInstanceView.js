@@ -40,9 +40,9 @@ class DataInstanceView extends React.Component {
 
 function RunToggler(props) {
     return (
-        <div style={{display: "inline", border: "solid purple"}} onClick={props.onClick}>
-            <span>{props.runId}</span>
-            <span>{props.modelId}</span>
+        <div style={{display: "inline", border: "solid purple", margin: "5px"}} onClick={props.onClick}>
+            <span style={{padding: "2px"}}>{props.runId}</span>
+            <span style={{padding: "2px"}}>{props.modelId}</span>
         </div>
     );
 }

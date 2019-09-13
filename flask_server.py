@@ -49,7 +49,7 @@ def run_model_on_dataset():
         result = m.run_on_dataset(STATE.datasets[ds_id])
         STATE.add_results(result)
         run_id = STATE.get_current_run_counter()
-        # send the client only the captions, the rest is on demand
+        # only send the captions to the client, the rest is on demand
         r = {
             'runId': run_id,
             'modelId': m_id,
@@ -61,10 +61,6 @@ def run_model_on_dataset():
 
 @APP.route('/update_user', methods=['POST'])
 def update_user():
-    pass
-
-@APP.route('/attach_encoder', methods=['POST'])
-def attach_encoder_to_model():
     pass
 
 @APP.route('/load_image/<string:dataset>/<int:element>', methods=['POST', 'GET'])
