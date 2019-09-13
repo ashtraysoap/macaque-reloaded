@@ -41,19 +41,22 @@ def add_model():
 @APP.route('/run_model_on_dataset', methods=['POST'])
 def run_model_on_dataset():
     json_data = _get_json_from_request()
-    ds = json_data['dataset']
+    # validate json_data
+    ds_id = json_data['dataset']
     results = []
     for m_id in json_data['models']:
         m = STATE.model_interfaces[m_id]
-        result = m.run_on_dataset(STATE.datasets[ds])
-        result = {
-            'runId': STATE.get_new_run_id(),
+        result = m.run_on_dataset(STATE.datasets[ds_id])
+        STATE.add_results(result)
+        run_id = STATE.get_current_run_counter()
+        # send the client only the captions, the rest is on demand
+        r = {
+            'runId': run_id,
             'modelId': m_id,
-            'datasetId': ds,
-            'results': result
+            'datasetId': ds_id,
+            'captions': list(map(lambda x: x['caption'], result))
         }
-        print(result)
-        results.append(result)
+        results.append(r)
     return json.dumps(results)
 
 @APP.route('/update_user', methods=['POST'])

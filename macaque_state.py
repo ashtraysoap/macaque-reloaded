@@ -2,8 +2,9 @@ class MacaqueState():
     def __init__(self):
         self._datasets = {}
         self._model_interfaces = {}
-        self._user = None
+        self._run_results = []
         self._run_counter = 0
+        self._user = None
 
     @property
     def datasets(self):
@@ -12,6 +13,10 @@ class MacaqueState():
     @property
     def model_interfaces(self):
         return self._model_interfaces
+    
+    @property
+    def run_results(self):
+        return self._run_results
 
     @property
     def user(self):
@@ -29,12 +34,15 @@ class MacaqueState():
         
         self._datasets[ds.name] = ds
 
+    def add_results(self, res):
+        self._run_results.append(res)
+        self._run_counter += 1
+
     def update_dataset(self, name, ds):
         if name not in self._datasets:
             raise ValueError("There is no dataset with name {}".format(name))
 
         self._datasets[name] = ds
 
-    def get_new_run_id(self):
-        self._run_counter += 1
+    def get_current_run_counter(self):
         return self._run_counter

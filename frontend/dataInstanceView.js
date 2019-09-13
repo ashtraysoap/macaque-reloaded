@@ -14,8 +14,10 @@ class DataInstanceView extends React.Component {
     render() {
         const instance = this.props.dataInstance;
         const results = this.props.results;
+        // map model runs to navigation elements
         const runsNav = (results.length === 0) ? 
             <h3>No runs available</h3> : results.map((r) => <RunToggler key={r.id} runId={r.runId} modelId={r.modelId} onClick={() => {this.setState({runId: (r.runId - 1)});}}/>);
+        // results from the selected run
         const selectedRes = (this.state.runId === null) ? null : results[this.state.runId];
         const runResultsView = (this.state.runId === null) ? null : <RunResultsView results={selectedRes}/>;
 
@@ -47,10 +49,8 @@ function RunToggler(props) {
 
 class RunResultsView extends React.Component {
     render() {
-        console.log(this.props.results);
         const modelId = this.props.results.modelId;
-        const results = this.props.results.results;
-        const tokens = results.caption.map((t) => <div key={t.id} style={{display: "inline", padding: "3px"}} onClick={() => {console.log(t);}}>{t}</div>);
+        const tokens = this.props.results.caption.map((t) => <div key={t.id} style={{display: "inline", padding: "3px"}} onClick={() => {console.log(t);}}>{t}</div>);
 
         return (
             <div>
@@ -61,6 +61,7 @@ class RunResultsView extends React.Component {
                     </div>
                     ".
                 </div>
+                <div style={{border: "solid pink"}}>Alignments</div>
                 <div style={{border: "solid red"}}>Beam Search Output Graph</div>
                 <div style={{border: "solid purple"}}>Metrics Table</div>
             </div>
@@ -80,12 +81,7 @@ DataInstanceView.propTypes = {
             runId: PropTypes.number,
             modelId: PropTypes.string,
             datasetId: PropTypes.string,
-            results: PropTypes.shape(
-                {
-                    caption: PropTypes.arrayOf(PropTypes.string),
-                    alignments: PropTypes.any
-                }
-            )
+            captions: PropTypes.arrayOf(PropTypes.string)
         }
     )).isRequired,
     dataset: PropTypes.string.isRequired,
