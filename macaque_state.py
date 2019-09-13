@@ -3,6 +3,7 @@ class MacaqueState():
         self._datasets = {}
         self._model_interfaces = {}
         self._user = None
+        self._run_counter = 0
 
     @property
     def datasets(self):
@@ -33,3 +34,7 @@ class MacaqueState():
             raise ValueError("There is no dataset with name {}".format(name))
 
         self._datasets[name] = ds
+
+    def get_new_run_id(self):
+        self._run_counter += 1
+        return self._run_counter

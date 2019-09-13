@@ -47,7 +47,7 @@ def run_model_on_dataset():
         m = STATE.model_interfaces[m_id]
         result = m.run_on_dataset(STATE.datasets[ds])
         result = {
-            'runId': 1,
+            'runId': STATE.get_new_run_id(),
             'modelId': m_id,
             'datasetId': ds,
             'results': result
