@@ -11,9 +11,30 @@ class DataInstanceView extends React.Component {
         this.state = { runId: runId };
     }
 
+    fetchResults() {
+        // send to the S. (datasetId, dataInstanceID)
+
+        // the S. responds with 
+        //      - jpgs of attention weights vizualized on top of the preprocessed if prepro img is avail.
+        //      - otherwise simply jpgs of attention weights
+        // later also
+        //      - the beam search output graph structur with attention jpgs asociated to each node
+
+        fetch(`/load_results/${this.props.dataset}/${this.props.dataInstance.id}`)
+        .then(res => res.json())
+        .then(response => {
+            console.log('Success:', JSON.stringify(response));
+        })
+        .catch(error => console.log('Error:', error));
+    }
+
     render() {
         const instance = this.props.dataInstance;
         const results = this.props.results;
+
+        if (results.length !== 0)
+            this.fetchResults();
+
         // map model runs to navigation elements
         const runsNav = (results.length === 0) ? 
             <h3>No runs available</h3> : results.map((r) => <RunToggler key={r.id} runId={r.runId} modelId={r.modelId} onClick={() => {this.setState({runId: (r.runId - 1)});}}/>);

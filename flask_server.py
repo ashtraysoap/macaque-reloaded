@@ -47,7 +47,7 @@ def run_model_on_dataset():
     for m_id in json_data['models']:
         m = STATE.model_interfaces[m_id]
         result = m.run_on_dataset(STATE.datasets[ds_id])
-        STATE.add_results(result)
+        STATE.add_results(ds_id, result)
         run_id = STATE.get_current_run_counter()
         # only send the captions to the client, the rest is on demand
         r = {
@@ -69,6 +69,11 @@ def load_image(dataset, element):
     e = d.elements[element]
     path = e.source
     return send_file(path)
+
+@APP.route('/load_results/<string:dataset>/<int:element>', methods=['POST', 'GET'])
+def load_results(dataset, element):
+    run_results = STATE.get_run_results_for_instance(dataset, element)
+    return json.dumps(run_results)
 
 def _get_json_from_request():
     return request.get_json(force=True)
