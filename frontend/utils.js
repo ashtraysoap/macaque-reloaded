@@ -2,6 +2,19 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 
+function range(n) {
+    return [...Array(n).keys()];
+}
+
+function zip(x, y) {
+    //TODO: add checks
+    let z = []
+    for (let i = 0; i < x.length; i++) {
+        z.push([x[i], y[i]]);
+    }
+    return z;
+}
+
 class InformativeInput extends React.Component {
     constructor(props) {
         super(props);
@@ -63,4 +76,4 @@ TableRow.propTypes = {
     entries: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
-export { InformativeInput, TableRow };
+export { InformativeInput, TableRow, range, zip };

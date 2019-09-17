@@ -55,4 +55,7 @@ class MacaqueState():
         return self._run_results[datasetId]
 
     def get_run_results_for_instance(self, datasetId, dataInstanceId):
-        return list(map(lambda x: { x[0]: x[1][dataInstanceId] }, self._run_results[datasetId].items()))
+        res = {}
+        for k, v in self._run_results[datasetId].items():
+            res[k] = v[dataInstanceId]
+        return res

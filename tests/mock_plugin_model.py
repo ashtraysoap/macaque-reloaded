@@ -2,17 +2,23 @@ import random
 
 import numpy as np
 
+from neuralmonkey.readers.image_reader import single_image_for_imagenet
+
 class ModelWrapper:
     def run_on_paths(self, paths):
         print("Entering mock model wrapper.")
         x = { 
             'caption': ["Colorless", "green", "ideas", "sleep", "furiously"],
             'alignments': get_dummy_alphas(size=len(paths)),
-            'beam_search_output': None
+            'beam_search_output': None,
         }
+        res = [x for p in paths]
+        for x, p in zip(res, paths):
+            x['prepro_img'] = single_image_for_imagenet(p, 224, 224, True, False)
+        
         print("Computation complete, returning mock resuslts.")
         
-        return [x for p in paths]
+        return res
 
 def get_dummy_alphas(height=14, width=14, size=1):
     res = np.zeros((size, height, width), dtype=np.uint8)
