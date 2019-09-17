@@ -81,7 +81,7 @@ class DataInstanceView extends React.Component {
         const run = this.state.runId;
         const elem = this.props.dataInstance.id;
 
-        fetch(`/load_attention_map/${run}/${ds}/${elem}/${tokenId}`)
+        return fetch(`/load_attention_map/${run}/${ds}/${elem}/${tokenId}`)
         .then(res => res.arrayBuffer())
         .then(ab => {
             const view = new Uint8Array(ab);
@@ -89,9 +89,6 @@ class DataInstanceView extends React.Component {
             const url = URL.createObjectURL(new Blob([view], { type: "image/jpeg" }));
             console.log('url: ', url);
             return url;
-        })
-        .then(url => {
-            this.setState({ tokenId: tokenId, imgSrc: url });
         });
     }
 
@@ -101,7 +98,12 @@ class DataInstanceView extends React.Component {
             // the original image again
             this.setState({tokenId: null, imgSrc: this.imgSrc});
         } else {
-            this.fetchAttentionMap(tokenId);
+            // fetch the attention map corresponding to the word from the
+            // caption the user clicked on
+            this.fetchAttentionMap(tokenId)
+            .then(src => {
+                this.setState({ tokenId: tokenId, imgSrc: src });
+            });
         }
     }
 }
