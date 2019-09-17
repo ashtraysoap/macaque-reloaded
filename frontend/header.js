@@ -4,7 +4,7 @@ import './style.css';
 
 function Header() {
     return (
-        <div class="header">
+        <div className="header">
             <h1>Macaque</h1>
         </div>
     )
