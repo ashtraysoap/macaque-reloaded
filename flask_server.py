@@ -8,6 +8,7 @@ from data import create_dataset
 from interface import create_model_interface
 from visualizations import attention_map_jpg
 
+
 # Create the Flask server.
 static_path = os.path.abspath('dist')
 APP = Flask(__name__, static_folder=static_path)
@@ -83,12 +84,6 @@ def load_results(dataset, element):
         alignments = results['alignments']
         prepro_img = results['prepro_img'] if 'prepro_img' in results else None
         bs_out = results['beam_search_output'] if 'beam_search_output' in results else None
-
-        maps = []
-        if prepro_img is not None:
-            for alpha in alignments:
-                jpg_map = attention_map_jpg(alpha, prepro_img)
-                maps.append(jpg_map)
 
         new_results[run_id] = {
             'caption': caption,
