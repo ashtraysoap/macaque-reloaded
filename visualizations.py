@@ -4,14 +4,14 @@ from PIL import Image, ImageFilter
 
 def attention_map_jpg(alphas, image=None):
     alphas = np.asarray(alphas).astype('uint8')
-    alphas = alphas * 10000#00
+    print(alphas.shape)
     att_map = Image.fromarray(alphas)
-    att_map = att_map.convert("L")
     att_map = rescale_and_smooth(att_map)
+    return att_map
     
-    if image is not None:
-        image = Image.fromarray(image, 'RGB')
-    return apply_attention_mask(image, att_map)
+    # if image is not None:
+    #     image = Image.fromarray(image, 'RGB')
+    # return apply_attention_mask(image, att_map)
 
 
 def rescale_and_smooth(pil_image, scale=16, smooth=True):
