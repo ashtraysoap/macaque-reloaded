@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { range, zip } from './utils.js';
+import { RunResultsView } from './runResultsView.js';
 
 import './style.css';
 
@@ -16,7 +16,7 @@ class DataInstanceView extends React.Component {
         this.onCaptionClick = this.onCaptionClick.bind(this);
 
         this.imgSrc = `/load_image/${this.props.dataset}/${this.props.dataInstance.id}`;
-        const runId = (props.results.length === 0) ? null : 0;
+        const runId = (props.results.length === 0) ? null : this.props.results[0].runId;
         this.state = { 
             runId: runId, 
             imgSrc: this.imgSrc,
@@ -28,22 +28,30 @@ class DataInstanceView extends React.Component {
 
         const instance = this.props.dataInstance;
         const results = this.props.results;
+        const selRunId = this.state.runId;
 
-        // map model runs to navigation elements
-        const runsNav = (results.length === 0) ? 
-            <h3>No runs available</h3> : results.map((r) => <RunToggler 
-                key={r.runId} 
-                runId={r.runId} 
-                runnerName={this.props.runners[r.runnerId].name}
-                // onClick sets corresponding run and also changes the image back to default
-                onClick={() => {
-                    this.setState({ runId: (r.runId - 1), imgSrc: this.imgSrc });
-                }}
-            />);
+        // Create a navigation bar button for each run.
+        let runsNav;
+        if (results.length === 0) {
+            runsNav = <h3>No runs available</h3>;
+        } else {
+            runsNav = results.map((r) => 
+                <RunToggler 
+                    key={r.runId} 
+                    runId={r.runId} 
+                    runnerName={this.props.runners[r.runnerId].name}
+                    onClick={() => {
+                        // Clicking on this element selects the corresponding run; the original
+                        // instance image is shown.
+                        this.setState({ runId: r.runId, imgSrc: this.imgSrc });
+                    }}
+                />);
+        }
 
         // results from the selected run
-        const selectedRes = (this.state.runId === null) ? null : results[this.state.runId];
-        const runResultsView = (this.state.runId === null) ? null : <RunResultsView 
+        //const selectedRes = (this.state.runId === null) ? null : results[this.state.runId];
+        const selectedRes = (selRunId === null) ? null : results.filter(r => r.runId === selRunId)[0];
+        const runResultsView = (selRunId === null) ? null : <RunResultsView 
             results={selectedRes} 
             instanceId={instance.id}
             onCaptionClick={this.onCaptionClick}
@@ -52,12 +60,12 @@ class DataInstanceView extends React.Component {
 
         return (
             <div className="transparentLayer" onClick={() => this.props.onClick()}>
-                <div className="instanceView" style={{border: "solid 4px black", borderRadius: "15px"}} onClick={(e) => e.stopPropagation()}>
+                <div className="instanceView" onClick={(e) => e.stopPropagation()}>
                     {instance.source}
                     <div style={{border: "solid blue"}}>
                         <img src={this.state.imgSrc} alt=""/>
                     </div>
-                    <div id="runsBar" style={{display: "table", border: "solid grey"}}>
+                    <div id="runsBar">
                         {runsNav}
                     </div>
                     {runResultsView}
@@ -101,109 +109,6 @@ function RunToggler(props) {
     );
 }
 
-class RunResultsView extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            showAlignments: false
-        }
-    }
-
-    render() {
-        const runnerId = this.props.results.runnerId;
-        const caption = this.props.results.caption;
-        let toks = zip(caption, range(caption.length));
-        toks = toks.map(([token, id]) => <CaptionToken 
-            key={id} 
-            caption={token} 
-            onClick={() => this.props.onCaptionClick(id)}
-        />);
-
-        let attTab = !this.state.showAlignments ? null :
-            <AlignmentsTab 
-                caption={caption}
-                runId={this.props.results.runId}
-                instanceId={this.props.instanceId}
-                fetchAttentionMap={this.props.fetchAttentionMap}
-            />
-
-        return (
-            <div>
-                <div style={{border: "solid green"}}>
-                    Caption: {runnerId} says "
-                    <div style={{display: "inline"}}>
-                        {toks}
-                    </div>
-                    ".
-                </div>
-                <div style={{border: "solid pink"}}>
-                    <span onClick={() => this.setState({ showAlignments: !this.state.showAlignments })}>
-                        Alignments
-                    </span>
-                    {attTab}
-                </div>
-                <div style={{border: "solid red"}}>Beam Search Output Graph</div>
-                <div style={{border: "solid purple"}}>Metrics Table</div>
-            </div>
-        )
-    }
-}
-
-function CaptionToken(props) {
-    return (
-        <div style={{display: "inline", padding: "3px"}} 
-            onClick={props.onClick}>{props.caption}
-        </div>
-    )
-}
-
-class AlignmentsTab extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            srcs: Array(this.props.length)
-        };
-
-        const runId = this.props.runId;
-        const instanceId = this.props.instanceId;
-        const caption = this.props.caption;
-        const fetchMap = this.props.fetchAttentionMap;
-        
-        for (let i = 0; i < caption.length; i++) {
-            const j = i
-            fetchMap(runId, instanceId, j)
-            .then(url => {
-                let s = this.state;
-                s.srcs[j] = url;
-                this.setState(s);
-            });
-        }
-    }
-
-    render() {
-        const srcs = this.state.srcs;
-        const capt = this.props.caption;
-        const imgs = zip(srcs, capt).map(x => 
-            <ImageWithCaptionFrame src={x[0]} token={x[1]}/>);
-
-        return (
-            <div style={{display: "table"}}>
-                {imgs}
-            </div>
-        );
-    };
-}
-
-function ImageWithCaptionFrame(props) {
-    return (
-        <div style={{display: "block", padding: "5px"}}>
-            <img style={{display: "block"}} src={props.src} alt=""/>
-            <div style={{display: "block"}}>{props.token}</div>
-        </div>
-    );
-}
 
 DataInstanceView.propTypes = {
     dataInstance: PropTypes.shape(
@@ -225,27 +130,7 @@ DataInstanceView.propTypes = {
     runners: PropTypes.array.isRequired
 };
 
-RunResultsView.propTypes = {
-    results: PropTypes.shape(
-        {
-            runId: PropTypes.number,
-            runnerId: PropTypes.number,
-            caption: PropTypes.arrayOf(PropTypes.string)
-        }
-    ).isRequired,
-    instanceId: PropTypes.number.isRequired,
-    onCaptionClick: PropTypes.func.isRequired,
-    fetchAttentionMap: PropTypes.func.isRequired
-};
-
 RunToggler.propTypes = {
     runnerName: PropTypes.string.isRequired,
     runId: PropTypes.number.isRequired
-};
-
-AlignmentsTab.propTypes = {
-    caption: PropTypes.arrayOf(PropTypes.string).isRequired,
-    runId: PropTypes.number.isRequired,
-    instanceId: PropTypes.number.isRequired,
-    fetchAttentionMap: PropTypes.func.isRequired
 };
