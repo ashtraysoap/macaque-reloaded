@@ -29,9 +29,6 @@ class DataInstanceView extends React.Component {
         const instance = this.props.dataInstance;
         const results = this.props.results;
 
-        // if (results.length !== 0)
-        //     this.fetchResults();
-
         // map model runs to navigation elements
         const runsNav = (results.length === 0) ? 
             <h3>No runs available</h3> : results.map((r) => <RunToggler 
@@ -46,11 +43,11 @@ class DataInstanceView extends React.Component {
 
         // results from the selected run
         const selectedRes = (this.state.runId === null) ? null : results[this.state.runId];
-        
         const runResultsView = (this.state.runId === null) ? null : <RunResultsView 
             results={selectedRes} 
             instanceId={instance.id}
             onCaptionClick={this.onCaptionClick}
+            fetchAttentionMap={this.fetchAttentionMap}
         />;
 
         return (
@@ -69,27 +66,12 @@ class DataInstanceView extends React.Component {
         );
     }
 
-    fetchResults() {
-        fetch(`/load_results/${this.props.dataset}/${this.props.dataInstance.id}`)
-        .then(res => res.json())
-        .then(response => {
-            //
-        })
-        .catch(error => console.log('Error:', error));
-    }
-
-    fetchAttentionMap(tokenId) {
-        const ds = this.props.dataset;
-        const run = this.state.runId;
-        const elem = this.props.dataInstance.id;
-
-        return fetch(`/load_attention_map/${run}/${elem}/${tokenId}`)
+    fetchAttentionMap(runId, dataInstanceId, tokenId) {
+        return fetch(`/load_attention_map/${runId}/${dataInstanceId}/${tokenId}`)
         .then(res => res.arrayBuffer())
         .then(ab => {
             const view = new Uint8Array(ab);
-            console.log('view: ', view);
             const url = URL.createObjectURL(new Blob([view], { type: "image/jpeg" }));
-            console.log('url: ', url);
             return url;
         });
     }
@@ -102,7 +84,7 @@ class DataInstanceView extends React.Component {
         } else {
             // fetch the attention map corresponding to the word from the
             // caption the user clicked on
-            this.fetchAttentionMap(tokenId)
+            this.fetchAttentionMap(this.state.runId, this.props.dataInstance.id, tokenId)
             .then(src => {
                 this.setState({ tokenId: tokenId, imgSrc: src });
             });
@@ -122,6 +104,10 @@ function RunToggler(props) {
 class RunResultsView extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            showAlignments: false
+        }
     }
 
     render() {
@@ -134,6 +120,14 @@ class RunResultsView extends React.Component {
             onClick={() => this.props.onCaptionClick(id)}
         />);
 
+        let attTab = !this.state.showAlignments ? null :
+            <AlignmentsTab 
+                caption={caption}
+                runId={this.props.results.runId}
+                instanceId={this.props.instanceId}
+                fetchAttentionMap={this.props.fetchAttentionMap}
+            />
+
         return (
             <div>
                 <div style={{border: "solid green"}}>
@@ -143,7 +137,12 @@ class RunResultsView extends React.Component {
                     </div>
                     ".
                 </div>
-                <div style={{border: "solid pink"}}>Alignments</div>
+                <div style={{border: "solid pink"}}>
+                    <span onClick={() => this.setState({ showAlignments: !this.state.showAlignments })}>
+                        Alignments
+                    </span>
+                    {attTab}
+                </div>
                 <div style={{border: "solid red"}}>Beam Search Output Graph</div>
                 <div style={{border: "solid purple"}}>Metrics Table</div>
             </div>
@@ -157,6 +156,53 @@ function CaptionToken(props) {
             onClick={props.onClick}>{props.caption}
         </div>
     )
+}
+
+class AlignmentsTab extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            srcs: Array(this.props.length)
+        };
+
+        const runId = this.props.runId;
+        const instanceId = this.props.instanceId;
+        const caption = this.props.caption;
+        const fetchMap = this.props.fetchAttentionMap;
+        
+        for (let i = 0; i < caption.length; i++) {
+            const j = i
+            fetchMap(runId, instanceId, j)
+            .then(url => {
+                let s = this.state;
+                s.srcs[j] = url;
+                this.setState(s);
+            });
+        }
+    }
+
+    render() {
+        const srcs = this.state.srcs;
+        const capt = this.props.caption;
+        const imgs = zip(srcs, capt).map(x => 
+            <ImageWithCaptionFrame src={x[0]} token={x[1]}/>);
+
+        return (
+            <div style={{display: "table"}}>
+                {imgs}
+            </div>
+        );
+    };
+}
+
+function ImageWithCaptionFrame(props) {
+    return (
+        <div style={{display: "block", padding: "5px"}}>
+            <img style={{display: "block"}} src={props.src} alt=""/>
+            <div style={{display: "block"}}>{props.token}</div>
+        </div>
+    );
 }
 
 DataInstanceView.propTypes = {
@@ -179,7 +225,27 @@ DataInstanceView.propTypes = {
     runners: PropTypes.array.isRequired
 };
 
+RunResultsView.propTypes = {
+    results: PropTypes.shape(
+        {
+            runId: PropTypes.number,
+            runnerId: PropTypes.number,
+            caption: PropTypes.arrayOf(PropTypes.string)
+        }
+    ).isRequired,
+    instanceId: PropTypes.number.isRequired,
+    onCaptionClick: PropTypes.func.isRequired,
+    fetchAttentionMap: PropTypes.func.isRequired
+};
+
 RunToggler.propTypes = {
     runnerName: PropTypes.string.isRequired,
     runId: PropTypes.number.isRequired
+};
+
+AlignmentsTab.propTypes = {
+    caption: PropTypes.arrayOf(PropTypes.string).isRequired,
+    runId: PropTypes.number.isRequired,
+    instanceId: PropTypes.number.isRequired,
+    fetchAttentionMap: PropTypes.func.isRequired
 };
