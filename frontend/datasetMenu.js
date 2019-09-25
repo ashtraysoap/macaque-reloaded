@@ -7,26 +7,17 @@ export { DatasetMenu };
 class DatasetMenu extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
-        this.props.modelNames.forEach(m => this.state[m] = false);
-        this.runModelsOnDataset = this.runModelsOnDataset.bind(this);
+        this.state = {
+            runner: null
+        };
+        this.runOnDataset = this.runOnDataset.bind(this);
     }
     
-    runModelsOnDataset() {
-        const msg = {
-            dataset: this.props.datasetName,
-            models: Object.keys(this.state).filter(x => this.state[x])
-        }
-        // unselect chosen models for next time
-        this.props.modelNames.forEach(m => this.state[m] = false);
-        console.log(msg);
-        fetch('/run_model_on_dataset', {
-            method: 'POST',
-            body: JSON.stringify(msg),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(res => res.json())
+    runOnDataset() {
+        if (this.state.runner === null) return;
+
+        fetch(`/run_on_dataset/${this.props.dataset}/${this.state.runner}`)
+        .then(res => res.json())
         .then(response => {
             console.log('Success:', JSON.stringify(response));
             this.props.onServerResponse(response);
@@ -35,23 +26,24 @@ class DatasetMenu extends React.Component {
     }
     
     render() {
-        const models = this.props.modelNames;
-        const buttons = models.map(m => <div key={m} 
-            onClick={() => { console.log(`Selected model: ${m}`); this.state[m] = !this.state[m];}}>
-            {m}
-            </div>);
+        const runners = this.props.runnerNames;
+        const buttons = runners.map(r => <div key={r} 
+            onClick={() => this.setState({ runner: runners.indexOf(r) })}>
+            {r}
+            </div>
+        );
 
         return (
             <div>
                 {buttons}
-                <button onClick={this.runModelsOnDataset}>Run</button>
+                <button onClick={this.runOnDataset}>Run</button>
             </div>
         );
     }
 }
 
 DatasetMenu.propTypes = {
-    datasetName: PropTypes.string.isRequired,
-    modelNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+    dataset: PropTypes.number.isRequired,
+    runnerNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     onServerResponse: PropTypes.func.isRequired
 };

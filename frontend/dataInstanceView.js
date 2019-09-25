@@ -5,6 +5,8 @@ import { range, zip } from './utils.js';
 
 import './style.css';
 
+export { DataInstanceView };
+
 
 class DataInstanceView extends React.Component {
     constructor(props) {
@@ -27,15 +29,15 @@ class DataInstanceView extends React.Component {
         const instance = this.props.dataInstance;
         const results = this.props.results;
 
-        if (results.length !== 0)
-            this.fetchResults();
+        // if (results.length !== 0)
+        //     this.fetchResults();
 
         // map model runs to navigation elements
         const runsNav = (results.length === 0) ? 
             <h3>No runs available</h3> : results.map((r) => <RunToggler 
-                key={r.id} 
+                key={r.runId} 
                 runId={r.runId} 
-                modelId={r.modelId}
+                runnerName={this.props.runners[r.runnerId].name}
                 // onClick sets corresponding run and also changes the image back to default
                 onClick={() => {
                     this.setState({ runId: (r.runId - 1), imgSrc: this.imgSrc });
@@ -81,7 +83,7 @@ class DataInstanceView extends React.Component {
         const run = this.state.runId;
         const elem = this.props.dataInstance.id;
 
-        return fetch(`/load_attention_map/${run}/${ds}/${elem}/${tokenId}`)
+        return fetch(`/load_attention_map/${run}/${elem}/${tokenId}`)
         .then(res => res.arrayBuffer())
         .then(ab => {
             const view = new Uint8Array(ab);
@@ -112,7 +114,7 @@ function RunToggler(props) {
     return (
         <div style={{display: "inline", border: "solid purple", margin: "5px"}} onClick={props.onClick}>
             <span style={{padding: "2px"}}>{props.runId}</span>
-            <span style={{padding: "2px"}}>{props.modelId}</span>
+            <span style={{padding: "2px"}}>{props.runnerName}</span>
         </div>
     );
 }
@@ -123,7 +125,7 @@ class RunResultsView extends React.Component {
     }
 
     render() {
-        const modelId = this.props.results.modelId;
+        const runnerId = this.props.results.runnerId;
         const caption = this.props.results.caption;
         let toks = zip(caption, range(caption.length));
         toks = toks.map(([token, id]) => <CaptionToken 
@@ -135,7 +137,7 @@ class RunResultsView extends React.Component {
         return (
             <div>
                 <div style={{border: "solid green"}}>
-                    Caption: {modelId} says "
+                    Caption: {runnerId} says "
                     <div style={{display: "inline"}}>
                         {toks}
                     </div>
@@ -167,13 +169,17 @@ DataInstanceView.propTypes = {
     results: PropTypes.arrayOf(PropTypes.shape(
         {
             runId: PropTypes.number,
-            modelId: PropTypes.string,
+            runnerId: PropTypes.number,
             datasetId: PropTypes.string,
             captions: PropTypes.arrayOf(PropTypes.string)
         }
     )).isRequired,
-    dataset: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired
+    dataset: PropTypes.number.isRequired,
+    onClick: PropTypes.func.isRequired,
+    runners: PropTypes.array.isRequired
 };
 
-export { DataInstanceView };
+RunToggler.propTypes = {
+    runnerName: PropTypes.string.isRequired,
+    runId: PropTypes.number.isRequired
+};

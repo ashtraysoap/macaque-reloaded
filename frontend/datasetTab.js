@@ -80,15 +80,17 @@ class DatasetTab extends React.Component {
         console.log(this.props.results);
         const selectedResults = this.props.results.map(r => { return { 
             runId: r.runId, 
-            modelId: r.modelId,
+            runnerId: r.runnerId,
             datasetId: this.props.dataset.name,
             caption: r.captions[this.state.elemIdx]
         } });
         const view = this.showingElementView ? <DataInstanceView 
             dataInstance={this.getInstance()} 
-            dataset={this.props.dataset.name}
+            dataset={this.props.dataset.id}
             results={selectedResults}
-            onClick={this.closeView}/> : null;
+            onClick={this.closeView}
+            runners={this.props.runners}
+            /> : null;
 
         let elems = this.props.dataset.elements;
         elems = elems.map(e => <DataInstanceEntry key={e.id} dataInstance={e} handleClick={() => this.showView(e.id)}/>);
@@ -101,8 +103,8 @@ class DatasetTab extends React.Component {
                 </div>
                 <div style={{display: "table-cell"}}>
                     <DatasetMenu 
-                        datasetName={this.props.dataset.name}
-                        modelNames={this.props.modelNames}
+                        dataset={this.props.dataset.id}
+                        runnerNames={this.props.runners.map(r => r.name)}
                         onServerResponse={this.props.onServerResponse}
                     />
                 </div>
@@ -113,12 +115,13 @@ class DatasetTab extends React.Component {
 
 DatasetTab.propTypes = {
     dataset: PropTypes.shape({
+        id: PropTypes.number,
         name: PropTypes.string,
         elements: PropTypes.array
     }).isRequired,
-    modelNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     results: PropTypes.array.isRequired,
-    onServerResponse: PropTypes.func.isRequired
+    onServerResponse: PropTypes.func.isRequired,
+    runners: PropTypes.array.isRequired
 };
 
 DataInstanceEntry.propTypes = {

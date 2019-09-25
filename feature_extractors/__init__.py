@@ -19,7 +19,7 @@ def create_feature_extractor(extractor_config):
     if extractor_id == FeatureExtractorId.Slim.value:
         slim_config = extractor_config['tfSlim']
         net_type = slim_config['netType']
-        model_ckpt = slim_config['modelCkpt']
+        model_ckpt = slim_config['checkpoint']
         feature_map = slim_config['featureMap']
         extractor = NeuralMonkeyFeatureExtractor(net=net_type,
                     slim_models=SLIM_PATH,
@@ -33,7 +33,7 @@ def create_feature_extractor(extractor_config):
 
     elif extractor_id == FeatureExtractorId.Plugin.value:
         plugin_config = extractor_config['plugin']
-        src_path = plugin_config['sourcePath']
+        src_path = plugin_config['path']
         extractor = PluginFeatureExtractor(plugin_path=src_path)
 
     elif extractor_id == FeatureExtractorId.Null.value:

@@ -4,24 +4,30 @@ from PIL import Image, ImageFilter
 
 def attention_map_jpg(alphas, image=None):
     alphas = np.asarray(alphas).astype('uint8')
-    print(alphas.shape)
     att_map = Image.fromarray(alphas)
-    att_map = rescale_and_smooth(att_map)
-    return att_map
+
+    if image is None:
+        att_map = rescale_and_smooth(att_map)
+        return att_map
     
-    # if image is not None:
-    #     image = Image.fromarray(image, 'RGB')
-    # return apply_attention_mask(image, att_map)
+    #pil_img = Image.fromarray(image.astype('uint8'), 'RGB')
+    pil_img = image
+    print(pil_img.width, pil_img.height, att_map.width, att_map.height)
+    scale_w = pil_img.width // att_map.width
+    scale_h = pil_img.height // att_map.height
+    att_map = rescale_and_smooth(att_map, scale_w, scale_h)
+
+    return apply_attention_mask(pil_img, att_map)
 
 
-def rescale_and_smooth(pil_image, scale=16, smooth=True):
+def rescale_and_smooth(pil_image, scale_w=16, scale_h=16, smooth=True):
     """Returns the original image rescaled
     and smoothened by a Gaussian filter
     """
 
     w = pil_image.width
     h = pil_image.height
-    n_img = pil_image.resize((scale * w, scale * h))
+    n_img = pil_image.resize((scale_w * w, scale_h * h))
     n_img = n_img.filter(ImageFilter.GaussianBlur(10))
     return n_img
 
