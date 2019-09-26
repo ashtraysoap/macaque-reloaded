@@ -3,6 +3,7 @@ import React from 'react';
 
 import { range, zip } from './utils.js';
 import { AlignmentsTab } from './alignmentsTab.js';
+import { BeamSearchOutputView } from './beamSearchOutputView.js'
 
 export { RunResultsView };
 
@@ -12,7 +13,8 @@ class RunResultsView extends React.Component {
         super(props);
 
         this.state = {
-            showAlignments: false
+            showAlignments: false,
+            showBSOut: false
         }
     }
 
@@ -34,6 +36,11 @@ class RunResultsView extends React.Component {
                 fetchAttentionMap={this.props.fetchAttentionMap}
             />
 
+        let bsView = !this.state.showBSOut ? null :
+            <BeamSearchOutputView 
+                
+            />
+
         return (
             <div>
                 <div style={{border: "solid green"}}>
@@ -49,7 +56,12 @@ class RunResultsView extends React.Component {
                     </span>
                     {attTab}
                 </div>
-                <div style={{border: "solid red"}}>Beam Search Output Graph</div>
+                <div style={{border: "solid red"}}>
+                    <span onClick={() => this.setState({ showBSOut: !this.state.showBSOut })}>
+                        Beam Search Output Graph
+                    </span>
+                    {bsView}
+                </div>
                 <div style={{border: "solid purple"}}>Metrics Table</div>
             </div>
         )

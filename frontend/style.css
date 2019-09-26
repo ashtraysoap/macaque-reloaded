@@ -48,3 +48,36 @@ body {
     display: table;
     border: solid grey;
 }
+
+/*  */
+
+.node {
+    cursor: pointer;
+}
+  
+.node circle {
+    fill: #fff;
+    stroke: #ac4142;
+    stroke-width: 3px;
+}
+  
+.node rect {
+    fill: #fff;
+    stroke: #5081C1;
+    stroke-width: 3px;
+}
+  
+.node line {
+    stroke: #5081C1;
+    stroke-width: 3px;
+}
+  
+.node text {
+    font: 12px sans-serif;
+}
+  
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
+}
