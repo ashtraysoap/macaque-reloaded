@@ -40,6 +40,10 @@ class Runner():
     def idx(self, val):
         self._idx = val
 
+    @property
+    def preprocessor(self):
+        return self._prepro
+
     def run(self, dataset):
         res = []
         if dataset.feature_maps:

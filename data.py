@@ -164,6 +164,10 @@ class Dataset:
             e.image = Image.open(e.source)
         self._images = True
 
+    def load_image(self, elementId):
+        e = self.elements[elementId]
+        return Image.open(e.source)
+
     def attach_prepro_images(self, images):
         """
         Args:

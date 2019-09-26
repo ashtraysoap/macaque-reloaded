@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, send_file
 
 from data import create_dataset
 from interface import create_model_interface
-from visualizations import attention_map_jpg
+from visualizations import attention_map_jpg, attention_map_for_original_img
 
 from feature_extractors import create_feature_extractor
 from model_wrappers import create_model_wrapper
@@ -105,9 +105,16 @@ def load_attention_map(run, element, token):
     alphas = res['alignments'][token]
     img = None if 'prepro_img' not in res else res['prepro_img']
     att_map = attention_map_jpg(alphas=alphas, image=img)
-    blob = BytesIO()
-    att_map.save(blob, 'JPEG')
-    return blob.getvalue()
+    return img_to_jpg_raw(att_map)
+
+@APP.route('/load_attention_map_for_original_img/<int:run>/<int:element>/<int:token>', methods=['POST', 'GET'])
+def load_attention_map_for_original_img(run, element, token):
+    run_res = STATE.run_results[run]
+    alphas = run_res.results[element]['alignments'][token]
+    img = STATE.datasets[run_res.datasetId].load_image(element)
+    prepro = STATE.runners[run_res.runnerId].preprocessor
+    img = attention_map_for_original_img(alphas=alphas, image=img, prepro=prepro)
+    return img_to_jpg_raw(img)
 
 def _get_json_from_request():
     return request.get_json(force=True)
@@ -117,3 +124,8 @@ def head(xs):
     if len(xs) > 0: 
         return xs[0] 
     return None
+
+def img_to_jpg_raw(img):
+    blob = BytesIO()
+    img.save(blob, 'JPEG')
+    return blob.getvalue()

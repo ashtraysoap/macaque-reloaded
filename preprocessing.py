@@ -35,6 +35,18 @@ class Preprocessor():
     def idx(self, val):
         self._idx = val
 
+    @property
+    def target_width(self):
+        return self._target_width
+
+    @property
+    def target_height(self):
+        return self._target_height
+
+    @property
+    def mode(self):
+        return self._mode
+
     def preprocess(self, dataset):
         """
             Preprocesses images from the dataset.
@@ -47,16 +59,16 @@ class Preprocessor():
         def rescale_height_pad_or_crop_width(img):
             img = img.resize((img.width, self._target_height))
             if img.width > self._target_width:
-                return _crop(img, self._target_width, self._target_height)
+                return crop(img, self._target_width, self._target_height)
             else:
-                return _pad(img, self._target_width, self._target_height)
+                return pad(img, self._target_width, self._target_height)
 
         def rescale_width_pad_or_crop_height(img):
             img = img.resize((self._target_width, img.height))
             if img.height > self._target_height:
-                return _crop(img, self._target_width, self._target_height)
+                return crop(img, self._target_width, self._target_height)
             else:
-                return _pad(img, self._target_width, self._target_height)
+                return pad(img, self._target_width, self._target_height)
 
         def keep_aspect_ratio_and_pad(img):
             w = img.width
@@ -67,7 +79,7 @@ class Preprocessor():
                 img = img.resize((self._target_width, int(h * rw)))
             else:
                 img = img.resize((int(w * rh), self._target_height))
-            return _pad(img, self._target_width, self._target_height)
+            return pad(img, self._target_width, self._target_height)
 
         def keep_aspect_ratio_and_crop(img):
             w = img.width
@@ -78,7 +90,7 @@ class Preprocessor():
                 img = img.resize((self._target_width, int(h * rw)))
             else:
                 img = img.resize((int(w * rh), self._target_height))
-            return _crop(img, self._target_width, self._target_height)
+            return crop(img, self._target_width, self._target_height)
 
         dataset.load_images()
         pil_imgs = [e.image for e in dataset.elements]
@@ -98,7 +110,7 @@ class Preprocessor():
         print('Mode is ', mode, ', returning None')
         return None
 
-def _crop(image, target_width, target_height):
+def crop(image, target_width, target_height):
     """
     crop die center of dis image
     """
@@ -112,7 +124,7 @@ def _crop(image, target_width, target_height):
     lower = target_height + upper
     return image.crop((left, upper, right, lower))
 
-def _pad(image, target_width, target_height):
+def pad(image, target_width, target_height):
     """
     pad die image so thad di original is placed center
     """

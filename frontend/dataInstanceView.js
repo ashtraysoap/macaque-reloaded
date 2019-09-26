@@ -13,6 +13,7 @@ class DataInstanceView extends React.Component {
         super(props);
 
         this.fetchAttentionMap = this.fetchAttentionMap.bind(this);
+        this.fetchAttentionMapForOriginal = this.fetchAttentionMapForOriginal.bind(this);
         this.onCaptionClick = this.onCaptionClick.bind(this);
 
         this.imgSrc = `/load_image/${this.props.dataset}/${this.props.dataInstance.id}`;
@@ -84,6 +85,16 @@ class DataInstanceView extends React.Component {
         });
     }
 
+    fetchAttentionMapForOriginal(runId, dataInstanceId, tokenId) {
+        return fetch(`/load_attention_map_for_original_img/${runId}/${dataInstanceId}/${tokenId}`)
+        .then(res => res.arrayBuffer())
+        .then(ab => {
+            const view = new Uint8Array(ab);
+            const url = URL.createObjectURL(new Blob([view], { type: "image/jpeg" }));
+            return url;
+        });
+    }
+
     onCaptionClick(tokenId) {
         if (tokenId === this.state.tokenId) {
             // user clicked on the currently selected caption token => display
@@ -92,7 +103,8 @@ class DataInstanceView extends React.Component {
         } else {
             // fetch the attention map corresponding to the word from the
             // caption the user clicked on
-            this.fetchAttentionMap(this.state.runId, this.props.dataInstance.id, tokenId)
+            //this.fetchAttentionMap(this.state.runId, this.props.dataInstance.id, tokenId)
+            this.fetchAttentionMapForOriginal(this.state.runId, this.props.dataInstance.id, tokenId)
             .then(src => {
                 this.setState({ tokenId: tokenId, imgSrc: src });
             });
