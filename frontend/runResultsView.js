@@ -38,7 +38,7 @@ class RunResultsView extends React.Component {
 
         let bsView = !this.state.showBSOut ? null :
             <BeamSearchOutputView 
-                
+
             />
 
         return (
@@ -56,7 +56,7 @@ class RunResultsView extends React.Component {
                     </span>
                     {attTab}
                 </div>
-                <div style={{border: "solid red"}}>
+                <div style={{border: "solid #5081C1"}}>
                     <span onClick={() => this.setState({ showBSOut: !this.state.showBSOut })}>
                         Beam Search Output Graph
                     </span>

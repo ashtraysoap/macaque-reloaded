@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
-//import { tree } from 'd3-hierarchy';
 
 import './style.css';
 
@@ -31,7 +30,13 @@ class BeamSearchOutputView extends React.Component {
                 {
                     token: "cat",
                     score: 3.4,
-                    children: []
+                    children: [
+                        {
+                            token: "walrus",
+                            score: 7.7,
+                            children: []
+                        }
+                    ]
                 },
                 {
                     token: "doggy",
@@ -52,9 +57,6 @@ class BeamSearchOutputView extends React.Component {
 
         let diagonal = d3.svg.diagonal()
             .projection(function(d) { return [d.y, d.x]; });
-        // var diagonal = d3.linkHorizontal()
-        //     .x(function(d) { return d.y; })
-        //     .y(function(d) { return d.x; });
 
         var i = 0;
 
@@ -70,7 +72,7 @@ class BeamSearchOutputView extends React.Component {
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
             .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-            //.on("click", click);
+            .on("click", this.handleNodeClick);
 
         var link = svg.selectAll("path.link")
             .data(links, function(d) { return d.target.id; });
@@ -103,7 +105,43 @@ class BeamSearchOutputView extends React.Component {
             .attr("class", "link")
             .attr("d", diagonal);
     }
+
+    handleNodeClick(node) {
+        console.log(node);
+    }
 }
+
+function click(node) {
+    if (!node.displayed) {
+      acquireImage(node);
+      if (!node.imageUrl) {
+        // fetch the image
+        var init = {
+          method: 'POST',
+          body: JSON.stringify(node.alignment)
+        };
+  
+        fetch('single_alpha', init).then(response => {
+          response.blob().then(blob => {
+            node.imageUrl = URL.createObjectURL(blob);
+          })
+          .then(() => {
+            d3.select("img")
+              .attr("src", node.imageUrl)
+          });
+        });
+      }
+      else {
+        d3.select("img")
+          .attr("src", node.imageUrl)
+      }
+    }
+    else {
+      d3.select("img")
+        .attr("src", url);
+      releaseImage(node);
+    }
+  }
 
 // BeamSearchOutputView.propTypes = {
 //     beamSearchOutputGraph: PropTypes.object.isRequired
