@@ -15,12 +15,13 @@ class AlignmentsTab extends React.Component {
 
         const runId = this.props.runId;
         const instanceId = this.props.instanceId;
+        const captionId = this.props.captionId;
         const caption = this.props.caption;
         const fetchMap = this.props.fetchAttentionMap;
         
         for (let i = 0; i < caption.length; i++) {
             const j = i
-            fetchMap(runId, instanceId, j)
+            fetchMap(runId, instanceId, captionId, j)
             .then(url => {
                 let s = this.state;
                 s.srcs[j] = url;
@@ -57,5 +58,6 @@ AlignmentsTab.propTypes = {
     caption: PropTypes.arrayOf(PropTypes.string).isRequired,
     runId: PropTypes.number.isRequired,
     instanceId: PropTypes.number.isRequired,
+    captionId: PropTypes.number.isRequired,
     fetchAttentionMap: PropTypes.func.isRequired
 };

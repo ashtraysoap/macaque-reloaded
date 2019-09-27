@@ -7,10 +7,27 @@ from neuralmonkey.readers.image_reader import single_image_for_imagenet
 class ModelWrapper:
     def run(self, xs):
         print("Entering mock model wrapper.")
-        y = { 
-            'caption': ["Colorless", "green", "ideas", "sleep", "furiously"],
-            'alignments': get_dummy_alphas(size=5),
-            'beam_search_output': None,
+        y = {
+                'greedy': {
+                    'caption': ["Colorless", "green", "ideas", "sleep", "furiously"],
+                    'alignments': get_dummy_alphas(size=5)
+                },
+                'beam_search': {
+                    'captions': [
+                        ["Colorless", "green", "ideas", "sleep", "furiously"],
+                        ["Colorless", "green", "ideas", "sleep", "furiously"],
+                        ["Colorless", "green", "ideas", "sleep", "furiously"]
+                    ],
+                    'alignments': [
+                        get_dummy_alphas(size=5),
+                        get_dummy_alphas(size=5),
+                        get_dummy_alphas(size=5)
+                    ],
+                    'graph': None
+                }
+            # 'caption': ["Colorless", "green", "ideas", "sleep", "furiously"],
+            # 'alignments': get_dummy_alphas(size=5),
+            # 'beam_search_output': None,
         }
         res = [y for x in xs]
         print("Computation complete, returning mock resuslts.")

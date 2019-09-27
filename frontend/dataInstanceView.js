@@ -50,7 +50,6 @@ class DataInstanceView extends React.Component {
         }
 
         // results from the selected run
-        //const selectedRes = (this.state.runId === null) ? null : results[this.state.runId];
         const selectedRes = (selRunId === null) ? null : results.filter(r => r.runId === selRunId)[0];
         const runResultsView = (selRunId === null) ? null : <RunResultsView 
             results={selectedRes} 
@@ -75,8 +74,8 @@ class DataInstanceView extends React.Component {
         );
     }
 
-    fetchAttentionMap(runId, dataInstanceId, tokenId) {
-        return fetch(`/load_attention_map/${runId}/${dataInstanceId}/${tokenId}`)
+    fetchAttentionMap(runId, dataInstanceId, captionId, tokenId) {
+        return fetch(`/load_attention_map/${runId}/${dataInstanceId}/${captionId}/${tokenId}`)
         .then(res => res.arrayBuffer())
         .then(ab => {
             const view = new Uint8Array(ab);
@@ -85,8 +84,8 @@ class DataInstanceView extends React.Component {
         });
     }
 
-    fetchAttentionMapForOriginal(runId, dataInstanceId, tokenId) {
-        return fetch(`/load_attention_map_for_original_img/${runId}/${dataInstanceId}/${tokenId}`)
+    fetchAttentionMapForOriginal(runId, dataInstanceId, captionId, tokenId) {
+        return fetch(`/load_attention_map_for_original_img/${runId}/${dataInstanceId}/${captionId}/${tokenId}`)
         .then(res => res.arrayBuffer())
         .then(ab => {
             const view = new Uint8Array(ab);
@@ -95,7 +94,7 @@ class DataInstanceView extends React.Component {
         });
     }
 
-    onCaptionClick(tokenId) {
+    onCaptionClick(captionId, tokenId) {
         if (tokenId === this.state.tokenId) {
             // user clicked on the currently selected caption token => display
             // the original image again
@@ -104,7 +103,7 @@ class DataInstanceView extends React.Component {
             // fetch the attention map corresponding to the word from the
             // caption the user clicked on
             //this.fetchAttentionMap(this.state.runId, this.props.dataInstance.id, tokenId)
-            this.fetchAttentionMapForOriginal(this.state.runId, this.props.dataInstance.id, tokenId)
+            this.fetchAttentionMapForOriginal(this.state.runId, this.props.dataInstance.id, captionId, tokenId)
             .then(src => {
                 this.setState({ tokenId: tokenId, imgSrc: src });
             });
@@ -133,8 +132,12 @@ DataInstanceView.propTypes = {
         {
             runId: PropTypes.number,
             runnerId: PropTypes.number,
-            datasetId: PropTypes.string,
-            captions: PropTypes.arrayOf(PropTypes.string)
+            datasetId: PropTypes.number,
+            captions: PropTypes.shape({
+                greedyCaption: PropTypes.arrayOf(PropTypes.string),
+                beamSearchCaptions: PropTypes.arrayOf(
+                    PropTypes.arrayOf(PropTypes.string))
+            })
         }
     )).isRequired,
     dataset: PropTypes.number.isRequired,

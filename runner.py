@@ -66,11 +66,17 @@ class Runner():
                     r = self._model.run(f)
                 else:
                     r = self._model.run(imgs)
+                # nr = [
+                # { 
+                #     'caption': e['caption'],
+                #     'alignments': e['alignments'],
+                #     'beam_search_output': e['beam_search_output'],
+                #     'prepro_img': i
+                # } for (e, i) in zip(r, imgs)]
                 nr = [
-                { 
-                    'caption': e['caption'],
-                    'alignments': e['alignments'],
-                    'beam_search_output': e['beam_search_output'],
+                {
+                    'greedy': e['greedy'],
+                    'beam_search': e['beam_search'],
                     'prepro_img': i
                 } for (e, i) in zip(r, imgs)]
                 res.extend(nr)

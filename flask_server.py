@@ -88,7 +88,12 @@ def run_on_dataset(datasetId, runnerId):
         'runId': STATE.get_current_run_counter() - 1,
         'runnerId': runnerId,
         'datasetId': datasetId,
-        'captions': list(map(lambda x: x['caption'], outputs))
+        'captions': list(map(lambda x: {
+            'greedyCaption': [] if x['greedy'] is None 
+                else x['greedy']['caption'],
+            'beamSearchCaptions': [] if x['beam_search'] is None 
+                else x['beam_search']['captions']
+        }, outputs))
     })
 
 @APP.route('/load_image/<int:dataset>/<int:element>', methods=['POST', 'GET'])
@@ -98,19 +103,27 @@ def load_image(dataset, element):
     path = e.source
     return send_file(path)
 
-@APP.route('/load_attention_map/<int:run>/<int:element>/<int:token>/', methods=['POST', 'GET'])
-def load_attention_map(run, element, token):
+@APP.route('/load_attention_map/<int:run>/<int:element>/<int:caption>/<int:token>/', methods=['POST', 'GET'])
+def load_attention_map(run, element, caption, token):
     res = head(filter(lambda x: x.runId == run, STATE.run_results))
     res = res.results[element]
-    alphas = res['alignments'][token]
+    if caption == 0:
+        alphas = res['greedy']['alignments'][token]
+    else:
+        alphas = res['beam_search']['alignments'][caption - 1][token]
+
     img = None if 'prepro_img' not in res else res['prepro_img']
     att_map = attention_map_jpg(alphas=alphas, image=img)
     return img_to_jpg_raw(att_map)
 
-@APP.route('/load_attention_map_for_original_img/<int:run>/<int:element>/<int:token>', methods=['POST', 'GET'])
-def load_attention_map_for_original_img(run, element, token):
+@APP.route('/load_attention_map_for_original_img/<int:run>/<int:element>/<int:caption>/<int:token>', methods=['POST', 'GET'])
+def load_attention_map_for_original_img(run, element, caption, token):
     run_res = STATE.run_results[run]
-    alphas = run_res.results[element]['alignments'][token]
+    if caption == 0:
+        alphas = run_res.results[element]['greedy']['alignments'][token]
+    else:
+        alphas = run_res.results[element]['beam_search']['alignments'][caption - 1][token]
+
     img = STATE.datasets[run_res.datasetId].load_image(element)
     prepro = STATE.runners[run_res.runnerId].preprocessor
     img = attention_map_for_original_img(alphas=alphas, image=img, prepro=prepro)

@@ -7,19 +7,8 @@ import { TableRow } from './utils.js';
 
 import './style.css';
 
+export { DatasetTab };
 
-class DataInstanceEntry extends React.Component {
-    
-    render() {
-        let entries = [this.props.dataInstance.source]
-        
-        return (
-            <div onClick={this.props.handleClick}>
-                <TableRow entries={entries}/>
-            </div>
-        );
-    }
-}
 
 class DatasetTab extends React.Component {
     constructor(props) {
@@ -77,13 +66,10 @@ class DatasetTab extends React.Component {
     }
 
     render() {
-        console.log(this.props.results);
-        const selectedResults = this.props.results.map(r => { return { 
-            runId: r.runId, 
-            runnerId: r.runnerId,
-            datasetId: this.props.dataset.name,
-            caption: r.captions[this.state.elemIdx]
-        } });
+        const results = this.props.results;
+        const idx = this.state.elemIdx;
+        console.log(results);
+        const selectedResults = this.getResultsForElement(results, idx);
         const view = this.showingElementView ? <DataInstanceView 
             dataInstance={this.getInstance()} 
             dataset={this.props.dataset.id}
@@ -101,7 +87,7 @@ class DatasetTab extends React.Component {
                     {elems}
                     {view}
                 </div>
-                <div style={{display: "table-cell"}}>
+                <div style={{display: "table-cell", border: "solid-black"}}>
                     <DatasetMenu 
                         dataset={this.props.dataset.id}
                         runnerNames={this.props.runners.map(r => r.name)}
@@ -111,7 +97,29 @@ class DatasetTab extends React.Component {
             </div>
         );
     }
+
+    getResultsForElement(results, elemId) {
+        return results.map(r => {
+            return {
+                runId: r.runId,
+                runnerId: r.runnerId,
+                datasetId: r.datasetId,
+                captions: r.captions[elemId]
+            }
+        });
+    }
+
 }
+
+function DataInstanceEntry(props){
+    let entries = [props.dataInstance.source]    
+    return (
+        <div onClick={props.handleClick}>
+            <TableRow entries={entries}/>
+        </div>
+    );
+}
+
 
 DatasetTab.propTypes = {
     dataset: PropTypes.shape({
@@ -119,7 +127,18 @@ DatasetTab.propTypes = {
         name: PropTypes.string,
         elements: PropTypes.array
     }).isRequired,
-    results: PropTypes.array.isRequired,
+    results: PropTypes.arrayOf(
+        PropTypes.shape({
+            runId: PropTypes.number,
+            runnerId: PropTypes.number,
+            datasetId: PropTypes.number,
+            captions: PropTypes.arrayOf(PropTypes.shape({
+                greedyCaption: PropTypes.arrayOf(PropTypes.string),
+                beamSearchCaptions: PropTypes.arrayOf(
+                    PropTypes.arrayOf(PropTypes.string))
+            })
+        )})
+    ).isRequired,
     onServerResponse: PropTypes.func.isRequired,
     runners: PropTypes.array.isRequired
 };
@@ -130,5 +149,3 @@ DataInstanceEntry.propTypes = {
     }).isRequired,
     handleClick: PropTypes.func.isRequired
 };
-
-export { DatasetTab };

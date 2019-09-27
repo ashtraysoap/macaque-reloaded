@@ -11,6 +11,23 @@ import { Header } from './header.js';
 import { ModelTab } from './modelTab.js';
 import { Navigation } from './nav.js';
 
+/*
+
+results incoming from the server are objects of shape:
+{
+    runId: number,
+    runnerId: number,
+    datasetId: number,
+    captions: [
+        {
+            greedyCaption: [string],
+            beamSearchCaptions: [[string]]    
+        }
+    ]
+}
+
+*/
+
 
 class App extends React.Component {
     constructor(props) {

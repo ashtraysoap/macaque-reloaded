@@ -68,20 +68,5 @@ class MacaqueState():
     def add_results(self, res):
         self._run_results.append(res)
 
-    def update_dataset(self, name, ds):
-        if name not in self._datasets:
-            raise ValueError("There is no dataset with name {}".format(name))
-
-        self._datasets[name] = ds
-
     def get_current_run_counter(self):
         return len(self._run_results)
-
-    def get_run_results(self, datasetId):
-        return self._run_results[datasetId]
-
-    def get_run_results_for_instance(self, datasetId, dataInstanceId):
-        res = {}
-        for k, v in self._run_results[datasetId].items():
-            res[k] = v[dataInstanceId]
-        return res
