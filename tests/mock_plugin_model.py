@@ -14,9 +14,9 @@ class ModelWrapper:
                 },
                 'beam_search': {
                     'captions': [
-                        ["Colorless", "green", "ideas", "sleep", "furiously"],
-                        ["Colorless", "green", "ideas", "sleep", "furiously"],
-                        ["Colorless", "green", "ideas", "sleep", "furiously"]
+                        ["Colorless", "blue", "mustangs", "sleep", "furiously"],
+                        ["Colorless", "pink", "rabbits", "sleep", "furiously"],
+                        ["Colorless", "azure", "sheep", "sleep", "furiously"]
                     ],
                     'alignments': [
                         get_dummy_alphas(size=5),
