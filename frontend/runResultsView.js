@@ -12,6 +12,8 @@ class RunResultsView extends React.Component {
     constructor(props) {
         super(props);
 
+        console.log('results: ', this.props.results);
+
         this.getSelectedCaption = this.getSelectedCaption.bind(this);
         this.setInitialCapID = this.setInitialCapID.bind(this);
 
@@ -112,7 +114,7 @@ function CaptionToken(props) {
 function CaptionToggler(props) {
     const greedyOpt = <option value={0} >greedy hypothesis</option>; // what if greedy c. not provided?
     const bsOpts = range(props.beamSize).map(i => 
-        <option value={i}>{`beam search hypothesis ${i + 1}`}</option>)
+        <option key={i} value={i + 1}>{`beam search hypothesis ${i + 1}`}</option>)
     return (
         <div>
             <select value={props.captionId} onChange={e => props.onChange(e.target.value)}>
