@@ -74,6 +74,7 @@ class Dataset:
         self._images = images
         self._feature_maps = features
         self._preprocessed_imgs = prepro
+        self._idx = None
 
         if not os.path.isdir(prefix):
             raise ValueError("Directory {} does not exist.".format(prefix))
@@ -86,6 +87,14 @@ class Dataset:
             ds._set_elements(self._elements[counter : upper_bound])
             yield ds
             counter = upper_bound
+
+    @property
+    def idx(self):
+        return self._idx
+
+    @idx.setter
+    def idx(self, val):
+        self._idx = val
 
     @property
     def name(self):
@@ -155,6 +164,10 @@ class Dataset:
             e.image = Image.open(e.source)
         self._images = True
 
+    def load_image(self, elementId):
+        e = self.elements[elementId]
+        return Image.open(e.source)
+
     def attach_prepro_images(self, images):
         """
         Args:
@@ -219,16 +232,12 @@ class Dataset:
         self._elements = elements
         self._count = len(elements)
 
-def merge_datasets(d1, d2):
-    raise NotImplementedError()
-
-def dataset_from_json(json_str):
-    raise NotImplementedError()
 
 class DatasetEncoder(json.JSONEncoder):
     def default(self, dataset):
         instance_encoder = DataInstanceEncoder()
         return {
+            "id": dataset.idx,
             "name": dataset.name,
             "prefix": dataset.prefix,
             "batch_size": dataset.batch_size,

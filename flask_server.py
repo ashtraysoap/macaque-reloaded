@@ -1,13 +1,20 @@
 import json
 import os
+from collections import namedtuple
 from io import BytesIO
 
 from flask import Flask, render_template, request, send_file
 
 from data import create_dataset
 from interface import create_model_interface
-from visualizations import attention_map_jpg
+from visualizations import attention_map_jpg, attention_map_for_original_img
 
+from feature_extractors import create_feature_extractor
+from model_wrappers import create_model_wrapper
+from preprocessing import create_preprocessor
+from runner import create_runner
+
+Result = namedtuple('Result', ['runId', 'runnerId', 'datasetId', 'results'])
 
 # Create the Flask server.
 static_path = os.path.abspath('dist')
@@ -33,84 +40,105 @@ def add_dataset():
     STATE.add_dataset(ds)
     return ds.to_json()
 
+@APP.route('/add_prepro', methods=['POST'])
+def add_preprocessor():
+    json_data = _get_json_from_request()
+    # validate json
+    # json_data = { targetWidth, targetHeight, mode }
+    prepro = create_preprocessor(json_data)
+    idx = STATE.add_preprocessor(prepro)
+    return str(idx)
+
+@APP.route('/add_encoder', methods=['POST'])
+def add_feature_extractor():
+    json_data = _get_json_from_request()
+    # validate json
+    encoder = create_feature_extractor(json_data)
+    idx = STATE.add_feature_extractor(encoder)
+    return str(idx)
+
 @APP.route('/add_model', methods=['POST'])
 def add_model():
     json_data = _get_json_from_request()
-    # validate json_data
-    ifc = create_model_interface(json_data)
-    STATE.add_model_interface(ifc)
-    return ifc.to_json()
+    # validate json
+    model = create_model_wrapper(json_data)
+    idx = STATE.add_model(model)
+    return str(idx)
 
-@APP.route('/run_model_on_dataset', methods=['POST'])
-def run_model_on_dataset():
+@APP.route('/add_runner', methods=['POST'])
+def add_runner():
     json_data = _get_json_from_request()
-    # validate json_data
-    ds_id = json_data['dataset']
-    results = []
-    for m_id in json_data['models']:
-        m = STATE.model_interfaces[m_id]
-        result = m.run_on_dataset(STATE.datasets[ds_id])
-        STATE.add_results(ds_id, result)
-        run_id = STATE.get_current_run_counter() - 1
-        # only send the captions to the client, the rest is on demand
-        r = {
-            'runId': run_id,
-            'modelId': m_id,
-            'datasetId': ds_id,
-            'captions': list(map(lambda x: x['caption'], result))
-        }
-        results.append(r)
-    return json.dumps(results)
+    # validate json
+    # json_data = { preproId, encoderId, modelId }
+    runner = create_runner(STATE, json_data)
+    idx = STATE.add_runner(runner)
+    return str(idx)
 
-@APP.route('/update_user', methods=['POST'])
-def update_user():
-    pass
+@APP.route('/run_on_dataset/<int:datasetId>/<int:runnerId>', methods=['GET', 'POST'])
+def run_on_dataset(datasetId, runnerId):
+    runner = STATE.runners[runnerId]
+    dataset = STATE.datasets[datasetId]
+    outputs = runner.run(dataset)
+    r = Result(runId=STATE.get_current_run_counter(),
+        runnerId=runnerId,
+        datasetId=datasetId,
+        results=outputs)
+    STATE.add_results(r)
+    return json.dumps({
+        'runId': STATE.get_current_run_counter() - 1,
+        'runnerId': runnerId,
+        'datasetId': datasetId,
+        'captions': list(map(lambda x: {
+            'greedyCaption': [] if x['greedy'] is None 
+                else x['greedy']['caption'],
+            'beamSearchCaptions': [] if x['beam_search'] is None 
+                else x['beam_search']['captions']
+        }, outputs))
+    })
 
-@APP.route('/load_image/<string:dataset>/<int:element>', methods=['POST', 'GET'])
+@APP.route('/load_image/<int:dataset>/<int:element>', methods=['POST', 'GET'])
 def load_image(dataset, element):
     d = STATE.datasets[dataset]
     e = d.elements[element]
     path = e.source
     return send_file(path)
 
-@APP.route('/load_results/<string:dataset>/<int:element>', methods=['POST', 'GET'])
-def load_results(dataset, element):
-    # run_results is a dictionary, keys are runIds and values
-    # are results for the given dataset element
-    run_results = STATE.get_run_results_for_instance(dataset, element)
-    new_results = {}
-    for run_id, results in run_results.items():
-        caption = results['caption']
-        alignments = results['alignments']
-        prepro_img = results['prepro_img'] if 'prepro_img' in results else None
-        bs_out = results['beam_search_output'] if 'beam_search_output' in results else None
+@APP.route('/load_attention_map/<int:run>/<int:element>/<int:caption>/<int:token>/', methods=['POST', 'GET'])
+def load_attention_map(run, element, caption, token):
+    res = head(filter(lambda x: x.runId == run, STATE.run_results))
+    res = res.results[element]
+    if caption == 0:
+        alphas = res['greedy']['alignments'][token]
+    else:
+        alphas = res['beam_search']['alignments'][caption - 1][token]
 
-        new_results[run_id] = {
-            'caption': caption,
-            'alignments': alignments,
-            'bsOutput': bs_out
-        }
+    img = None if 'prepro_img' not in res else res['prepro_img']
+    att_map = attention_map_jpg(alphas=alphas, image=img)
+    return img_to_jpg_raw(att_map)
 
-    return json.dumps(new_results)
+@APP.route('/load_attention_map_for_original_img/<int:run>/<int:element>/<int:caption>/<int:token>', methods=['POST', 'GET'])
+def load_attention_map_for_original_img(run, element, caption, token):
+    run_res = STATE.run_results[run]
+    if caption == 0:
+        alphas = run_res.results[element]['greedy']['alignments'][token]
+    else:
+        alphas = run_res.results[element]['beam_search']['alignments'][caption - 1][token]
 
-@APP.route('/load_attention_maps/<string:dataset>/<int:element>', methods=['POST', 'GET'])
-def load_attention_maps(dataset, element):
-    pass
-
-@APP.route('/load_prepro_image/<string:dataset>/<int:element>', methods=['POST', 'GET'])
-def load_prepro_images(dataset, element):
-    pass
-
-@APP.route('/load_attention_map/<int:run>/<string:dataset>/<int:element>/<int:token>/', methods=['POST', 'GET'])
-def load_attention_map(run, dataset, element, token):
-    run_results = STATE.get_run_results_for_instance(dataset, element)
-    run_results = run_results[run]
-    alphas = run_results['alignments'][token]
-    prepro_img = run_results['prepro_img']
-    jpg_map = attention_map_jpg(alphas, prepro_img)
-    blob = BytesIO()
-    jpg_map.save(blob, 'JPEG')
-    return blob.getvalue()
+    img = STATE.datasets[run_res.datasetId].load_image(element)
+    prepro = STATE.runners[run_res.runnerId].preprocessor
+    img = attention_map_for_original_img(alphas=alphas, image=img, prepro=prepro)
+    return img_to_jpg_raw(img)
 
 def _get_json_from_request():
     return request.get_json(force=True)
+
+def head(xs):
+    xs = list(xs)
+    if len(xs) > 0: 
+        return xs[0] 
+    return None
+
+def img_to_jpg_raw(img):
+    blob = BytesIO()
+    img.save(blob, 'JPEG')
+    return blob.getvalue()

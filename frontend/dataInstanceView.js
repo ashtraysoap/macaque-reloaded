@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { range, zip } from './utils.js';
+import { RunResultsView } from './runResultsView.js';
 
 import './style.css';
+
+export { DataInstanceView };
 
 
 class DataInstanceView extends React.Component {
@@ -11,10 +13,11 @@ class DataInstanceView extends React.Component {
         super(props);
 
         this.fetchAttentionMap = this.fetchAttentionMap.bind(this);
+        this.fetchAttentionMapForOriginal = this.fetchAttentionMapForOriginal.bind(this);
         this.onCaptionClick = this.onCaptionClick.bind(this);
 
         this.imgSrc = `/load_image/${this.props.dataset}/${this.props.dataInstance.id}`;
-        const runId = (props.results.length === 0) ? null : 0;
+        const runId = (props.results.length === 0) ? null : this.props.results[0].runId;
         this.state = { 
             runId: runId, 
             imgSrc: this.imgSrc,
@@ -26,39 +29,43 @@ class DataInstanceView extends React.Component {
 
         const instance = this.props.dataInstance;
         const results = this.props.results;
+        const selRunId = this.state.runId;
 
-        if (results.length !== 0)
-            this.fetchResults();
-
-        // map model runs to navigation elements
-        const runsNav = (results.length === 0) ? 
-            <h3>No runs available</h3> : results.map((r) => <RunToggler 
-                key={r.id} 
-                runId={r.runId} 
-                modelId={r.modelId}
-                // onClick sets corresponding run and also changes the image back to default
-                onClick={() => {
-                    this.setState({ runId: (r.runId - 1), imgSrc: this.imgSrc });
-                }}
-            />);
+        // Create a navigation bar button for each run.
+        let runsNav;
+        if (results.length === 0) {
+            runsNav = <h3>No runs available</h3>;
+        } else {
+            runsNav = results.map((r) => 
+                <RunToggler 
+                    key={r.runId} 
+                    runId={r.runId} 
+                    runnerName={this.props.runners[r.runnerId].name}
+                    onClick={() => {
+                        // Clicking on this element selects the corresponding run; the original
+                        // instance image is shown.
+                        this.setState({ runId: r.runId, imgSrc: this.imgSrc });
+                    }}
+                />);
+        }
 
         // results from the selected run
-        const selectedRes = (this.state.runId === null) ? null : results[this.state.runId];
-        
-        const runResultsView = (this.state.runId === null) ? null : <RunResultsView 
+        const selectedRes = (selRunId === null) ? null : results.filter(r => r.runId === selRunId)[0];
+        const runResultsView = (selRunId === null) ? null : <RunResultsView 
             results={selectedRes} 
             instanceId={instance.id}
             onCaptionClick={this.onCaptionClick}
+            fetchAttentionMap={this.fetchAttentionMap}
         />;
 
         return (
             <div className="transparentLayer" onClick={() => this.props.onClick()}>
-                <div className="instanceView" style={{border: "solid 4px black", borderRadius: "15px"}} onClick={(e) => e.stopPropagation()}>
+                <div className="instanceView" onClick={(e) => e.stopPropagation()}>
                     {instance.source}
                     <div style={{border: "solid blue"}}>
                         <img src={this.state.imgSrc} alt=""/>
                     </div>
-                    <div id="runsBar" style={{display: "table", border: "solid grey"}}>
+                    <div id="runsBar">
                         {runsNav}
                     </div>
                     {runResultsView}
@@ -67,32 +74,27 @@ class DataInstanceView extends React.Component {
         );
     }
 
-    fetchResults() {
-        fetch(`/load_results/${this.props.dataset}/${this.props.dataInstance.id}`)
-        .then(res => res.json())
-        .then(response => {
-            //
-        })
-        .catch(error => console.log('Error:', error));
-    }
-
-    fetchAttentionMap(tokenId) {
-        const ds = this.props.dataset;
-        const run = this.state.runId;
-        const elem = this.props.dataInstance.id;
-
-        return fetch(`/load_attention_map/${run}/${ds}/${elem}/${tokenId}`)
+    fetchAttentionMap(runId, dataInstanceId, captionId, tokenId) {
+        return fetch(`/load_attention_map/${runId}/${dataInstanceId}/${captionId}/${tokenId}`)
         .then(res => res.arrayBuffer())
         .then(ab => {
             const view = new Uint8Array(ab);
-            console.log('view: ', view);
             const url = URL.createObjectURL(new Blob([view], { type: "image/jpeg" }));
-            console.log('url: ', url);
             return url;
         });
     }
 
-    onCaptionClick(tokenId) {
+    fetchAttentionMapForOriginal(runId, dataInstanceId, captionId, tokenId) {
+        return fetch(`/load_attention_map_for_original_img/${runId}/${dataInstanceId}/${captionId}/${tokenId}`)
+        .then(res => res.arrayBuffer())
+        .then(ab => {
+            const view = new Uint8Array(ab);
+            const url = URL.createObjectURL(new Blob([view], { type: "image/jpeg" }));
+            return url;
+        });
+    }
+
+    onCaptionClick(captionId, tokenId) {
         if (tokenId === this.state.tokenId) {
             // user clicked on the currently selected caption token => display
             // the original image again
@@ -100,7 +102,8 @@ class DataInstanceView extends React.Component {
         } else {
             // fetch the attention map corresponding to the word from the
             // caption the user clicked on
-            this.fetchAttentionMap(tokenId)
+            //this.fetchAttentionMap(this.state.runId, this.props.dataInstance.id, tokenId)
+            this.fetchAttentionMapForOriginal(this.state.runId, this.props.dataInstance.id, captionId, tokenId)
             .then(src => {
                 this.setState({ tokenId: tokenId, imgSrc: src });
             });
@@ -112,50 +115,11 @@ function RunToggler(props) {
     return (
         <div style={{display: "inline", border: "solid purple", margin: "5px"}} onClick={props.onClick}>
             <span style={{padding: "2px"}}>{props.runId}</span>
-            <span style={{padding: "2px"}}>{props.modelId}</span>
+            <span style={{padding: "2px"}}>{props.runnerName}</span>
         </div>
     );
 }
 
-class RunResultsView extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        const modelId = this.props.results.modelId;
-        const caption = this.props.results.caption;
-        let toks = zip(caption, range(caption.length));
-        toks = toks.map(([token, id]) => <CaptionToken 
-            key={id} 
-            caption={token} 
-            onClick={() => this.props.onCaptionClick(id)}
-        />);
-
-        return (
-            <div>
-                <div style={{border: "solid green"}}>
-                    Caption: {modelId} says "
-                    <div style={{display: "inline"}}>
-                        {toks}
-                    </div>
-                    ".
-                </div>
-                <div style={{border: "solid pink"}}>Alignments</div>
-                <div style={{border: "solid red"}}>Beam Search Output Graph</div>
-                <div style={{border: "solid purple"}}>Metrics Table</div>
-            </div>
-        )
-    }
-}
-
-function CaptionToken(props) {
-    return (
-        <div style={{display: "inline", padding: "3px"}} 
-            onClick={props.onClick}>{props.caption}
-        </div>
-    )
-}
 
 DataInstanceView.propTypes = {
     dataInstance: PropTypes.shape(
@@ -167,13 +131,21 @@ DataInstanceView.propTypes = {
     results: PropTypes.arrayOf(PropTypes.shape(
         {
             runId: PropTypes.number,
-            modelId: PropTypes.string,
-            datasetId: PropTypes.string,
-            captions: PropTypes.arrayOf(PropTypes.string)
+            runnerId: PropTypes.number,
+            datasetId: PropTypes.number,
+            captions: PropTypes.shape({
+                greedyCaption: PropTypes.arrayOf(PropTypes.string),
+                beamSearchCaptions: PropTypes.arrayOf(
+                    PropTypes.arrayOf(PropTypes.string))
+            })
         }
     )).isRequired,
-    dataset: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired
+    dataset: PropTypes.number.isRequired,
+    onClick: PropTypes.func.isRequired,
+    runners: PropTypes.array.isRequired
 };
 
-export { DataInstanceView };
+RunToggler.propTypes = {
+    runnerName: PropTypes.string.isRequired,
+    runId: PropTypes.number.isRequired
+};

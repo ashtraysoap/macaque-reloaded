@@ -36,18 +36,12 @@ class KerasFeatureExtractor(FeatureExtractor):
         self._preprocess_input = getattr(module, 'preprocess_input')
         self._input_size = enc_spec.input_size
 
-    def extract_features(self, dataset):
+    def extract_features(self, images):
         """
         Returns:
             A numpy array of extracted features.
         """
-        elems = dataset.elements
-        paths = [e.source.rstrip() for e in elems]
+        xs = [self._preprocess_input(x) for x in images]
+        xs = np.asarray(xs)
 
-        imgs = [image.load_img(p, target_size=self._input_size) 
-            for p in paths]
-        xs = [image.img_to_array(i) for i in imgs]
-        xs = [np.expand_dims(x, axis=0) for x in xs]
-        xs = [self._preprocess_input(x) for x in xs]
-
-        return np.array([self._model.predict(x) for x in xs])
+        return self._model.predict(xs)

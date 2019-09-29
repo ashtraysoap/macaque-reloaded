@@ -5,19 +5,32 @@ import numpy as np
 from neuralmonkey.readers.image_reader import single_image_for_imagenet
 
 class ModelWrapper:
-    def run_on_paths(self, paths):
+    def run(self, xs):
         print("Entering mock model wrapper.")
-        x = { 
-            'caption': ["Colorless", "green", "ideas", "sleep", "furiously"],
-            'alignments': get_dummy_alphas(size=5),
-            'beam_search_output': None,
+        y = {
+                'greedy': {
+                    'caption': ["Colorless", "green", "ideas", "sleep", "furiously"],
+                    'alignments': get_dummy_alphas(size=5)
+                },
+                'beam_search': {
+                    'captions': [
+                        ["Colorless", "blue", "mustangs", "sleep", "furiously"],
+                        ["Colorless", "pink", "rabbits", "sleep", "furiously"],
+                        ["Colorless", "azure", "sheep", "sleep", "furiously"]
+                    ],
+                    'alignments': [
+                        get_dummy_alphas(size=5),
+                        get_dummy_alphas(size=5),
+                        get_dummy_alphas(size=5)
+                    ],
+                    'graph': None
+                }
+            # 'caption': ["Colorless", "green", "ideas", "sleep", "furiously"],
+            # 'alignments': get_dummy_alphas(size=5),
+            # 'beam_search_output': None,
         }
-        res = [x for p in paths]
-        for x, p in zip(res, paths):
-            x['prepro_img'] = single_image_for_imagenet(p, 224, 224, True, False)
-        
+        res = [y for x in xs]
         print("Computation complete, returning mock resuslts.")
-        
         return res
 
 def get_dummy_alphas(height=14, width=14, size=1):

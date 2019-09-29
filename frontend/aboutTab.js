@@ -2,6 +2,9 @@ import React from 'react';
 
 import './style.css';
 
+export { AboutTab };
+
+
 function AboutTab() {
     return (
         <div>
@@ -10,5 +13,3 @@ function AboutTab() {
         </div>
     )
 }
-
-export { AboutTab };

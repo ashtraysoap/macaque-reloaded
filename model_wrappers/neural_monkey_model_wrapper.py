@@ -9,6 +9,7 @@ from .model_wrapper import ModelWrapper
 
 class NeuralMonkeyModelWrapper(ModelWrapper):
     def __init__(self,
+                runs_on_features,
                 config_path,
                 vars_path,
                 image_series="",
@@ -21,6 +22,7 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         if not os.path.isfile(config_path):
             raise ValueError("File {} does not exist.".format(config_path))
 
+        self._runs_on_features = runs_on_features
         self._config_path = config_path
         self._vars_path = vars_path
         self._image_series = image_series
@@ -34,6 +36,9 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         self._exp.build_model()
         self._exp.load_variables([vars_path])
 
+    @property
+    def runs_on_features(self):
+        return self._runs_on_features
 
     def run(self, dataset):
         """

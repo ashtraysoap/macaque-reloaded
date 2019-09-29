@@ -21,14 +21,14 @@ class Navigation extends React.Component {
             styleClass="datasetNavElement"
         />);
 
-        const models = props.modelNames.map((e) => <NavElement 
+        const runners = props.runnerNames.map((e) => <NavElement 
             key={e} 
             text={e} 
             handleClick={callback}
-            styleClass="modelNavElement"
+            styleClass="runnerNavElement"
         />);
 
-        const elements = defaults.concat(models).concat(datasets);
+        const elements = defaults.concat(runners).concat(datasets);
 
         return (
             <div className="nav" >{elements}</div>
@@ -49,7 +49,7 @@ class NavElement extends React.Component {
 
 Navigation.propTypes = {
     datasetNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-    modelNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+    runnerNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     defaultNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     onSelectedChange: PropTypes.func.isRequired
 };

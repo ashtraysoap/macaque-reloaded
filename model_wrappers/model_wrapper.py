@@ -1,8 +1,18 @@
 class ModelWrapper:
     def __init__(self):
-        raise NotImplementedError()
+        self._idx
+        self._input_shape
+        self._runs_on_features
 
-    def run(self, dataset):
+    @property
+    def idx(self):
+        return self._idx
+
+    @idx.setter
+    def idx(self, val):
+        self._idx = val
+
+    def run(self, inputs):
         """
         Returns:
             A list of dictionaries. Each dictionary contains the keys
