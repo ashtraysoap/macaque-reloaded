@@ -10,10 +10,11 @@ Macaque is a client-server application for analyzing inference resutls of models
 - npm
 
 ### Installation
-
-`git clone https://github.com/saimioul/macaque-reloaded.git`
-
-`./install.sh`
+```
+git clone https://github.com/saimioul/macaque-reloaded.git
+cd macaque-reloaded
+./install.sh
+```
 
 ### Running
 
