@@ -1,5 +1,5 @@
 #!/bin/bash
 
 pip3 install -r requirements.txt
-npm run install
+npm install
 npm run build
