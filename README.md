@@ -11,12 +11,14 @@ Macaque is a client-server application for analyzing inference resutls of models
 
 ### Installation
 
-Create a Python virtual environment
+Create a Python virtual environment and activate it:
 ```
 python3 -m venv macaque-venv
 source macauqe-venv/bin/activate
 ```
-Clone the repository and install the dependencies by running
+You can deactivate it later by running `deactivate` from inside your shell.
+
+Clone the repository and install the dependencies by running:
 ```
 git clone https://github.com/saimioul/macaque-reloaded.git
 cd macaque-reloaded
