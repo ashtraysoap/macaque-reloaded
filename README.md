@@ -22,6 +22,7 @@ Clone the repository and install the dependencies by running:
 ```
 git clone https://github.com/saimioul/macaque-reloaded.git
 cd macaque-reloaded
+# you might need root permissions to execute the installation script
 ./install.sh
 ```
 
