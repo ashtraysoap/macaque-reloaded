@@ -19,10 +19,10 @@ source macauqe-venv/bin/activate
 You can deactivate it later by running `deactivate` from inside your shell.
 
 Clone the repository and install the dependencies by running:
+(Note: You might need root permissions to execute the installation script.)
 ```
 git clone https://github.com/saimioul/macaque-reloaded.git
 cd macaque-reloaded
-# you might need root permissions to execute the installation script
 ./install.sh
 ```
 
