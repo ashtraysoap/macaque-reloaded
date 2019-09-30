@@ -6,7 +6,6 @@ from io import BytesIO
 from flask import Flask, render_template, request, send_file
 
 from data import create_dataset
-from interface import create_model_interface
 from visualizations import attention_map_jpg, attention_map_for_original_img
 
 from feature_extractors import create_feature_extractor
