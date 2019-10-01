@@ -130,7 +130,6 @@ class App extends React.Component {
             const results = s.results.filter(r => r.datasetId === d.id);
             mainTab = <DatasetTab 
                 dataset={d} 
-                runnerNames={s.runners.map((r) => r.name)} 
                 onServerResponse={this.addResults}
                 results={results}
                 runners={this.state.runners}
