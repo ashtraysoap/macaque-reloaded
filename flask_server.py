@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, send_file
 
 from data import create_dataset
 from visualizations import attention_map_jpg, attention_map_for_original_img
-
+from metrics import evaluate
 from feature_extractors import create_feature_extractor
 from model_wrappers import create_model_wrapper
 from preprocessing import create_preprocessor
@@ -127,6 +127,36 @@ def load_attention_map_for_original_img(run, element, caption, token):
     prepro = STATE.runners[run_res.runnerId].preprocessor
     img = attention_map_for_original_img(alphas=alphas, image=img, prepro=prepro)
     return img_to_jpg_raw(img)
+
+@APP.route('/evaluate_metric/<int:dataset>/<string:metric>')
+def evaluate_metric(dataset, metric):
+
+    # TODO: check that the dataset has reference captions
+    run_res = filter(lambda x: x.datasetId == dataset, STATE.run_results)
+    refs = None
+    results = {}
+
+    for r in run_res:
+        results[r.runId] = {}
+        gr_caps = r.results['greedy']['captions']
+        bs_caps = r.results['beam_seach']['captions']
+        if gr_caps is not None:
+            scores, mean = evaluate(metric, gr_caps, refs)
+            results[r.runId]['greedy'] = {
+                'scores': scores,
+                'mean': mean
+            }
+
+        if len(bs_caps) > 0:
+            results[r.runId]['beam_search'] = []
+            for hyps in bs_caps:
+                scores, mean = evaluate(metric, hyps, refs)
+                results[r.runId]['beam_search'].append({
+                    'scores': scores,
+                    'mean': mean
+                })
+
+    return json.dumps(results)
 
 def _get_json_from_request():
     return request.get_json(force=True)
