@@ -35,8 +35,8 @@ body {
 }
 
 .selElem {
-    width: 50px;
-    height: 25px;
+    width: 100px;
+    height: 40px;
     background: #5081C1;
 }
 
@@ -51,8 +51,8 @@ body {
 }
 
 .unselElem {
-    width: 50px;
-    height: 25px;
+    width: 100px;
+    height: 40px;
     background: #fff;
 }
 
