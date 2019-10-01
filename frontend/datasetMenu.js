@@ -7,38 +7,14 @@ export { DatasetMenu };
 class DatasetMenu extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            runner: null
-        };
-        this.runOnDataset = this.runOnDataset.bind(this);
     }
-    
-    runOnDataset() {
-        if (this.state.runner === null) return;
-
-        fetch(`/run_on_dataset/${this.props.dataset}/${this.state.runner}`)
-        .then(res => res.json())
-        .then(response => {
-            console.log('Success:', JSON.stringify(response));
-            this.props.onServerResponse(response);
-        })
-        .catch(error => console.log('Error:', error));
-    }
-    
+  
     render() {
-        const runners = this.props.runnerNames;
-        const buttons = runners.map(r => <div key={r} 
-            onClick={() => this.setState({ runner: runners.indexOf(r) })}>
-            {r}
-            </div>
-        );
-
         return (
             <div>
-                {buttons}
                 <RunModelsTab 
                     datasetId={this.props.dataset}
-                    runnerNames={runners}
+                    runnerNames={this.props.runnerNames}
                     onServerResponse={this.props.onServerResponse}
                 />
                 {/* <EvaluateMetricsTab
@@ -46,7 +22,6 @@ class DatasetMenu extends React.Component {
                     metricNames={this.props.metricNames}
                     onServerResponse={this.props.onServerResponse}
                 /> */}
-                <button onClick={this.runOnDataset}>Run</button>
             </div>
         );
     }
@@ -99,7 +74,7 @@ class RunModelsTab extends React.Component {
 
         return (
             <div style={{ border: "solid grey", borderRadius: "10px", padding: "10px", margin: "5px"}}>
-                <h3>run model on dataset</h3>
+                <div>run model on dataset</div>
                 {elements}
                 <button onClick={this.runOnDataset}>run</button>
             </div>
