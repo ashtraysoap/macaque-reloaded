@@ -17,11 +17,11 @@ class DatasetMenu extends React.Component {
                     runnerNames={this.props.runnerNames}
                     onServerResponse={this.props.onServerResponse}
                 />
-                {/* <EvaluateMetricsTab
+                <EvaluateMetricsTab
                     datasetId={this.props.dataset}
                     metricNames={this.props.metricNames}
                     onServerResponse={this.props.onServerResponse}
-                /> */}
+                />
             </div>
         );
     }
@@ -37,8 +37,20 @@ class RunModelsTab extends React.Component {
         };
     }
 
+    render() {
+        const elements = this.props.runnerNames.map(r => 
+            <Element key={r} text={r} onClick={() => this.addOrRemoveRunner(r)} />);
+
+        return (
+            <div style={{ border: "solid grey", borderRadius: "10px", padding: "10px", margin: "5px"}}>
+                <div>run model on dataset</div>
+                {elements}
+                <button onClick={this.runOnDataset}>run</button>
+            </div>
+        );
+    }
+
     runOnDataset() {
-        console.log(this.state.selectedRunnerIds);
         this.state.selectedRunnerIds.forEach(runner => {
             fetch(`/run_on_dataset/${this.props.datasetId}/${runner}`)
             .then(res => res.json())
@@ -54,36 +66,64 @@ class RunModelsTab extends React.Component {
     // otherwise removes it from the selected runners
     addOrRemoveRunner(runnerName) {
         let runners = this.state.selectedRunnerIds;
-        console.log(runnerName);
-        console.log(this.props.runnerNames);
         const idx = this.props.runnerNames.indexOf(runnerName);
-        console.log('idx: ', idx);
         const selIdx = runners.indexOf(idx);
         if (selIdx === -1) {
             runners.push(idx);
         } else {
             runners.splice(selIdx, 1);
         }
-        console.log('new state: ', runners);
         this.setState({ selectedRunnerIds: runners });
-    }
-
-    render() {
-        const elements = this.props.runnerNames.map(r => 
-            <Element key={r} text={r} onClick={() => this.addOrRemoveRunner(r)} />);
-
-        return (
-            <div style={{ border: "solid grey", borderRadius: "10px", padding: "10px", margin: "5px"}}>
-                <div>run model on dataset</div>
-                {elements}
-                <button onClick={this.runOnDataset}>run</button>
-            </div>
-        );
     }
 }
 
 class EvaluateMetricsTab extends React.Component {
+    constructor(props) {
+        super(props);
+        this.addOrRemoveMetric = this.addOrRemoveMetric.bind(this);
+        this.evaluateMetric = this.evaluateMetric.bind(this);
+        this.state = {
+            selectedMetricNames: []
+        };
+    }
 
+    render() {
+        const elements = this.props.metricNames.map(m => 
+            <Element key={m} text={m} onClick={() => this.addOrRemoveMetric(m)} />);
+
+        return (
+            <div style={{ border: "solid grey", borderRadius: "10px", padding: "10px", margin: "5px"}}>
+                <div>evaluate metrics</div>
+                {elements}
+                <button onClick={this.evaluateMetric}>evaluate</button>
+            </div>
+        );
+    }
+
+    evaluateMetric() {
+        this.state.selectedMetricNames.forEach(m => {
+            fetch(`/evaluate_metric/${this.props.datasetId}/${m}`)
+            .then(res => res.json())
+            .then(response => {
+                console.log('Success:', JSON.stringify(response));
+                this.props.onServerResponse(response);
+            })
+            .catch(error => console.log('Error:', error));
+        });
+    }
+
+    // adds the metric to the selected metrics if it is not present,
+    // otherwise removes it from the selected metrics
+    addOrRemoveMetric(metricName) {
+        let metrics = this.state.selectedMetricNames;
+        const i = this.props.metricNames.indexOf(metricName);
+        if (i === -1) {
+            metrics.push(metricName);
+        } else {
+            metrics.splice(i, 1);
+        }
+        this.setState({ selectedMetricNames: metrics });
+    }
 }
 
 class Element extends React.Component {
