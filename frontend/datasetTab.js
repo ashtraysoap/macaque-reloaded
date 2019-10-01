@@ -91,6 +91,7 @@ class DatasetTab extends React.Component {
                     <DatasetMenu 
                         dataset={this.props.dataset.id}
                         runnerNames={this.props.runners.map(r => r.name)}
+                        metricNames={this.props.metrics}
                         onServerResponse={this.props.onServerResponse}
                     />
                 </div>
@@ -140,7 +141,8 @@ DatasetTab.propTypes = {
         )})
     ).isRequired,
     onServerResponse: PropTypes.func.isRequired,
-    runners: PropTypes.array.isRequired
+    runners: PropTypes.array.isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 DataInstanceEntry.propTypes = {

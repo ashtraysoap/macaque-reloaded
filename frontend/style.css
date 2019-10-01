@@ -34,6 +34,12 @@ body {
     padding: 10px;
 }
 
+.selElem {
+    width: 50px;
+    height: 25px;
+    background: #5081C1;
+}
+
 .transparentLayer {
     width: 100vw;
     height: 100vh;
@@ -42,6 +48,12 @@ body {
     top: 0;
     left: 0;
     text-align: center;
+}
+
+.unselElem {
+    width: 50px;
+    height: 25px;
+    background: #fff;
 }
 
 #runsBar {

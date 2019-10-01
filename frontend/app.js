@@ -47,7 +47,7 @@ class App extends React.Component {
             encoders: [],
             models: [],
             runners: [],
-            metrics: [],
+            metrics: [ "BLEU1", "BLEU2", "BLEU3", "BLEU4", "METEOR" ],
             results: [],
             selectedTab: "About",
         };
@@ -133,6 +133,7 @@ class App extends React.Component {
                 onServerResponse={this.addResults}
                 results={results}
                 runners={this.state.runners}
+                metrics={this.state.metrics}
             />
         }
 
