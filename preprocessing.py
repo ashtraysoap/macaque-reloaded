@@ -1,4 +1,5 @@
 from enum import Enum
+from threading import Lock
 
 import numpy as np
 from PIL import Image
@@ -26,6 +27,7 @@ class Preprocessor():
         self._target_height = target_height
         self._mode = mode
         self._idx = None
+        self._lock = Lock()
 
     @property
     def idx(self):
@@ -53,6 +55,8 @@ class Preprocessor():
 
             Returns: A numpy array of preprocessed images.
         """
+        self._lock.acquire()
+
         def rescale_width_rescale_height(img):
             return img.resize((self._target_width, self._target_height))
 
@@ -95,20 +99,21 @@ class Preprocessor():
         dataset.load_images()
         pil_imgs = [e.image for e in dataset.elements]
         mode = self._mode
+        results = []
 
         if mode == PreproMode.RescaleWidthRescaleHeight:
-            return [rescale_width_rescale_height(img) for img in pil_imgs]
+            results = [rescale_width_rescale_height(img) for img in pil_imgs]
         elif mode == PreproMode.RescaleHeightPadOrCropWidth:
-            return [rescale_height_pad_or_crop_width(img) for img in pil_imgs]
+            results = [rescale_height_pad_or_crop_width(img) for img in pil_imgs]
         elif mode == PreproMode.RescaleWidthPadOrCropHeight:
-            return [rescale_width_pad_or_crop_height(img) for img in pil_imgs]
+            results = [rescale_width_pad_or_crop_height(img) for img in pil_imgs]
         elif mode == PreproMode.AspectRatioCrop:
-            return [keep_aspect_ratio_and_crop(img) for img in pil_imgs]
+            results = [keep_aspect_ratio_and_crop(img) for img in pil_imgs]
         elif mode == PreproMode.AspectRatioPad:
-            return [keep_aspect_ratio_and_pad(img) for img in pil_imgs]
+            results = [keep_aspect_ratio_and_pad(img) for img in pil_imgs]
 
-        print('Mode is ', mode, ', returning None')
-        return None
+        self._lock.release()
+        return results
 
 def crop(image, target_width, target_height):
     """
