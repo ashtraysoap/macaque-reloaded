@@ -12,14 +12,8 @@ class ScoreTable extends React.Component {
         const res = this.props.results;
        
         if (res.length === 0 || res[0].scores === undefined) {
-            console.log("pffu tudle nudle");
             return null;
         }
-
-        // let x = {};
-        // for (let i = 0; i < res.length; i++) {
-        //     let metrics =
-        // }
 
         const rows = res.map(r =>
             <tr key={r.runId}>
