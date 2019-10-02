@@ -116,12 +116,13 @@ class EvaluateMetricsTab extends React.Component {
     // otherwise removes it from the selected metrics
     addOrRemoveMetric(metricName) {
         let metrics = this.state.selectedMetricNames;
-        const i = this.props.metricNames.indexOf(metricName);
+        const i = metrics.indexOf(metricName);
         if (i === -1) {
             metrics.push(metricName);
         } else {
             metrics.splice(i, 1);
         }
+        console.log(metrics);
         this.setState({ selectedMetricNames: metrics });
     }
 }

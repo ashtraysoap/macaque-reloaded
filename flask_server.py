@@ -131,30 +131,34 @@ def load_attention_map_for_original_img(run, element, caption, token):
 @APP.route('/evaluate_metric/<int:dataset>/<string:metric>')
 def evaluate_metric(dataset, metric):
 
+    def collect_hyps(run_results):
+        gr_caps = [r['greedy']['caption'] for r in run_results.results]
+        bs_caps = [r['beam_search']['captions'] for r in run_results.results]
+        return (gr_caps, bs_caps)
+
     # TODO: check that the dataset has reference captions
     run_res = filter(lambda x: x.datasetId == dataset, STATE.run_results)
-    refs = None
+    ds = STATE.datasets[dataset]
+    refs = [e.references for e in ds.elements]
     results = {}
 
     for r in run_res:
         results[r.runId] = {}
-        gr_caps = r.results['greedy']['captions']
-        bs_caps = r.results['beam_seach']['captions']
-        if gr_caps is not None:
-            scores, mean = evaluate(metric, gr_caps, refs)
-            results[r.runId]['greedy'] = {
+        # evaluate greedy captions
+        gr_caps, bs_caps = collect_hyps(r)
+        scores, mean = evaluate(metric, gr_caps, refs)
+        results[r.runId]['greedy'] = {
+            'scores': scores,
+            'mean': mean
+        }
+        # evaluate beam search captions from all beams
+        results[r.runId]['beam_search'] = []
+        for hyps in bs_caps:
+            scores, mean = evaluate(metric, hyps, refs)
+            results[r.runId]['beam_search'].append({
                 'scores': scores,
                 'mean': mean
-            }
-
-        if len(bs_caps) > 0:
-            results[r.runId]['beam_search'] = []
-            for hyps in bs_caps:
-                scores, mean = evaluate(metric, hyps, refs)
-                results[r.runId]['beam_search'].append({
-                    'scores': scores,
-                    'mean': mean
-                })
+            })
 
     return json.dumps(results)
 
