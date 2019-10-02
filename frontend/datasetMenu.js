@@ -4,27 +4,21 @@ import React from 'react';
 export { DatasetMenu };
 
 
-class DatasetMenu extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-  
-    render() {
-        return (
-            <div>
-                <RunModelsTab 
-                    datasetId={this.props.dataset}
-                    runnerNames={this.props.runnerNames}
-                    onServerResponse={this.props.onServerResponse}
-                />
-                <EvaluateMetricsTab
-                    datasetId={this.props.dataset}
-                    metricNames={this.props.metricNames}
-                    onServerResponse={this.props.onServerResponse}
-                />
-            </div>
-        );
-    }
+function DatasetMenu(props) {
+    return (
+        <div>
+            <RunModelsTab 
+                datasetId={props.dataset}
+                runnerNames={props.runnerNames}
+                onResultsResponse={props.onResultsResponse}
+            />
+            <EvaluateMetricsTab
+                datasetId={props.dataset}
+                metricNames={props.metricNames}
+                onMetricScoresResponse={props.onMetricScoresResponse}
+            />
+        </div>
+    );
 }
 
 class RunModelsTab extends React.Component {
@@ -56,7 +50,7 @@ class RunModelsTab extends React.Component {
             .then(res => res.json())
             .then(response => {
                 console.log('Success:', JSON.stringify(response));
-                this.props.onServerResponse(response);
+                this.props.onResultsResponse(response);
             })
             .catch(error => console.log('Error:', error));
         });
@@ -106,7 +100,8 @@ class EvaluateMetricsTab extends React.Component {
             .then(res => res.json())
             .then(response => {
                 console.log('Success:', JSON.stringify(response));
-                this.props.onServerResponse(response);
+                response.metric = m;
+                this.props.onMetricScoresResponse(response);
             })
             .catch(error => console.log('Error:', error));
         });
@@ -122,7 +117,6 @@ class EvaluateMetricsTab extends React.Component {
         } else {
             metrics.splice(i, 1);
         }
-        console.log(metrics);
         this.setState({ selectedMetricNames: metrics });
     }
 }
@@ -154,17 +148,18 @@ DatasetMenu.propTypes = {
     dataset: PropTypes.number.isRequired,
     runnerNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     metricNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-    onServerResponse: PropTypes.func.isRequired
+    onResultsResponse: PropTypes.func.isRequired,
+    onMetricScoresResponse: PropTypes.func.isRequired
 };
 
 RunModelsTab.propTypes = {
     datasetId: PropTypes.number.isRequired,
     runnerNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-    onServerResponse: PropTypes.func.isRequired
+    onResultsResponse: PropTypes.func.isRequired,
 }
 
 EvaluateMetricsTab.propTypes = {
     datasetId: PropTypes.number.isRequired,
     metricNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-    onServerResponse: PropTypes.func.isRequired
+    onMetricScoresResponse: PropTypes.func.isRequired
 }
