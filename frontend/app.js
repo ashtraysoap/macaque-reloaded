@@ -155,14 +155,12 @@ class App extends React.Component {
         return (
             <div>
                 <Header />
-                <hr/>
                 <Navigation
                     datasetNames={datasets} 
                     runnerNames={runners} 
                     defaultNames={defaultTabs}
                     onSelectedChange={this.handleSelectedTabChange}
                 />
-                <hr/>
                 {mainTab}
             </div>
         );
