@@ -3,6 +3,7 @@ import React from 'react';
 
 import { DataInstanceView } from './dataInstanceView.js';
 import { DatasetMenu } from './datasetMenu.js';
+import { ScoreTable } from './scoreTable.js';
 import { TableRow } from './utils.js';
 
 import './style.css';
@@ -87,11 +88,17 @@ class DatasetTab extends React.Component {
                     {elems}
                     {view}
                 </div>
-                <div style={{display: "table-cell", border: "solid-black"}}>
+                <div style={{display: "table-cell", border: "solid black"}}>
+                    <ScoreTable 
+                        results={this.props.results}
+                        runnerNames={this.props.runners.map(r => r.name)}
+                    />
                     <DatasetMenu 
                         dataset={this.props.dataset.id}
                         runnerNames={this.props.runners.map(r => r.name)}
-                        onServerResponse={this.props.onServerResponse}
+                        metricNames={this.props.metrics}
+                        onResultsResponse={this.props.onResultsResponse}
+                        onMetricScoresResponse={this.props.onMetricScoresResponse}
                     />
                 </div>
             </div>
@@ -139,8 +146,10 @@ DatasetTab.propTypes = {
             })
         )})
     ).isRequired,
-    onServerResponse: PropTypes.func.isRequired,
-    runners: PropTypes.array.isRequired
+    onResultsResponse: PropTypes.func.isRequired,
+    onMetricScoresResponse: PropTypes.func.isRequired,
+    runners: PropTypes.array.isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 DataInstanceEntry.propTypes = {

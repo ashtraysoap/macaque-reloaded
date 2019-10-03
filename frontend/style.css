@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: sans-serif;
 }
@@ -17,21 +22,38 @@ body {
     border-radius: 15px;
 }
 
+.header {
+    position: relative;
+    background: linear-gradient(#e66465, #9198e5);
+    height: 10vh;
+}
+
 .runnerNavElement {
     border-style: dotted;
 }
 
 .nav {
-    display: table;
-    margin: 30px;
+    /* display: table;
+    margin: 30px; */
+    background-color: #9198e5;
+    height: 7vh;
 }
 
 .navElement {
+    position: relative;
     display: inline;
+    border-width: 1px;
     border-color: black;
     border-radius: 12px;
-    margin: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
     padding: 10px;
+}
+
+.selElem {
+    width: 100px;
+    height: 40px;
+    background: #5081C1;
 }
 
 .transparentLayer {
@@ -42,6 +64,12 @@ body {
     top: 0;
     left: 0;
     text-align: center;
+}
+
+.unselElem {
+    width: 100px;
+    height: 40px;
+    background: #fff;
 }
 
 #runsBar {

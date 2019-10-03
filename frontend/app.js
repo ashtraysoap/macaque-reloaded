@@ -3,8 +3,6 @@ import React from 'react';
 
 import { AboutTab } from './aboutTab.js';
 import { AddDatasetTab } from './addDatasetTab.js';
-// import { AddMetricTab } from './addMetricTab.js';
-// import { AddModelTab } from './addModelTab.js';
 import { ConfigTab } from './configTab.js';
 import { DatasetTab } from './datasetTab.js';
 import { Header } from './header.js';
@@ -39,6 +37,7 @@ class App extends React.Component {
         this.addModel = this.addModel.bind(this);
         this.addRunner = this.addRunner.bind(this);
         this.addResults = this.addResults.bind(this);
+        this.addMetricScoresToResults = this.addMetricScoresToResults.bind(this);
         this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
 
         this.state = {
@@ -47,7 +46,7 @@ class App extends React.Component {
             encoders: [],
             models: [],
             runners: [],
-            metrics: [],
+            metrics: [ "BLEU1", "BLEU2", "BLEU3", "BLEU4", "METEOR" ],
             results: [],
             selectedTab: "About",
         };
@@ -100,6 +99,21 @@ class App extends React.Component {
         return this.state.results.length - 1;
     }
 
+    addMetricScoresToResults(scores) {
+        let res = this.state.results;
+        const metric = scores.metric;
+        for (let i = 0; i < res.length; i++) {
+            let runId = res[i].runId;
+            // if there are new scores for this run
+            if (scores[runId] !== -1) {
+                if (res[i].scores === undefined)
+                    res[i].scores = {};
+                res[i].scores[metric] = scores[runId];
+            }
+        }
+        this.setState({ results: res });
+    }
+
     render() {
         const s = this.state;
         const runners = s.runners.map(r => r.name);
@@ -130,23 +144,23 @@ class App extends React.Component {
             const results = s.results.filter(r => r.datasetId === d.id);
             mainTab = <DatasetTab 
                 dataset={d} 
-                onServerResponse={this.addResults}
+                onResultsResponse={this.addResults}
+                onMetricScoresResponse={this.addMetricScoresToResults}
                 results={results}
                 runners={this.state.runners}
+                metrics={this.state.metrics}
             />
         }
 
         return (
             <div>
                 <Header />
-                <hr/>
                 <Navigation
                     datasetNames={datasets} 
                     runnerNames={runners} 
                     defaultNames={defaultTabs}
                     onSelectedChange={this.handleSelectedTabChange}
                 />
-                <hr/>
                 {mainTab}
             </div>
         );

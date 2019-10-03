@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from warnings import warn
 
 from PIL import Image
@@ -9,12 +10,16 @@ def create_dataset(json_config):
     ds = Dataset(name=json_config['name'],
                 prefix=json_config['prefix'],
                 batch_size=json_config['batchSize'])
-    srcs = None
+    
     if json_config['sources'] != "":
         srcs = open(json_config['sources'], 'r', encoding='utf-8').readlines()
         ds.initialize(sources=srcs)
     else:
         ds.initialize()
+
+    for refs_fp in json_config['references']:
+        ds.attach_references(refs_fp)
+
     return ds
 
 
@@ -43,6 +48,10 @@ class DataInstance:
     @property
     def image(self):
         return self._image
+
+    @property
+    def references(self):
+        return self._references
 
     @image.setter
     def image(self, val):
@@ -220,6 +229,22 @@ class Dataset:
             elem.feature_map = fm
         self._feature_maps = True
 
+    def attach_references(self, refs_fp):
+        if not os.path.exists(refs_fp):
+            raise RuntimeError("Given references file path %s does not exist" %refs_fp)
+
+        refs = open(refs_fp, mode='r').readlines()
+        
+        if len(refs) != self.count:
+            raise RuntimeError("The number of dataset elements and \
+                reference captions does not match.")
+
+        refs = [_tokenize(r) for r in refs]
+
+        for e, r in zip(self.elements, refs):
+            e.references.append(r)
+        return
+
     def _create_offspring(self):
         return Dataset(name=self.name,
                     prefix=self.prefix,
@@ -232,6 +257,11 @@ class Dataset:
         self._elements = elements
         self._count = len(elements)
 
+def _tokenize(string):
+    string = string.strip()
+    # TODO: improve this regex
+    string = re.sub('[\.,!?]', '', string)
+    return string.split()
 
 class DatasetEncoder(json.JSONEncoder):
     def default(self, dataset):
