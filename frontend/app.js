@@ -3,8 +3,6 @@ import React from 'react';
 
 import { AboutTab } from './aboutTab.js';
 import { AddDatasetTab } from './addDatasetTab.js';
-// import { AddMetricTab } from './addMetricTab.js';
-// import { AddModelTab } from './addModelTab.js';
 import { ConfigTab } from './configTab.js';
 import { DatasetTab } from './datasetTab.js';
 import { Header } from './header.js';
