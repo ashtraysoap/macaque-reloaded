@@ -2,12 +2,13 @@ import React from 'react';
 
 import './style.css';
 
-function Header() {
+function Header(props) {
     return (
         <div className="header">
-            <h1>Macaque</h1>
+            <div className="logo" >Macaque</div>
+            {props.nav}
         </div>
-    )
+    );
 }
 
 export { Header };

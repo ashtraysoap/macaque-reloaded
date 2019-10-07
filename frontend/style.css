@@ -6,13 +6,13 @@
 body {
     font-family: sans-serif;
 }
-
+ 
 .datasetNavElement {
-    border-style: dashed;
+
 }
 
 .defaultNavElement {
-    border-style: solid;
+
 }
 
 .instanceView {
@@ -23,31 +23,35 @@ body {
 }
 
 .header {
-    position: relative;
-    background: linear-gradient(#e66465, #9198e5);
+    /* background: linear-gradient(#e66465, #9198e5); */
+    background: linear-gradient(#eb5e55, #9198e5);
     height: 10vh;
+    width: 100vw;
+    box-shadow: 0px 5px 5px grey;
+    line-height: 10vh;
+    display: table;
+}
+ 
+.runnerNavElement {
+
 }
 
-.runnerNavElement {
-    border-style: dotted;
+.header div {
+    display: table-cell;
+    text-align: center;
+}
+
+.logo {
+    width: 20%;
 }
 
 .nav {
-    /* display: table;
-    margin: 30px; */
-    background-color: #9198e5;
-    height: 7vh;
+    width: 80%;
 }
 
 .navElement {
-    position: relative;
-    display: inline;
-    border-width: 1px;
-    border-color: black;
-    border-radius: 12px;
-    margin-left: 5px;
-    margin-right: 5px;
-    padding: 10px;
+    padding-left: 3vw;
+    padding-right: 3vw;
 }
 
 .selElem {
@@ -77,7 +81,7 @@ body {
     border: solid grey;
 }
 
-/*  */
+/* Beam search visualizations */
 
 .node {
     cursor: pointer;
