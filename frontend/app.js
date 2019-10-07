@@ -163,7 +163,9 @@ class App extends React.Component {
                             onSelectedChange={this.handleSelectedTabChange}
                         />
                     } />
-                {mainTab}
+                <div className="mainTab">
+                    {mainTab}
+                </div>
             </div>
         );
     }

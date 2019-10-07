@@ -45,6 +45,13 @@ body {
     width: 20%;
 }
 
+.mainTab {
+    margin-left: 10vw;
+    margin-right: 10vw;
+    margin-top: 2vw;
+    background-color: #ccc;
+}
+
 .nav {
     width: 80%;
 }
