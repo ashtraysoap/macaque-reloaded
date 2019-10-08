@@ -71,6 +71,7 @@ class AddDatasetTab extends React.Component {
 
         return (
             <div>
+                <label>Dataset</label>
                 <InformativeInput
                     name="dataset name"
                     value={s.name}

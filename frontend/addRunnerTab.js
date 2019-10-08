@@ -61,30 +61,33 @@ class AddRunnerTab extends React.Component {
 
         return (
             <div>
+                <label>Runner</label>
+                <br/>
                 <label>preprocessor</label>
                 <select value={s.prepro === null ? "none" : ps[s.prepro]} onChange={setPrepro}>
                     <option value='none'>none</option>
                     { ps.map(p => <option value={p} key={p}>{p}</option>) }
                 </select>
-
+                <br/>
                 <label>encoder</label>
                 <select value={s.encoder === null ? "none" : es[s.encoder]} onChange={setEncoder}>
                     <option value='none'>none</option>
                     { es.map(e => <option value={e} key={e}>{e}</option>) }
                 </select>
-
+                <br/>
                 <label>model</label>
                 <select value={s.model === null ? "none" : ms[s.model]} onChange={setModel}>
                     <option value='none'>none</option>
                     { ms.map(m => <option value={m} key={m}>{m}</option>) }
                 </select>
-
+                <br/>
                 <input 
                     type="text"
                     name="name"
                     value={s.name}
                     onChange={e => this.setState({ name: e.target.value })}
                 />
+                <br/>
                 <button onClick={this.addRunner}>Add run configuration</button>
             </div>
         );

@@ -8,6 +8,10 @@ import { DatasetTab } from './datasetTab.js';
 import { Header } from './header.js';
 import { ModelTab } from './modelTab.js';
 import { Navigation } from './nav.js';
+import { AddPreproTab } from './addPreproTab.js';
+import { AddEncoderTab } from './addEncoderTab.js';
+import { AddModelTab } from './newAddModelTab.js';
+import { AddRunnerTab } from './addRunnerTab.js';
 
 /*
 
@@ -50,7 +54,7 @@ class App extends React.Component {
             results: [],
             selectedTab: "About",
         };
-        this.state.defaultTabs = [ "About", "Add Dataset", "Configure" ];
+        this.state.defaultTabs = [ "About", "Configure", "Datasets", "Models" ];
     }
 
     handleSelectedTabChange(tabKey) {
@@ -123,17 +127,35 @@ class App extends React.Component {
         let mainTab = null;
 
         if (id === "Configure") {
-            mainTab = <ConfigTab 
-                addPrepro={this.addPrepro}
-                addEncoder={this.addEncoder}
-                addModel={this.addModel}
-                addRunner={this.addRunner}
-                preprocessors={this.state.preprocessors}
-                encoders={this.state.encoders}
-                models={this.state.models}
-            />;
-        } else if (id === "Add Dataset") {
-            mainTab = <AddDatasetTab onServerResponse={this.addDataset}/>
+            // mainTab = <ConfigTab
+            //     addPrepro={this.addPrepro}
+            //     addEncoder={this.addEncoder}
+            //     addModel={this.addModel}
+            //     addRunner={this.addRunner}
+            //     preprocessors={this.state.preprocessors}
+            //     encoders={this.state.encoders}
+            //     models={this.state.models}
+            // />;
+            mainTab = <ConfigTab>
+                <AddDatasetTab
+                    onServerResponse={this.addDataset}
+                />
+                <AddPreproTab
+                    addPrepro={this.addPrepro}
+                />
+                <AddEncoderTab
+                    addEncoder={this.addEncoder}
+                />
+                <AddModelTab
+                    addModel={this.addModel}
+                />
+                <AddRunnerTab
+                    preprocessors={s.preprocessors}
+                    encoders={s.encoders}
+                    models={s.models}
+                    addRunner={this.addRunner}
+                />
+            </ConfigTab>
         } else if (id === "About") {
             mainTab = <AboutTab />;
         } else if (runners.includes(id)) {
