@@ -11,13 +11,6 @@ body {
     margin-bottom: 3vh;
 }
 
-.instanceView {
-    background-color: white;
-    display: inline-block;
-    border: solid 4px black;
-    border-radius: 15px;
-}
-
 .header {
     /* background: linear-gradient(#e66465, #9198e5); */
     background: linear-gradient(#eb5e55, #9198e5);
@@ -35,12 +28,19 @@ body {
     text-align: center;
 }
 
+.instanceView {
+    background-color: white;
+    display: inline-block;
+    border: solid 4px black;
+    border-radius: 15px;
+}
+
 .logo {
     width: 20%;
 }
 
 .mainTab {
-    width: 80vw;
+    width: 55vw;
     margin-left: auto;
     margin-right: auto;
     margin-top: 2vw;
@@ -83,6 +83,7 @@ body {
     display: table;
     border: solid grey;
 }
+
 
 /* Beam search visualizations */
 

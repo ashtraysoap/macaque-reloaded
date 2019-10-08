@@ -2,6 +2,9 @@ import React from 'react';
 
 import './style.css';
 
+export { Header };
+
+
 function Header(props) {
     return (
         <div className="header">
@@ -10,5 +13,3 @@ function Header(props) {
         </div>
     );
 }
-
-export { Header };

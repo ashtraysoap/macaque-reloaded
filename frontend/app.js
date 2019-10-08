@@ -54,7 +54,6 @@ class App extends React.Component {
             results: [],
             selectedTab: "About",
         };
-        this.state.defaultTabs = [ "About", "Configure", "Datasets", "Models" ];
     }
 
     handleSelectedTabChange(tabKey) {
@@ -122,20 +121,12 @@ class App extends React.Component {
         const s = this.state;
         const runners = s.runners.map(r => r.name);
         const datasets = s.datasets.map(d => d.name);
-        const defaultTabs = s.defaultTabs;
         const id = s.selectedTab;
         let mainTab = null;
 
-        if (id === "Configure") {
-            // mainTab = <ConfigTab
-            //     addPrepro={this.addPrepro}
-            //     addEncoder={this.addEncoder}
-            //     addModel={this.addModel}
-            //     addRunner={this.addRunner}
-            //     preprocessors={this.state.preprocessors}
-            //     encoders={this.state.encoders}
-            //     models={this.state.models}
-            // />;
+        if (id === "About") {
+            mainTab = <AboutTab/>;
+        } else if (id === "Configure") {
             mainTab = <ConfigTab>
                 <AddDatasetTab
                     onServerResponse={this.addDataset}
@@ -156,8 +147,10 @@ class App extends React.Component {
                     addRunner={this.addRunner}
                 />
             </ConfigTab>
-        } else if (id === "About") {
-            mainTab = <AboutTab />;
+        } else if (id === "Datasets") {
+
+        } else if (id === "Models") {
+
         } else if (runners.includes(id)) {
             const m = s.runners.filter(m => m.name === id)[0];
             mainTab =  <ModelTab model={m} />
@@ -179,9 +172,6 @@ class App extends React.Component {
                 <Header
                     nav={
                         <Navigation
-                            datasetNames={datasets} 
-                            runnerNames={runners} 
-                            defaultNames={defaultTabs}
                             onSelectedChange={this.handleSelectedTabChange}
                         />
                     } />
