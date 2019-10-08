@@ -7,7 +7,7 @@ export { AboutTab };
 
 function AboutTab() {
     return (
-        <div>
+        <div className="mainTab">
             <p>An application for building intuitions about neural network inference and evaluation.</p>
             <i>Created by Samuel Michalik</i>
         </div>

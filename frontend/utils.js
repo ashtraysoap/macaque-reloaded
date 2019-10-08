@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+export { InformativeInput, TableRow, SidePanel, range, zip };
+
 
 function range(n) {
     return [...Array(n).keys()];
@@ -63,6 +65,42 @@ function TableRow(props) {
     );
 }
 
+class SidePanel extends React.Component {
+
+    render() {
+        const p = this.props;
+        let keys = p.keys.map(k => {
+
+            if (k === p.selectedKey) {
+                return (
+                    <div 
+                    key={k} 
+                    onClick={() => p.callback(p.values[p.keys.indexOf(k)])}
+                    className="selected">
+                    {k}
+                    </div>
+                );
+            } else {
+                return (
+                    <div 
+                    key={k} 
+                    onClick={() => p.callback(p.values[p.keys.indexOf(k)])}>
+                    {k}
+                    </div>
+                );
+            }
+        });
+
+        return (
+            <div className="sideTab">
+                <label>{p.label}</label>
+                <hr/>
+                {keys}
+            </div>
+        );
+    }
+}
+
 InformativeInput.propTypes = {
     name: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
@@ -76,4 +114,10 @@ TableRow.propTypes = {
     entries: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
-export { InformativeInput, TableRow, range, zip };
+SidePanel.propTypes = {
+    label: PropTypes.string.isRequired,
+    keys: PropTypes.arrayOf(PropTypes.string).isRequired,
+    values: PropTypes.arrayOf(PropTypes.any).isRequired,
+    callback: PropTypes.func.isRequired,
+    selectedKey: PropTypes.string.isRequired
+}

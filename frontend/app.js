@@ -4,7 +4,7 @@ import React from 'react';
 import { AboutTab } from './aboutTab.js';
 import { AddDatasetTab } from './addDatasetTab.js';
 import { ConfigTab } from './configTab.js';
-import { DatasetTab } from './datasetTab.js';
+import { DatasetsTab } from './datasetsTab.js';
 import { Header } from './header.js';
 import { ModelTab } from './modelTab.js';
 import { Navigation } from './nav.js';
@@ -127,44 +127,44 @@ class App extends React.Component {
         if (id === "About") {
             mainTab = <AboutTab/>;
         } else if (id === "Configure") {
-            mainTab = <ConfigTab>
-                <AddDatasetTab
+            mainTab = <ConfigTab
+                dataset={<AddDatasetTab
                     onServerResponse={this.addDataset}
-                />
-                <AddPreproTab
+                />}
+                prepro={<AddPreproTab
                     addPrepro={this.addPrepro}
-                />
-                <AddEncoderTab
+                />}
+                encoder={<AddEncoderTab
                     addEncoder={this.addEncoder}
-                />
-                <AddModelTab
+                />}
+                model={<AddModelTab
                     addModel={this.addModel}
-                />
-                <AddRunnerTab
+                />}
+                runner={<AddRunnerTab
                     preprocessors={s.preprocessors}
                     encoders={s.encoders}
                     models={s.models}
                     addRunner={this.addRunner}
-                />
-            </ConfigTab>
+                />}
+            />
         } else if (id === "Datasets") {
+
+            mainTab = <DatasetsTab
+                datasets={s.datasets}
+                onResultsResponse={this.addResults}
+                onMetricScoresResponse={this.addMetricScoresToResults}
+                results={s.results}
+                runners={s.runners}
+                metrics={s.metrics}
+            />;
 
         } else if (id === "Models") {
 
         } else if (runners.includes(id)) {
+            
             const m = s.runners.filter(m => m.name === id)[0];
             mainTab =  <ModelTab model={m} />
-        } else if (datasets.includes(id)) {
-            const d = s.datasets.filter(d => d.name === id)[0];
-            const results = s.results.filter(r => r.datasetId === d.id);
-            mainTab = <DatasetTab 
-                dataset={d} 
-                onResultsResponse={this.addResults}
-                onMetricScoresResponse={this.addMetricScoresToResults}
-                results={results}
-                runners={this.state.runners}
-                metrics={this.state.metrics}
-            />
+
         }
 
         return (
@@ -175,9 +175,7 @@ class App extends React.Component {
                             onSelectedChange={this.handleSelectedTabChange}
                         />
                     } />
-                <div className="mainTab">
-                    {mainTab}
-                </div>
+                {mainTab}
             </div>
         );
     }

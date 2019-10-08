@@ -5,6 +5,7 @@
 
 body {
     font-family: sans-serif;
+    font-size: 14pt;
 }
 
 .configTab > div {
@@ -44,8 +45,33 @@ body {
     margin-left: auto;
     margin-right: auto;
     margin-top: 2vw;
-    /* background-color: #ccc; */
 }
+
+/*  */
+
+.sideTab {
+    float: left;
+    width: 12vw;
+    margin-left: 6vw;
+    margin-right: auto;
+    line-height: 2;
+}
+
+.centerTab {
+    width: 55vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.configTab {
+    margin-top: 2vw;
+}
+
+.datasetsTab {
+    margin-top: 2vw;
+}
+
+/*  */
 
 .nav {
     width: 80%;
@@ -61,6 +87,12 @@ body {
     width: 100px;
     height: 40px;
     background: #5081C1;
+}
+
+.sidePanel {
+    width: 15vw;
+    padding-left: 5vw;
+    padding-right: 5vw;
 }
 
 .transparentLayer {

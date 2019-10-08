@@ -22,7 +22,7 @@ function Navigation(props) {
 function NavElement(props) {
     return (
         <div className="navElement" 
-            onClick={ () => props.handleClick(text) }>{props.text}</div>
+            onClick={ () => props.handleClick(props.text) }>{props.text}</div>
     );
 }
 
