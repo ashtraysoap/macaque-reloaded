@@ -1,24 +1,19 @@
 from numpy import mean
+from neuralmonkey.evaluators.bleu import BLEUEvaluator
 
 def mockup_metric(hyps, refs):
     return [100] * len(hyps)
 
 SUPPORTED_METRICS = [
     "BLEU",
-    "BLEU1",
-    "BLEU2",
-    "BLEU3",
-    "BLEU4",
-    "METEOR"
+    "METEOR",
+    "chrf3"
 ]
 
 EVALUATORS = {
-    "BLEU": mockup_metric,
-    "BLEU1": mockup_metric,
-    "BLEU2": mockup_metric,
-    "BLEU3": mockup_metric,
-    "BLEU4": mockup_metric,
-    "METEOR": mockup_metric
+    "BLEU": lambda h, r : BLEUEvaluator().bleu(h, r),
+    "METEOR": mockup_metric,
+    "chrf3": mockup_metric
 }
 
 def evaluate(metric, hypotheses, references):
