@@ -76,7 +76,7 @@ class EvaluateMetricsTab extends React.Component {
     render() {
         return (
             <MultipleSelectionWithButton
-                label="Evaluate"
+                label="Evaluation"
                 keys={this.props.metricNames}
                 values={this.props.metricNames}
                 onSubmit={this.evaluateMetrics}

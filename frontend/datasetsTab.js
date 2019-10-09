@@ -20,7 +20,7 @@ class DatasetsTab extends React.Component {
         const dsNames = p.datasets.map(d => d.name);
 
         return (
-            <div className="datasetsTab">
+            <div>
                 <SidePanel
                     label="Datasets"
                     keys={range(dsNames.length)}
@@ -28,7 +28,7 @@ class DatasetsTab extends React.Component {
                     callback={(key) => this.setState({selected: key})}
                     selectedKey={sel}
                 />
-                <div className="centerTab">
+                <div>
                     {
                         p.datasets.length > 0 &&
                         <DatasetTab

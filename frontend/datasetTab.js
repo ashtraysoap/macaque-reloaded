@@ -83,12 +83,8 @@ class DatasetTab extends React.Component {
         elems = elems.map(e => <DataInstanceEntry key={e.id} dataInstance={e} handleClick={() => this.showView(e.id)}/>);
 
         return (
-            <div style={{display: "table"}}>
-                <div style={{display: "table-cell"}}>
-                    {elems}
-                    {view}
-                </div>
-                <div>
+            <div>
+                <div className="datasetRight">
                     <ScoreTable 
                         results={this.props.results}
                         runnerNames={this.props.runners.map(r => r.name)}
@@ -100,6 +96,11 @@ class DatasetTab extends React.Component {
                         onResultsResponse={this.props.onResultsResponse}
                         onMetricScoresResponse={this.props.onMetricScoresResponse}
                     />
+                </div>
+
+                <div className="datasetCenter">
+                    {elems}
+                    {view}
                 </div>
             </div>
         );
