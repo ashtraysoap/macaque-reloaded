@@ -15,23 +15,61 @@ class ScoreTable extends React.Component {
             return null;
         }
 
-        const rows = res.map(r =>
-            <tr key={r.runId}>
-                <th>{r.runId}</th>
-                {
-                    Object.values(r.scores).map(s =>
-                        <td key={s}>
-                            {s.greedy.mean}
-                        </td>
-                    )
+        let tHead = ["Runs"].concat(this.props.metrics);
+        tHead = tHead.map(x => <th>{x}</th>);
+
+        let rows = [];
+        for (let i = 0; i < res.length; i++) {
+            console.log(i, res[i]);
+            const runId = res[i].runId;
+            const runner = this.props.runners[res[i].runnerId].name;
+            const greedy = res[i].captions[0].greedyCaption;
+            const bs = res[i].captions[0].beamSearchCaptions;
+            // If a greedy caption is present...
+            if (greedy !== undefined) {
+                const scores = this.props.metrics.map(m => {
+                    if (res[i].scores[m] !== undefined) {
+                        const mean = res[i].scores[m].greedy.mean
+                        return Math.round(100 * mean ) / 100;
+                    } else {
+                        return "-";
+                    }
+                });
+                const s = `${runId}(${runner}), greedy`;
+                rows.push([s].concat(scores));
+            }
+            if (bs !== undefined) {
+                for (let j = 0; j < bs.length; j++) {
+                    const scores = this.props.metrics.map(m => {
+                        if (res[i].scores[m] !== undefined) {
+                            const mean = res[i].scores[m].beamSearch[j].mean;
+                            return Math.round(mean * 100) / 100;
+                        } else {
+                            return "-";
+                        }
+                    });
+                    const s = `${runId}(${runner}), beam search ${j}`;
+                    rows.push([s].concat(scores));
                 }
-            </tr>
-        );
+            }
+        }
+
+        console.log("rows", rows);
+
+        rows = rows.map(r => {
+            let xs = r.map(x => <td>{x}</td>);
+            return <tr>{xs}</tr>;
+        });
 
         return (
             <div>
                 <table>
-                    {rows}
+                    <thead>
+                        <tr>{tHead}</tr>
+                    </thead>
+                    <tbody>
+                        {rows}
+                    </tbody>
                 </table>
             </div>
         );
@@ -48,7 +86,23 @@ ScoreTable.propTypes = {
             beamSearchCaptions: PropTypes.arrayOf(
                 PropTypes.arrayOf(PropTypes.string))
         })),
-        // scores
+        scores: PropTypes.object
     })).isRequired,
-    runnerNames: PropTypes.arrayOf(PropTypes.string).isRequired
+    runners: PropTypes.arrayOf(PropTypes.object).isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired
 };
+
+/*
+
+scores = {
+    BLEU: {
+        greedy: { scores: [...], mean: ... },
+        beamSearch: [
+            { scores: [...], mean: ... },
+            ...
+        ]
+    },
+    ...
+}
+
+*/

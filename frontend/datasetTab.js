@@ -67,34 +67,31 @@ class DatasetTab extends React.Component {
     }
 
     render() {
-        const results = this.props.results;
+        const p = this.props;
+        const results = p.results;
         const idx = this.state.elemIdx;
         console.log(results);
         const selectedResults = this.getResultsForElement(results, idx);
         const view = this.showingElementView ? <DataInstanceView 
             dataInstance={this.getInstance()} 
-            dataset={this.props.dataset.id}
+            dataset={p.dataset.id}
             results={selectedResults}
             onClick={this.closeView}
-            runners={this.props.runners}
+            runners={p.runners}
             /> : null;
 
-        let elems = this.props.dataset.elements;
+        let elems = p.dataset.elements;
         elems = elems.map(e => <DataInstanceEntry key={e.id} dataInstance={e} handleClick={() => this.showView(e.id)}/>);
 
         return (
             <div>
                 <div className="datasetRight">
-                    <ScoreTable 
-                        results={this.props.results}
-                        runnerNames={this.props.runners.map(r => r.name)}
-                    />
                     <DatasetMenu 
-                        dataset={this.props.dataset.id}
-                        runnerNames={this.props.runners.map(r => r.name)}
-                        metricNames={this.props.metrics}
-                        onResultsResponse={this.props.onResultsResponse}
-                        onMetricScoresResponse={this.props.onMetricScoresResponse}
+                        dataset={p.dataset.id}
+                        runnerNames={p.runners.map(r => r.name)}
+                        metricNames={p.metrics}
+                        onResultsResponse={p.onResultsResponse}
+                        onMetricScoresResponse={p.onMetricScoresResponse}
                     />
                 </div>
 
@@ -102,6 +99,12 @@ class DatasetTab extends React.Component {
                     {elems}
                     {view}
                 </div>
+
+                <ScoreTable 
+                        results={p.results}
+                        runners={p.runners}
+                        metrics={p.metrics}
+                    />
             </div>
         );
     }

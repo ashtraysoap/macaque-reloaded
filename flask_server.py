@@ -155,10 +155,10 @@ def evaluate_metric(dataset, metric):
             'mean': mean
         }
         # evaluate beam search captions from all beams
-        results[r.runId]['beam_search'] = []
+        results[r.runId]['beamSearch'] = []
         for hyps in bs_caps:
             scores, mean = evaluate(metric, hyps, refs)
-            results[r.runId]['beam_search'].append({
+            results[r.runId]['beamSearch'].append({
                 'scores': scores,
                 'mean': mean
             })

@@ -159,12 +159,6 @@ class App extends React.Component {
         } else if (id === "Models") {
         
         }
-        // } else if (runners.includes(id)) {
-            
-        //     const m = s.runners.filter(m => m.name === id)[0];
-        //     mainTab =  <ModelTab model={m} />
-
-        // }
 
         return (
             <div>
