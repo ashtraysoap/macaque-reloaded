@@ -36,9 +36,9 @@ class ConfigTab extends React.Component {
             <div className="configTab">
                 <SidePanel
                     label="Configuration"
-                    keys={["add dataset", "add preprocessor", "add encoder", "add model", "add runner"]}
-                    values={["dataset", "prepro", "encoder", "model", "runner"]}
-                    callback={(val) => this.setState({selected: val})}
+                    keys={["dataset", "prepro", "encoder", "model", "runner"]}
+                    values={["add dataset", "add preprocessor", "add encoder", "add model", "add runner"]}
+                    callback={(key) => this.setState({selected: key})}
                     selectedKey={sel}
                 />
                 <div className="centerTab">

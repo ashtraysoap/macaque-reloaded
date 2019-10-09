@@ -75,17 +75,17 @@ class SidePanel extends React.Component {
                 return (
                     <div 
                     key={k} 
-                    onClick={() => p.callback(p.values[p.keys.indexOf(k)])}
+                    onClick={() => p.callback(k)}
                     className="selected">
-                    {k}
+                    {p.values[p.keys.indexOf(k)]}
                     </div>
                 );
             } else {
                 return (
                     <div 
                     key={k} 
-                    onClick={() => p.callback(p.values[p.keys.indexOf(k)])}>
-                    {k}
+                    onClick={() => p.callback(k)}>
+                    {p.values[p.keys.indexOf(k)]}
                     </div>
                 );
             }

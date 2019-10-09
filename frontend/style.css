@@ -61,6 +61,18 @@ body {
     line-height: 2;
 }
 
+.sideTab > div {
+    color: grey;
+}
+
+.sideTab > div.selected {
+    color: black;
+}
+
+.sideTab > div:hover {
+    cursor: pointer;
+}
+
 .centerTab {
     width: 55vw;
     margin-left: auto;

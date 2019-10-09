@@ -23,10 +23,10 @@ class DatasetsTab extends React.Component {
             <div className="datasetsTab">
                 <SidePanel
                     label="Datasets"
-                    keys={dsNames}
-                    values={range(dsNames.length)}
-                    callback={(val) => this.setState({selected: val})}
-                    selectedKey={dsNames[sel]}
+                    keys={range(dsNames.length)}
+                    values={dsNames}
+                    callback={(key) => this.setState({selected: key})}
+                    selectedKey={sel}
                 />
                 <div className="centerTab">
                     {
