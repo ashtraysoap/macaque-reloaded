@@ -53,6 +53,26 @@ body {
 
 /*  */
 
+.multiSel {
+    line-height: 2;
+}
+
+.multiSel  div {
+    color: grey;
+}
+
+.multiSel  div.selected {
+    color: black;
+}
+
+.multiSel > label {
+    color: grey;
+}
+
+.multiSel > label.selected {
+    color: black;
+}
+
 .sideTab {
     float: left;
     width: 12vw;

@@ -29,6 +29,9 @@ def start_server(macaque_state):
 
 @APP.route('/', methods=['GET'])
 def init():
+    # TODO: tu poriesit reload
+    # macaque_state ma property `initialised`
+    # pri dalsich requestoch vrati home-page
     return render_template('index.html')
 
 @APP.route('/add_dataset', methods=['POST'])

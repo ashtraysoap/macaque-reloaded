@@ -88,7 +88,7 @@ class DatasetTab extends React.Component {
                     {elems}
                     {view}
                 </div>
-                <div style={{display: "table-cell", border: "solid black"}}>
+                <div>
                     <ScoreTable 
                         results={this.props.results}
                         runnerNames={this.props.runners.map(r => r.name)}
