@@ -50,7 +50,7 @@ class App extends React.Component {
             encoders: [],
             models: [],
             runners: [],
-            metrics: [ "BLEU1", "BLEU2", "BLEU3", "BLEU4", "METEOR" ],
+            metrics: [ "BLEU", "METEOR", "chrf3" ],
             results: [],
             selectedTab: "About",
         };

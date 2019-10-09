@@ -20,7 +20,7 @@ class DatasetsTab extends React.Component {
         const dsNames = p.datasets.map(d => d.name);
 
         return (
-            <div>
+            <div className="datasetsTab">
                 <SidePanel
                     label="Datasets"
                     keys={range(dsNames.length)}
