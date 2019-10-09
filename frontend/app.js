@@ -119,8 +119,6 @@ class App extends React.Component {
 
     render() {
         const s = this.state;
-        const runners = s.runners.map(r => r.name);
-        const datasets = s.datasets.map(d => d.name);
         const id = s.selectedTab;
         let mainTab = null;
 
@@ -151,21 +149,22 @@ class App extends React.Component {
 
             mainTab = <DatasetsTab
                 datasets={s.datasets}
-                onResultsResponse={this.addResults}
-                onMetricScoresResponse={this.addMetricScoresToResults}
                 results={s.results}
                 runners={s.runners}
                 metrics={s.metrics}
+                onResultsResponse={this.addResults}
+                onMetricScoresResponse={this.addMetricScoresToResults}
             />;
 
         } else if (id === "Models") {
-
-        } else if (runners.includes(id)) {
-            
-            const m = s.runners.filter(m => m.name === id)[0];
-            mainTab =  <ModelTab model={m} />
-
+        
         }
+        // } else if (runners.includes(id)) {
+            
+        //     const m = s.runners.filter(m => m.name === id)[0];
+        //     mainTab =  <ModelTab model={m} />
+
+        // }
 
         return (
             <div>

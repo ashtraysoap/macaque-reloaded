@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { AddSomethingTab } from './addSomethingTab.js';
+
 export { AddRunnerTab };
 
 
@@ -60,8 +62,17 @@ class AddRunnerTab extends React.Component {
         };
 
         return (
+            <AddSomethingTab>
             <div>
                 <label>Runner</label>
+                <br/>
+                <label>name</label>
+                <input 
+                    type="text"
+                    name="name"
+                    value={s.name}
+                    onChange={e => this.setState({ name: e.target.value })}
+                />
                 <br/>
                 <label>preprocessor</label>
                 <select value={s.prepro === null ? "none" : ps[s.prepro]} onChange={setPrepro}>
@@ -81,15 +92,9 @@ class AddRunnerTab extends React.Component {
                     { ms.map(m => <option value={m} key={m}>{m}</option>) }
                 </select>
                 <br/>
-                <input 
-                    type="text"
-                    name="name"
-                    value={s.name}
-                    onChange={e => this.setState({ name: e.target.value })}
-                />
-                <br/>
                 <button onClick={this.addRunner}>Add run configuration</button>
             </div>
+            </AddSomethingTab>
         );
     }
 }

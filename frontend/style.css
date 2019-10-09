@@ -8,6 +8,10 @@ body {
     font-size: 14pt;
 }
 
+.addSomethingTab {
+    line-height: 2;
+}
+
 .configTab > div {
     margin-bottom: 3vh;
 }

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { InformativeInput } from './utils.js';
-
+import { AddSomethingTab } from './addSomethingTab.js';
 
 class AddDatasetTab extends React.Component {
     constructor(props) {
@@ -70,36 +70,38 @@ class AddDatasetTab extends React.Component {
         );
 
         return (
-            <div>
-                <label>Dataset</label>
-                <InformativeInput
-                    name="dataset name"
-                    value={s.name}
-                    optional={false}
-                    hint="A name for the dataset."
-                    handleChange={(e) => this.handleChange("name", e.target.value)}
-                />
-                <InformativeInput
-                    name="path prefix"
-                    value={s.prefix}
-                    optional={false}
-                    hint="The path to the directory containing dataset element files."
-                    handleChange={(e) => this.handleChange("prefix", e.target.value)}
-                />
-                <InformativeInput
-                    name="sources"
-                    value={s.sources}
-                    optional={true}
-                    hint="The path to a file containing a list of dataset elements
-                        to be used. Each line should contain one element given as its
-                        corresponding filename."
-                    handleChange={(e) => this.handleChange("sources", e.target.value)}
-                />
-                {refs}
-                <button onClick={this.addReference}>add reference</button>
-                <br/>
-                <button onClick={this.handleDatasetSubmit}>load dataset</button>
-            </div>
+            <AddSomethingTab>
+                <div>
+                    <label>Dataset</label>
+                    <InformativeInput
+                        name="dataset name"
+                        value={s.name}
+                        optional={false}
+                        hint="A name for the dataset."
+                        handleChange={(e) => this.handleChange("name", e.target.value)}
+                    />
+                    <InformativeInput
+                        name="path prefix"
+                        value={s.prefix}
+                        optional={false}
+                        hint="The path to the directory containing dataset element files."
+                        handleChange={(e) => this.handleChange("prefix", e.target.value)}
+                    />
+                    <InformativeInput
+                        name="sources"
+                        value={s.sources}
+                        optional={true}
+                        hint="The path to a file containing a list of dataset elements
+                            to be used. Each line should contain one element given as its
+                            corresponding filename."
+                        handleChange={(e) => this.handleChange("sources", e.target.value)}
+                    />
+                    {refs}
+                    <button onClick={this.addReference}>add reference</button>
+                    <br/>
+                    <button onClick={this.handleDatasetSubmit}>load dataset</button>
+                </div>
+            </AddSomethingTab>
         );
     }
 }

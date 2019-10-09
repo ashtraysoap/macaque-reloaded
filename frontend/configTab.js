@@ -1,22 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { AddPreproTab } from './addPreproTab.js';
-import { AddEncoderTab } from './addEncoderTab.js';
-import { AddModelTab } from './newAddModelTab.js';
-import { AddRunnerTab } from './addRunnerTab.js';
 import { SidePanel } from './utils.js';
 
 export { ConfigTab };
 
-
-// function ConfigTab(props) {
-//     return (
-//         <div className="configTab">
-//             {props.children}
-//         </div>
-//     )
-// }
 
 class ConfigTab extends React.Component {
     constructor(props) {
@@ -48,7 +36,7 @@ class ConfigTab extends React.Component {
             <div className="configTab">
                 <SidePanel
                     label="Configuration"
-                    keys={["add dataset", "add preprocessing", "add encoder", "add model", "add runner"]}
+                    keys={["add dataset", "add preprocessor", "add encoder", "add model", "add runner"]}
                     values={["dataset", "prepro", "encoder", "model", "runner"]}
                     callback={(val) => this.setState({selected: val})}
                     selectedKey={sel}

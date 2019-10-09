@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { InformativeInput } from './utils.js';
+import { AddSomethingTab } from './addSomethingTab.js';
 
 export { AddEncoderTab };
 
@@ -73,24 +74,26 @@ class AddEncoderTab extends React.Component {
         }
 
         return (
-            <div>
-                <label>Encoder</label>
-                <InformativeInput name="name" value={this.state.name} 
-                    optional={false}
-                    handleChange={(e) => { this.setState({ name: e.target.value }); }}
-                />
-                <form>
-                    <label>type</label>
-                    <select value={type} 
-                        onChange={(e) => { this.setState({ type: e.target.value}); }} >
-                        <option value='plugin' >plugin</option>
-                        <option value='keras' >Keras</option>
-                        <option value='neuralmonkey' >Neural Monkey / TensorFlow Slim</option>
-                    </select>
-                </form>
-                {innerForm}
-                <button onClick={this.addEncoder}>Add encoder</button>
-            </div>
+            <AddSomethingTab>
+                <div>
+                    <label>Encoder</label>
+                    <InformativeInput name="name" value={this.state.name} 
+                        optional={false}
+                        handleChange={(e) => { this.setState({ name: e.target.value }); }}
+                    />
+                    <form>
+                        <label>type</label>
+                        <select value={type} 
+                            onChange={(e) => { this.setState({ type: e.target.value}); }} >
+                            <option value='plugin' >plugin</option>
+                            <option value='keras' >Keras</option>
+                            <option value='neuralmonkey' >Neural Monkey / TensorFlow Slim</option>
+                        </select>
+                    </form>
+                    {innerForm}
+                    <button onClick={this.addEncoder}>Add encoder</button>
+                </div>
+            </AddSomethingTab>
         );
     }
 }

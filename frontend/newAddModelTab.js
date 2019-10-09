@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { InformativeInput } from './utils.js';
+import { AddSomethingTab } from './addSomethingTab.js';
 
 export { AddModelTab };
 
@@ -67,31 +68,33 @@ class AddModelTab extends React.Component {
         }
 
         return (
-            <div>
-                <label>Model</label>
-                <InformativeInput name="name" value={this.state.name} 
-                    optional={false}
-                    handleChange={(e) => { this.setState({ name: e.target.value }); }}
-                />
-                <form>
-                    <label>runs on</label>
-                    <select value={this.state.input}
-                        onChange={(e) => { this.setState({ input: e.target.value }); }}>
-                        <option value='features' >features</option>
-                        <option value='images' >images</option>
-                    </select>
-                </form>
-                <form>
-                    <label>type</label>
-                    <select value={type} 
-                        onChange={(e) => { this.setState({ type: e.target.value}); }} >
-                        <option value='plugin' >plugin</option>
-                        <option value='neuralmonkey' >Neural Monkey</option>
-                    </select>
-                </form>
-                {innerForm}
-                <button onClick={this.addModel}>Add model</button>
-            </div>
+            <AddSomethingTab>
+                <div>
+                    <label>Model</label>
+                    <InformativeInput name="name" value={this.state.name} 
+                        optional={false}
+                        handleChange={(e) => { this.setState({ name: e.target.value }); }}
+                    />
+                    <form>
+                        <label>runs on</label>
+                        <select value={this.state.input}
+                            onChange={(e) => { this.setState({ input: e.target.value }); }}>
+                            <option value='features' >features</option>
+                            <option value='images' >images</option>
+                        </select>
+                    </form>
+                    <form>
+                        <label>type</label>
+                        <select value={type} 
+                            onChange={(e) => { this.setState({ type: e.target.value}); }} >
+                            <option value='plugin' >plugin</option>
+                            <option value='neuralmonkey' >Neural Monkey</option>
+                        </select>
+                    </form>
+                    {innerForm}
+                    <button onClick={this.addModel}>Add model</button>
+                </div>
+            </AddSomethingTab>
         );
     }
 }

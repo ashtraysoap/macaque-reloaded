@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { InformativeInput } from './utils.js';
+import { AddSomethingTab } from './addSomethingTab.js';
 
 export { AddPreproTab };
 
@@ -39,6 +40,7 @@ class AddPreproTab extends React.Component {
     render() {
 
         return (
+            <AddSomethingTab>
             <div>
                 <label>Preprocessor</label>
                 <InformativeInput name="name" value={this.state.name} 
@@ -64,6 +66,7 @@ class AddPreproTab extends React.Component {
                 <br/>
                 <button onClick={this.addPrepro}>Add preprocessor</button>
             </div>
+            </AddSomethingTab>
         );
     }
 }
