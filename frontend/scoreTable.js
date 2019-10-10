@@ -11,15 +11,20 @@ class ScoreTable extends React.Component {
     render() {
         const res = this.props.results;
        
-        if (res.length === 0 || res[0].scores === undefined) {
+        if (res.length === 0) {
             return null;
         }
 
-        let tHead = ["Runs"].concat(this.props.metrics);
+        if (res.filter(r => r.scores !== undefined).length === 0) {
+            return null;
+        }
+
+        let tHead = ["Run", "Runner", "Hypothesis"].concat(this.props.metrics);
         tHead = tHead.map(x => <th>{x}</th>);
 
         let rows = [];
         for (let i = 0; i < res.length; i++) {
+            if (res[i].scores === undefined) continue;
             console.log(i, res[i]);
             const runId = res[i].runId;
             const runner = this.props.runners[res[i].runnerId].name;
@@ -35,8 +40,8 @@ class ScoreTable extends React.Component {
                         return "-";
                     }
                 });
-                const s = `${runId}(${runner}), greedy`;
-                rows.push([s].concat(scores));
+                const s = [runId, runner, "greedy"];
+                rows.push(s.concat(scores));
             }
             if (bs !== undefined) {
                 for (let j = 0; j < bs.length; j++) {
@@ -48,8 +53,8 @@ class ScoreTable extends React.Component {
                             return "-";
                         }
                     });
-                    const s = `${runId}(${runner}), beam search ${j}`;
-                    rows.push([s].concat(scores));
+                    const s = [runId, runner, `beam search ${j}`];
+                    rows.push(s.concat(scores));
                 }
             }
         }
