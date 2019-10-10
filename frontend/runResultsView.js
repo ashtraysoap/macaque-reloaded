@@ -22,6 +22,7 @@ class RunResultsView extends React.Component {
         this.state = {
             showAlignments: false,
             showBSOut: false,
+            showMetrics: false,
             captionId: cid
         };
     }
@@ -29,6 +30,11 @@ class RunResultsView extends React.Component {
     render() {
         const caption = this.getSelectedCaption();
         const cid = this.state.captionId;
+        const switchState = b => {
+            let s = this.state;
+            s[b] = !s[b];
+            this.setState(s);
+        };
 
         let toks = zip(caption, range(caption.length));
         toks = toks.map(([token, id]) => <CaptionToken 
@@ -44,10 +50,13 @@ class RunResultsView extends React.Component {
                 instanceId={this.props.instanceId}
                 captionId={cid}
                 fetchAttentionMap={this.props.fetchAttentionMap}
-            />
+            />;
 
         let bsView = !this.state.showBSOut ? null :
-            <BeamSearchOutputView />
+            <BeamSearchOutputView />;
+
+        let metrics = !this.state.showMetrics ? null :
+            <div></div>;
 
         return (
             <div>
@@ -62,18 +71,23 @@ class RunResultsView extends React.Component {
                     </div>
                 </div>
                 <div id="alignments" style={{border: "solid pink"}}>
-                    <span onClick={() => this.setState({ showAlignments: !this.state.showAlignments })}>
+                    <span onClick={() => switchState('showAlignments')}>
                         Alignments
                     </span>
                     {attTab}
                 </div>
                 <div id="beamSearch" style={{border: "solid #5081C1"}}>
-                    <span onClick={() => this.setState({ showBSOut: !this.state.showBSOut })}>
+                    <span onClick={() => switchState('showBSOut')}>
                         Beam Search Output Graph
                     </span>
                     {bsView}
                 </div>
-                <div id="metrics" style={{border: "solid purple"}}>Metrics Table</div>
+                <div id="metrics" style={{border: "solid purple"}}>
+                    <span onClick={() => switchState('showMetrics')}>
+                        Metrics Table
+                    </span>
+                    {metrics}
+                </div>
             </div>
         );
     }

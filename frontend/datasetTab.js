@@ -3,7 +3,7 @@ import React from 'react';
 
 import { DataInstanceView } from './dataInstanceView.js';
 import { DatasetMenu } from './datasetMenu.js';
-import { ScoreTable } from './scoreTable.js';
+import { Scores } from './scoreTable.js';
 import { TableRow } from './utils.js';
 
 import './style.css';
@@ -93,18 +93,17 @@ class DatasetTab extends React.Component {
                         onResultsResponse={p.onResultsResponse}
                         onMetricScoresResponse={p.onMetricScoresResponse}
                     />
+                    <Scores
+                        results={p.results}
+                        runners={p.runners}
+                        metrics={p.metrics}    
+                    />
                 </div>
 
                 <div className="datasetCenter">
                     {elems}
                     {view}
                 </div>
-
-                <ScoreTable 
-                        results={p.results}
-                        runners={p.runners}
-                        metrics={p.metrics}
-                    />
             </div>
         );
     }

@@ -1,13 +1,46 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export { ScoreTable };
+export { ScoreTable, Scores };
 
-class ScoreTable extends React.Component {
-    constructor(props) {
+class Scores extends React.Component {
+    constructor(props){
         super(props);
+        this.state = {
+            showing: false
+        };
     }
 
+    render() {
+        const p = this.props;
+
+        if (p.results.filter(r => r.scores !== undefined).length === 0) {
+            // no scores whatsoever
+            return null;
+        }
+
+        const view = !this.state.showing ? null :
+            <div className="transparentLayer" onClick={() => this.setState({showing: false})}>
+                <div className="instanceView" onClick={(e) => e.stopPropagation()}>
+                    <ScoreTable
+                        results={p.results}
+                        runners={p.runners}
+                        metrics={p.metrics}
+                    />
+                </div>
+            </div>
+
+        return (
+            <div>
+                <label onClick={() => this.setState({showing: true})}>Scores</label>
+                <hr/>
+                {view}
+            </div>
+        );
+    }
+}
+
+class ScoreTable extends React.Component {
     render() {
         const res = this.props.results;
        
@@ -93,6 +126,12 @@ ScoreTable.propTypes = {
         })),
         scores: PropTypes.object
     })).isRequired,
+    runners: PropTypes.arrayOf(PropTypes.object).isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired
+};
+
+Scores.propTypes = {
+    results: PropTypes.arrayOf(PropTypes.object).isRequired,
     runners: PropTypes.arrayOf(PropTypes.object).isRequired,
     metrics: PropTypes.arrayOf(PropTypes.string).isRequired
 };
