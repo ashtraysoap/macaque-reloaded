@@ -1,4 +1,4 @@
-from numpy import mean
+from numpy import mean as np_mean
 from neuralmonkey.evaluators.bleu import BLEUEvaluator
 
 def mockup_metric(hyps, refs):
@@ -21,5 +21,8 @@ def evaluate(metric, hypotheses, references):
         raise RuntimeError("Unsupported metric type", metric)
 
     evaluator = EVALUATORS[metric]
-    scores = evaluator(hypotheses, references)
-    return scores, mean(scores)
+    # evaluate the metric for each insance separately
+    scores = [evaluator(h, r) for (h, r) in zip(hypotheses, references)]
+    # TODO: check that mean == numpy.mean(scores)
+    mean = evaluator(hypotheses, references)
+    return scores, mean

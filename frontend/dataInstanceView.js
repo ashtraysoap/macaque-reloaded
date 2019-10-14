@@ -56,6 +56,8 @@ class DataInstanceView extends React.Component {
             instanceId={instance.id}
             onCaptionClick={this.onCaptionClick}
             fetchAttentionMap={this.fetchAttentionMap}
+            runners={this.props.runners}
+            metrics={this.props.metrics}
         />;
 
         return (
@@ -142,7 +144,8 @@ DataInstanceView.propTypes = {
     )).isRequired,
     dataset: PropTypes.number.isRequired,
     onClick: PropTypes.func.isRequired,
-    runners: PropTypes.array.isRequired
+    runners: PropTypes.arrayOf(PropTypes.object).isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 RunToggler.propTypes = {

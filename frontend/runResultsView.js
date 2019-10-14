@@ -4,6 +4,7 @@ import React from 'react';
 import { range, zip } from './utils.js';
 import { AlignmentsTab } from './alignmentsTab.js';
 import { BeamSearchOutputView } from './beamSearchOutputView.js'
+import { ElementScoreTable } from './scoreTable.js';
 
 export { RunResultsView };
 
@@ -56,7 +57,10 @@ class RunResultsView extends React.Component {
             <BeamSearchOutputView />;
 
         let metrics = !this.state.showMetrics ? null :
-            <div></div>;
+            <ElementScoreTable
+               scores={this.props.results.scores} 
+               metrics={this.props.metrics}
+            />;
 
         return (
             <div>
@@ -154,7 +158,9 @@ RunResultsView.propTypes = {
     ).isRequired,
     instanceId: PropTypes.number.isRequired,
     onCaptionClick: PropTypes.func.isRequired,
-    fetchAttentionMap: PropTypes.func.isRequired
+    fetchAttentionMap: PropTypes.func.isRequired,
+    runners: PropTypes.arrayOf(PropTypes.object).isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 CaptionToggler.propTypes = {

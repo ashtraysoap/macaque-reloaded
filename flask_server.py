@@ -134,11 +134,6 @@ def load_attention_map_for_original_img(run, element, caption, token):
 @APP.route('/evaluate_metric/<int:dataset>/<string:metric>')
 def evaluate_metric(dataset, metric):
 
-    def collect_hyps(run_results):
-        gr_caps = [r['greedy']['caption'] for r in run_results.results]
-        bs_caps = [r['beam_search']['captions'] for r in run_results.results]
-        return (gr_caps, bs_caps)
-
     # TODO: check that the dataset has reference captions
     run_res = filter(lambda x: x.datasetId == dataset, STATE.run_results)
     ds = STATE.datasets[dataset]
@@ -148,7 +143,11 @@ def evaluate_metric(dataset, metric):
     for r in run_res:
         results[r.runId] = {}
         # evaluate greedy captions
-        gr_caps, bs_caps = collect_hyps(r)
+        gr_caps, bs_caps = _collect_hyps(r)
+        
+        # do something with this
+        bs_caps = _transpose_bs_hyps(bs_caps)
+
         scores, mean = evaluate(metric, gr_caps, refs)
         results[r.runId]['greedy'] = {
             'scores': scores,
@@ -167,6 +166,24 @@ def evaluate_metric(dataset, metric):
 
 def _get_json_from_request():
     return request.get_json(force=True)
+
+def _collect_hyps(run_results):
+    gr_caps = [r['greedy']['caption'] for r in run_results.results]
+    bs_caps = [r['beam_search']['captions'] for r in run_results.results]
+    return (gr_caps, bs_caps)
+
+def _transpose_bs_hyps(hyps):
+    if hyps is None:
+        return None
+    if len(hyps) == 0:
+        return []
+    beam_size = len(hyps[0])
+    res = []
+    res = [[] for i in range(beam_size)]
+    for elem in hyps:
+        for i in range(beam_size):
+            res[i].append(elem[i])
+    return res
 
 def head(xs):
     xs = list(xs)

@@ -78,6 +78,7 @@ class DatasetTab extends React.Component {
             results={selectedResults}
             onClick={this.closeView}
             runners={p.runners}
+            metrics={p.metrics}
             /> : null;
 
         let elems = p.dataset.elements;
@@ -109,14 +110,35 @@ class DatasetTab extends React.Component {
     }
 
     getResultsForElement(results, elemId) {
+        console.log("getResultsForElement", results);
         return results.map(r => {
             return {
                 runId: r.runId,
                 runnerId: r.runnerId,
                 datasetId: r.datasetId,
-                captions: r.captions[elemId]
+                captions: r.captions[elemId],
+                scores: this.getScoresForElement(r.scores, elemId)
             }
         });
+    }
+
+    getScoresForElement(scores, elemId) {
+        console.log("getScoresForElement", scores);
+        let results = {};
+
+        for (let m in scores) {
+
+            results[m] = {
+                greedy: scores[m].greedy.scores[elemId]
+            };
+            
+            results[m].beamSearch = [];
+
+            for (let h of scores[m].beamSearch) {
+                results[m].beamSearch.push(h.scores[elemId]);
+            }
+        }
+        return results;
     }
 
 }

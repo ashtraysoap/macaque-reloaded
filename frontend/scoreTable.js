@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export { ScoreTable, Scores };
+export { ScoreTable, Scores, ElementScoreTable };
 
 class Scores extends React.Component {
     constructor(props){
@@ -42,8 +42,10 @@ class Scores extends React.Component {
 
 class ScoreTable extends React.Component {
     render() {
+        const p = this.props;
         const res = this.props.results;
-       
+        console.log(p.results);
+
         if (res.length === 0) {
             return null;
         }
@@ -52,7 +54,10 @@ class ScoreTable extends React.Component {
             return null;
         }
 
-        let tHead = ["Run", "Runner", "Hypothesis"].concat(this.props.metrics);
+        let tHead = ["Hypothesis"].concat(p.metrics);    
+        if (!p.onlyHyps) {
+            tHead.unshift("Run", "Runner");
+        }
         tHead = tHead.map(x => <th>{x}</th>);
 
         let rows = [];
@@ -60,12 +65,12 @@ class ScoreTable extends React.Component {
             if (res[i].scores === undefined) continue;
             console.log(i, res[i]);
             const runId = res[i].runId;
-            const runner = this.props.runners[res[i].runnerId].name;
+            const runner = p.runners[res[i].runnerId].name;
             const greedy = res[i].captions[0].greedyCaption;
             const bs = res[i].captions[0].beamSearchCaptions;
             // If a greedy caption is present...
             if (greedy !== undefined) {
-                const scores = this.props.metrics.map(m => {
+                const scores = p.metrics.map(m => {
                     if (res[i].scores[m] !== undefined) {
                         const mean = res[i].scores[m].greedy.mean
                         return Math.round(100 * mean ) / 100;
@@ -73,12 +78,12 @@ class ScoreTable extends React.Component {
                         return "-";
                     }
                 });
-                const s = [runId, runner, "greedy"];
+                const s = p.onlyHyps ? ["greedy"] : [runId, runner, "greedy"];
                 rows.push(s.concat(scores));
             }
             if (bs !== undefined) {
                 for (let j = 0; j < bs.length; j++) {
-                    const scores = this.props.metrics.map(m => {
+                    const scores = p.metrics.map(m => {
                         if (res[i].scores[m] !== undefined) {
                             const mean = res[i].scores[m].beamSearch[j].mean;
                             return Math.round(mean * 100) / 100;
@@ -86,7 +91,8 @@ class ScoreTable extends React.Component {
                             return "-";
                         }
                     });
-                    const s = [runId, runner, `beam search ${j}`];
+                    const s = p.onlyHyps ? [`beam ${j}`] : 
+                        [runId, runner, `beam ${j}`];
                     rows.push(s.concat(scores));
                 }
             }
@@ -114,6 +120,63 @@ class ScoreTable extends React.Component {
     }
 }
 
+function ElementScoreTable(props) {
+
+        // in case no scores are present
+        if (Object.keys(props.scores).length === 0)
+            return null;
+
+        const metrics = props.metrics;
+        const scores = props.scores;
+        const beamSize = scores[Object.keys(scores)[0]].beamSearch.length;
+        let tHead = ["Hypothesis"].concat(metrics);
+        let rows = [];
+
+        tHead = tHead.map(x => <th>{x}</th>);
+
+        let r = ["greedy"];
+        for (let m of metrics) {
+            if (scores[m] === undefined) {
+                r.push("-");
+            } else {
+                const c = scores[m].greedy;
+                c === undefined ? r.push("-") : r.push(c);
+            }
+        }
+        rows.push(r);
+
+        for (let i = 0; i < beamSize; i++) {
+            let r = [`beam ${i}`];
+            for (let m of metrics) {
+                if (scores[m] === undefined) {
+                    r.push("-");
+                } else {
+                    const c = scores[m].beamSearch[i];
+                    c === undefined ? r.push("-") : r.push(c);
+                }
+            }
+            rows.push(r);
+        }
+
+        rows = rows.map(r => {
+            let xs = r.map(x => <td>{x}</td>);
+            return <tr>{xs}</tr>;
+        });
+
+        return (
+            <div>
+                <table>
+                    <thead>
+                        <tr>{tHead}</tr>
+                    </thead>
+                    <tbody>
+                        {rows}
+                    </tbody>
+                </table>
+            </div>
+        );
+}
+
 ScoreTable.propTypes = {
     results: PropTypes.arrayOf(PropTypes.shape({
         runId: PropTypes.number,
@@ -127,13 +190,23 @@ ScoreTable.propTypes = {
         scores: PropTypes.object
     })).isRequired,
     runners: PropTypes.arrayOf(PropTypes.object).isRequired,
-    metrics: PropTypes.arrayOf(PropTypes.string).isRequired
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
+    onlyHyps: PropTypes.bool
+};
+
+ScoreTable.defaultProps = {
+    onlyHyps: false
 };
 
 Scores.propTypes = {
     results: PropTypes.arrayOf(PropTypes.object).isRequired,
     runners: PropTypes.arrayOf(PropTypes.object).isRequired,
     metrics: PropTypes.arrayOf(PropTypes.string).isRequired
+};
+
+ElementScoreTable.propTypes = {
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
+    scores: PropTypes.object
 };
 
 /*
