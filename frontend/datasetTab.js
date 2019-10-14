@@ -5,6 +5,7 @@ import { DataInstanceView } from './dataInstanceView.js';
 import { DatasetMenu } from './datasetMenu.js';
 import { Scores } from './scoreTable.js';
 import { TableRow } from './utils.js';
+import { DataEntriesList } from './dataEntriesList.js';
 
 import './style.css';
 
@@ -70,7 +71,6 @@ class DatasetTab extends React.Component {
         const p = this.props;
         const results = p.results;
         const idx = this.state.elemIdx;
-        console.log(results);
         const selectedResults = this.getResultsForElement(results, idx);
         const view = this.showingElementView ? <DataInstanceView 
             dataInstance={this.getInstance()} 
@@ -81,8 +81,11 @@ class DatasetTab extends React.Component {
             metrics={p.metrics}
             /> : null;
 
-        let elems = p.dataset.elements;
-        elems = elems.map(e => <DataInstanceEntry key={e.id} dataInstance={e} handleClick={() => this.showView(e.id)}/>);
+        const list = <DataEntriesList
+            entries={p.dataset.elements}
+            scores={[]}
+            handleEntryClick={(idx) => this.showView(idx)}
+        />;
 
         return (
             <div>
@@ -102,7 +105,7 @@ class DatasetTab extends React.Component {
                 </div>
 
                 <div className="datasetCenter">
-                    {elems}
+                    {list}
                     {view}
                 </div>
             </div>
