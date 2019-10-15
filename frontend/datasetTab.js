@@ -25,6 +25,7 @@ class DatasetTab extends React.Component {
         this.moveViewLeft = this.moveViewLeft.bind(this);
         this.moveViewRight = this.moveViewRight.bind(this);
         this.getInstance = this.getInstance.bind(this);
+        this.filterScoresForList = this.filterScoresForList.bind(this);
     }
 
     get showingElementView() {
@@ -67,11 +68,17 @@ class DatasetTab extends React.Component {
         return x;
     }
 
+    filterScoresForList() {
+        let res = this.props.results.filter(r => r.scores !== undefined);
+        return res.map(r => { return { runId: r.runId, scores: r.scores } });
+    }
+
     render() {
         const p = this.props;
         const results = p.results;
         const idx = this.state.elemIdx;
         const selectedResults = this.getResultsForElement(results, idx);
+
         const view = this.showingElementView ? <DataInstanceView 
             dataInstance={this.getInstance()} 
             dataset={p.dataset.id}
@@ -83,7 +90,7 @@ class DatasetTab extends React.Component {
 
         const list = <DataEntriesList
             entries={p.dataset.elements}
-            scores={[]}
+            scores={this.filterScoresForList()}
             handleEntryClick={(idx) => this.showView(idx)}
         />;
 
