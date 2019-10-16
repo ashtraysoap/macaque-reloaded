@@ -120,7 +120,6 @@ class DatasetTab extends React.Component {
     }
 
     getResultsForElement(results, elemId) {
-        console.log("getResultsForElement", results);
         return results.map(r => {
             return {
                 runId: r.runId,
@@ -133,7 +132,6 @@ class DatasetTab extends React.Component {
     }
 
     getScoresForElement(scores, elemId) {
-        console.log("getScoresForElement", scores);
         let results = {};
 
         for (let m in scores) {

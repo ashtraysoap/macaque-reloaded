@@ -24,6 +24,20 @@ body {
     margin-bottom: 3vh;
 }
 
+.dataEntry {
+    width: auto;
+    border-bottom: solid 1px #ccc;
+    padding-left: 1vw;
+}
+
+.dataEntry:hover {
+    background-color: #9198e580;
+}
+
+.dataList {
+    line-height: 3;
+}
+
 .header {
     /* background: linear-gradient(#e66465, #9198e5); */
     background: linear-gradient(#eb5e55, #9198e5);
@@ -46,6 +60,14 @@ body {
     display: inline-block;
     border: solid 4px black;
     border-radius: 15px;
+}
+
+.listHeader {
+    display: table;
+}
+
+.listHeader > div {
+    display: table-cell;
 }
 
 .logo {

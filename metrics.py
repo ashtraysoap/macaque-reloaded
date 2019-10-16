@@ -22,7 +22,8 @@ def evaluate(metric, hypotheses, references):
 
     evaluator = EVALUATORS[metric]
     # evaluate the metric for each insance separately
-    scores = [evaluator(h, r) for (h, r) in zip(hypotheses, references)]
+    scores = [evaluator([h], [r]) for (h, r) in zip(hypotheses, references)]
+    print(scores)
     # TODO: check that mean == numpy.mean(scores)
     mean = evaluator(hypotheses, references)
     return scores, mean
