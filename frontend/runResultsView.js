@@ -13,8 +13,6 @@ class RunResultsView extends React.Component {
     constructor(props) {
         super(props);
 
-        console.log('results: ', this.props.results);
-
         this.getSelectedCaption = this.getSelectedCaption.bind(this);
         this.setInitialCapID = this.setInitialCapID.bind(this);
 
@@ -29,7 +27,9 @@ class RunResultsView extends React.Component {
     }
 
     render() {
+        console.log("render-cid:", this.state.captionId);
         const caption = this.getSelectedCaption();
+        console.log("render-caption:", caption);
         const cid = this.state.captionId;
         const switchState = b => {
             let s = this.state;
@@ -69,25 +69,25 @@ class RunResultsView extends React.Component {
                     beamSize={this.props.results.captions.beamSearchCaptions.length}
                     onChange={(cid) => this.setState({ captionId: cid })}
                 />
-                <div id="caption" style={{border: "solid green"}}>
+                <div id="caption">
                     <div style={{display: "inline"}}>
                         {toks}
                     </div>
                 </div>
-                <div id="alignments" style={{border: "solid pink"}}>
-                    <span onClick={() => switchState('showAlignments')}>
+                <div id="alignments">
+                    <span className="resultsSpan" onClick={() => switchState('showAlignments')}>
                         Alignments
                     </span>
                     {attTab}
                 </div>
-                <div id="beamSearch" style={{border: "solid #5081C1"}}>
-                    <span onClick={() => switchState('showBSOut')}>
+                <div id="beamSearch">
+                    <span className="resultsSpan" onClick={() => switchState('showBSOut')}>
                         Beam Search Output Graph
                     </span>
                     {bsView}
                 </div>
-                <div id="metrics" style={{border: "solid purple"}}>
-                    <span onClick={() => switchState('showMetrics')}>
+                <div id="metrics">
+                    <span className="resultsSpan" onClick={() => switchState('showMetrics')}>
                         Metrics Table
                     </span>
                     {metrics}
@@ -99,7 +99,8 @@ class RunResultsView extends React.Component {
     // returns the currently selected caption as an array of string tokens.
     getSelectedCaption() {
         const cid = this.state.captionId;
-        if (cid === 0) {
+        console.log("cid", cid);
+        if (cid == 0) {
             return this.props.results.captions.greedyCaption;
         } else if (cid > 0) {
             return this.props.results.captions.beamSearchCaptions[cid - 1];

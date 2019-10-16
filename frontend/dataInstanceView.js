@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { RunResultsView } from './runResultsView.js';
+import { basename } from './utils.js';
 
 import './style.css';
 
@@ -63,7 +64,7 @@ class DataInstanceView extends React.Component {
         return (
             <div className="transparentLayer" onClick={() => this.props.onClick()}>
                 <div className="instanceView" onClick={(e) => e.stopPropagation()}>
-                    {instance.source}
+                    {basename(instance.source)}
                     <div style={{border: "solid blue"}}>
                         <img src={this.state.imgSrc} alt=""/>
                     </div>

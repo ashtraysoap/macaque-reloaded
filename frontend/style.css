@@ -65,6 +65,7 @@ body {
     display: inline-block;
     border: solid 4px black;
     border-radius: 15px;
+    line-height: 3;
 }
 
 .listHeader {
@@ -170,6 +171,10 @@ body {
     padding-left: 3vw;
     padding-right: 3vw;
     cursor: pointer;
+}
+
+.resultsSpan {
+    border-bottom: solid 1px #ccc;
 }
 
 .sidePanel {

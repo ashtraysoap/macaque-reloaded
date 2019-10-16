@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 export { InformativeInput, TableRow, SidePanel, 
-    range, zip, round, MultipleSelectionWithButton };
+    range, zip, round, basename, MultipleSelectionWithButton };
 
 
 function range(n) {
@@ -20,6 +20,10 @@ function zip(x, y) {
 
 function round(n) {
     return Math.round(n * 100) / 100
+}
+
+function basename(fp) {
+    return fp.replace(/^.*[\\\/]/, '');
 }
 
 class InformativeInput extends React.Component {
