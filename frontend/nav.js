@@ -11,6 +11,7 @@ function Navigation(props) {
     navElems = navElems.map((e) => <NavElement 
         key={e}
         text={e}
+        class={props.selected === e ? "navElementSel" : "navElement"}
         handleClick={callback}
     />);
 
@@ -21,16 +22,18 @@ function Navigation(props) {
 
 function NavElement(props) {
     return (
-        <div className="navElement" 
-            onClick={ () => props.handleClick(props.text) }>{props.text}</div>
+        <div className={props.class}
+        onClick={ () => props.handleClick(props.text) }>{props.text}</div>
     );
 }
 
 Navigation.propTypes = {
-    onSelectedChange: PropTypes.func.isRequired
+    onSelectedChange: PropTypes.func.isRequired,
+    selected: PropTypes.string.isRequired
 };
 
 NavElement.propTypes = {
     text: PropTypes.string.isRequired,
+    class: PropTypes.string.isRequired,
     handleClick: PropTypes.func.isRequired,
 };

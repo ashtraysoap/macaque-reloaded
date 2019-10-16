@@ -6,7 +6,7 @@ import { AddDatasetTab } from './addDatasetTab.js';
 import { ConfigTab } from './configTab.js';
 import { DatasetsTab } from './datasetsTab.js';
 import { Header } from './header.js';
-import { ModelTab } from './modelTab.js';
+import { HomeTab } from './homeTab.js';
 import { Navigation } from './nav.js';
 import { AddPreproTab } from './addPreproTab.js';
 import { AddEncoderTab } from './addEncoderTab.js';
@@ -52,7 +52,7 @@ class App extends React.Component {
             runners: [],
             metrics: [ "BLEU", "METEOR", "chrf3" ],
             results: [],
-            selectedTab: "About",
+            selectedTab: "Home",
         };
     }
 
@@ -122,7 +122,9 @@ class App extends React.Component {
         const id = s.selectedTab;
         let mainTab = null;
 
-        if (id === "About") {
+        if (id === "Home") {
+            mainTab = <HomeTab/>;
+        } else if (id === "About") {
             mainTab = <AboutTab/>;
         } else if (id === "Configure") {
             mainTab = <ConfigTab
@@ -163,11 +165,9 @@ class App extends React.Component {
         return (
             <div>
                 <Header
-                    nav={
-                        <Navigation
-                            onSelectedChange={this.handleSelectedTabChange}
-                        />
-                    } />
+                    onSelectedChange={this.handleSelectedTabChange}
+                    selected={id}
+                    />
                 {mainTab}
             </div>
         );

@@ -65,6 +65,14 @@ body {
     text-align: center;
 }
 
+.homeTab {
+    width: 55vw;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3vh;
+    line-height: 2.5;
+}
+
 .instanceView {
     background-color: white;
     display: inline-block;
@@ -83,6 +91,11 @@ body {
 
 .logo {
     width: 20%;
+    cursor: pointer;
+}
+
+.logoSelected {
+    border-bottom: solid black 2px;
 }
 
 .mainTab {
@@ -176,6 +189,13 @@ body {
     padding-left: 3vw;
     padding-right: 3vw;
     cursor: pointer;
+}
+
+.navElementSel {
+    padding-left: 3vw;
+    padding-right: 3vw;
+    cursor: pointer;
+    border-bottom: solid black 2px;
 }
 
 .resultsSpan {
