@@ -65,7 +65,7 @@ class DataInstanceView extends React.Component {
             <div className="transparentLayer" onClick={() => this.props.onClick()}>
                 <div className="instanceView" onClick={(e) => e.stopPropagation()}>
                     {basename(instance.source)}
-                    <div style={{border: "solid blue"}}>
+                    <div>
                         <img src={this.state.imgSrc} alt=""/>
                     </div>
                     <div id="runsBar">

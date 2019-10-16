@@ -25,6 +25,11 @@ body {
     line-height: 2;
 }
 
+.captionTab {
+    background-color: #9198e534;
+    line-height: 2.5;
+}
+
 .configTab > div {
     margin-bottom: 3vh;
 }
