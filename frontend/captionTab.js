@@ -17,13 +17,13 @@ class CaptionTab extends React.Component {
         />);
 
         return (
-            <div className="captionTab">
+            <div className="background">
                 <CaptionToggler 
                     captionId={this.props.captionId}
                     beamSize={this.props.beamSize}
                     onChange={(cid) => this.props.onCaptionChange(cid)}
                 />
-                
+
                 <div id="caption">
                     <div style={{display: "inline"}}>
                         {toks}

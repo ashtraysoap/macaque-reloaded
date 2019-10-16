@@ -164,7 +164,7 @@ function ElementScoreTable(props) {
         });
 
         return (
-            <div>
+            <div className="background">
                 <table>
                     <thead>
                         <tr>{tHead}</tr>
