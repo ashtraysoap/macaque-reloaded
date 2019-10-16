@@ -70,7 +70,7 @@ class AddModelTab extends React.Component {
         return (
             <AddSomethingTab>
                 <div>
-                    <label>Model</label>
+                    <div className="addModelPartLabel">Model</div>
                     <InformativeInput name="name" value={this.state.name} 
                         optional={false}
                         handleChange={(e) => { this.setState({ name: e.target.value }); }}

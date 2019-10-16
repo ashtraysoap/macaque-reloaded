@@ -76,7 +76,7 @@ class AddEncoderTab extends React.Component {
         return (
             <AddSomethingTab>
                 <div>
-                    <label>Encoder</label>
+                    <div className="addModelPartLabel">Encoder</div>
                     <InformativeInput name="name" value={this.state.name} 
                         optional={false}
                         handleChange={(e) => { this.setState({ name: e.target.value }); }}

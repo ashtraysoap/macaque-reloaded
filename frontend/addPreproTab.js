@@ -42,7 +42,7 @@ class AddPreproTab extends React.Component {
         return (
             <AddSomethingTab>
             <div>
-                <label>Preprocessor</label>
+                <div className="addModelPartLabel">Preprocessor</div>
                 <InformativeInput name="name" value={this.state.name} 
                     optional={false}
                     handleChange={(e) => { this.setState({ name: e.target.value }); }}

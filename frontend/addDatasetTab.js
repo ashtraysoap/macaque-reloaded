@@ -72,7 +72,7 @@ class AddDatasetTab extends React.Component {
         return (
             <AddSomethingTab>
                 <div>
-                    <label>Dataset</label>
+                    <div className="addModelPartLabel">Dataset</div>
                     <InformativeInput
                         name="dataset name"
                         value={s.name}

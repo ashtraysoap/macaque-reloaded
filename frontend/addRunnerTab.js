@@ -64,8 +64,7 @@ class AddRunnerTab extends React.Component {
         return (
             <AddSomethingTab>
             <div>
-                <label>Runner</label>
-                <br/>
+                <div className="addModelPartLabel">Runner</div>
                 <label>name</label>
                 <input 
                     type="text"

@@ -16,6 +16,11 @@ body {
     margin-top: 2vw;
 }
 
+.addModelPartLabel {
+    border-bottom: solid 1px #ccc;
+    margin-bottom: 1vw;
+}
+
 .addSomethingTab {
     line-height: 2;
 }
