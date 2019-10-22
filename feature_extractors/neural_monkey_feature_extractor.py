@@ -20,20 +20,32 @@ MODELS = {
     'ResNet152V2': S('renset_v2_152', (229, 229))
 }
 
+# Mean pixel values from preprocessing of the VGG network
+VGG_RGB_MEANS = [[[123.68, 116.779, 103.939]]]
+
+
 class NeuralMonkeyFeatureExtractor(FeatureExtractor):
+    
     def __init__(self, 
                 net, 
                 slim_models,
                 model_checkpoint,
-                conv_map,
-                vector=None,
-                data_id="images"):
+                conv_map):
+        """Create a Nerual Monkey feature extractor. 
+        
+        Args:
+            net: A string identifier of the network type.
+            slim_models: A path to the Tensorflow Slim repository.
+            model_checkpoint: A path to the model checkpoint.
+            conv_map: The string identifier of the convolutional
+                map which should be extracted as features.
+        """
         if net not in MODELS:
             raise ValueError("Unsupported network %s." % net)
         
-        if conv_map is None == vector is None:
+        if conv_map is None:
             raise ValueError(
-                "You must provide either convolutional map or feed-forward layer.")
+                "You must provide the convolutional map.")
 
         net_spec = MODELS[net]
         if net_spec.net_id in ['vgg_16', 'vgg_19']:
@@ -43,7 +55,7 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
             self._vgg_normalization = False
             self._zero_one_normalization = True
 
-        self._data_id = data_id
+        self._data_id = "images"
 
         self._imagenet = ImageNet(name="imagenet",
                 data_id=self._data_id,
@@ -59,23 +71,30 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
         self._session.run(tf.global_variables_initializer())
         self._imagenet.load(self._session)
         
-    def extract_features(self, dataset):
+    def extract_features(self, images):
         """Extracts features from the dataset.
         
         Args:
-            dataset: A `dataset.Dataset` class instance.
+            images: A numpy array of images.
         Returns:
             A list of numpy arrays, the extracted feature maps.
         """
-        elems = dataset.elements
-        paths = [e.source for e in elems]
 
-        images = [single_image_for_imagenet(img_path,
-                self._net_spec.input_size[0], 
-                self._net_spec.input_size[1],
-                self._vgg_normalization,
-                self._zero_one_normalization)
-                for img_path in paths]
+        width = self._net_spec.input_size[0]
+        height = self._net_spec.input_size[1]
+        assert images[1:].shape == (width, height, 3)
+
+        def vgg_norm(img):
+            return i - VGG_RGB_MEANS
+
+        def zero_one_norm(img):
+            return i / 255
+
+        if self._vgg_normalization:
+            images = [vgg_norm(i) for i in images]
+
+        if self._zero_one_normalization:
+            images = [zero_one_norm(i) for i in images]
 
         ds = Dataset("macaque_data",
                 {self._data_id: lambda: np.array(images)},
@@ -83,6 +102,7 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
         feed_dict = self._imagenet.feed_dict(ds)
 
         results = self._session.run(self._fetch, feed_dict=feed_dict)
+        
         if isinstance(results, list):
             results = np.array(results)
         elif not isinstance(results, np.ndarray):

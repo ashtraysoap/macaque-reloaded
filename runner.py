@@ -1,4 +1,6 @@
 def create_runner(macaque_state, runner_config):
+    """Creates a runner from the config dictionary."""
+
     if runner_config['prepro'] is not None:
         prepro_id = int(runner_config['prepro'])
         prepro = macaque_state.preprocessors[prepro_id]
