@@ -62,9 +62,6 @@ class PluginFeatureExtractor(FeatureExtractor):
         Returns:
             A numpy array of features.
         """
-
-        elems = dataset.elements
-        results = []
     
         results = self._method(images)
 

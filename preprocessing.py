@@ -112,6 +112,10 @@ class Preprocessor():
         elif mode == PreproMode.AspectRatioPad:
             results = [keep_aspect_ratio_and_pad(img) for img in pil_imgs]
 
+        results = [np.array(img) for img in results]
+        results = np.asarray(results)
+        print(results.shape)
+
         self._lock.release()
         return results
 

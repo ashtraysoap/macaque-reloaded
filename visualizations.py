@@ -15,6 +15,7 @@ def attention_map_jpg(alphas, image=None, target_w=None, target_h=None):
         return att_map
     
     #pil_img = Image.fromarray(image.astype('uint8'), 'RGB')
+    image = Image.fromarray(image.astype('uint8'), 'RGB')
     pil_img = image
     target_w = target_w if target_w else pil_img.width
     target_h = target_h if target_h else pil_img.height
