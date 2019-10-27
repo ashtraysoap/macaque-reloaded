@@ -7,6 +7,7 @@ class MacaqueState():
         self._runners = []
         self._run_results = []
         self._user = None
+        self._demo_runner = None
 
     @property
     def datasets(self):
@@ -39,6 +40,14 @@ class MacaqueState():
     @property
     def user(self):
         return self._user
+
+    @property
+    def demo_runner(self):
+        return self._demo_runner
+    
+    @demo_runner.setter
+    def demo_runner(self, val):
+        self._demo_runner = val
 
     def add_dataset(self, ds):
         ds.idx = len(self.datasets)

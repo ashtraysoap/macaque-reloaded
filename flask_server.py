@@ -4,6 +4,7 @@ from collections import namedtuple
 from io import BytesIO
 
 from flask import Flask, render_template, request, send_file
+from PIL import Image
 
 from data import create_dataset
 from visualizations import attention_map_jpg, attention_map_for_original_img
@@ -11,7 +12,7 @@ from metrics import evaluate
 from feature_extractors import create_feature_extractor
 from model_wrappers import create_model_wrapper
 from preprocessing import create_preprocessor
-from runner import create_runner
+from runner import create_runner, create_demo_runner
 
 Result = namedtuple('Result', ['runId', 'runnerId', 'datasetId', 'results'])
 
@@ -33,6 +34,23 @@ def init():
     # macaque_state ma property `initialised`
     # pri dalsich requestoch vrati home-page
     return render_template('index.html')
+
+@APP.route('/demo_caption', methods=['POST'])
+def single_img_caption():
+
+    fname = request.files['input-file'].filename
+    print(request.files['input-file'])
+    request.files['input-file'].save(fname)
+
+    response_json = {}
+
+    img = Image.open(fname)
+
+    if STATE.demo_runner is None:
+        STATE.demo_runner = create_demo_runner()
+    out = STATE.demo_runner.run_on_images([img])[0]
+    # return fake dataset
+    return "okej"
 
 @APP.route('/add_dataset', methods=['POST'])
 def add_dataset():

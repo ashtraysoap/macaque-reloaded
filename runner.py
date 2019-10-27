@@ -1,3 +1,6 @@
+from preprocessing import create_preprocessor, PreproMode
+from model_wrappers import create_model_wrapper
+
 def create_runner(macaque_state, runner_config):
     """Creates a runner from the config dictionary."""
 
@@ -76,3 +79,48 @@ class Runner():
                 } for (e, i) in zip(r, imgs)]
                 res.extend(nr)
         return res
+
+    def run_on_images(self, images):
+        if self._prepro:
+            images = self._prepro.preprocess_images(images)
+        else:
+            # PIL Image to Numpy Array
+            images = [np.array(i) for i in images]
+
+        if self._feature_extractor:
+            feats = self._feature_extractor.extract_features(images)
+            r = self._model.run(feats)
+        else:
+            r = self._model.run(images)
+        return [
+            {
+                'greedy': e['greedy'],
+                'beam_search': e['beam_search'],
+                'prepro_img': i
+            } for (e, i) in zip(r, images)
+        ]
+
+def create_demo_runner():
+    prepro_cfg = {
+        'targetWidth': 224,
+        'targetHeight': 224,
+        'mode': 1
+    }
+    prepro = create_preprocessor(prepro_cfg)
+
+    # model_cfg = {
+    #     'type': 'neuralmonkey',
+    #     'input': 'images',
+    #     'configPath': None,
+    #     'varsPath': None,
+    #     'imageSeries':
+    # }
+    model_cfg = {
+        'type': 'plugin',
+        'input': 'images',
+        'plugin': {
+            'path': '/home/sam/thesis-code/macaque/tests/mock_plugin_model.py',
+        }
+    }
+    model = create_model_wrapper(model_cfg)
+    return Runner(model=model, prepro=prepro)

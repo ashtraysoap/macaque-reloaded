@@ -50,12 +50,29 @@ class Preprocessor():
         return self._mode
 
     def preprocess(self, dataset):
-        """
-            Preprocesses images from the dataset.
+        """Preprocesses images from the dataset.
 
-            Returns: A numpy array of preprocessed images.
+            Returns:
+                A numpy array of preprocessed images.
         """
         self._lock.acquire()
+
+        dataset.load_images()
+        pil_imgs = [e.image for e in dataset.elements]
+
+        results = self.preprocess_images(pil_imgs)
+
+        self._lock.release()
+        return results
+
+    def preprocess_images(self, images):
+        """Preprocess a list of PIL Images.
+
+            Args:
+                images: A list of PIL Images.
+            Returns:
+                A numpy array of preprocessed images.
+        """
 
         def rescale_width_rescale_height(img):
             return img.resize((self._target_width, self._target_height))
@@ -96,27 +113,21 @@ class Preprocessor():
                 img = img.resize((int(w * rh), self._target_height))
             return crop(img, self._target_width, self._target_height)
 
-        dataset.load_images()
-        pil_imgs = [e.image for e in dataset.elements]
         mode = self._mode
-        results = []
 
         if mode == PreproMode.RescaleWidthRescaleHeight:
-            results = [rescale_width_rescale_height(img) for img in pil_imgs]
+            results = [rescale_width_rescale_height(img) for img in images]
         elif mode == PreproMode.RescaleHeightPadOrCropWidth:
-            results = [rescale_height_pad_or_crop_width(img) for img in pil_imgs]
+            results = [rescale_height_pad_or_crop_width(img) for img in images]
         elif mode == PreproMode.RescaleWidthPadOrCropHeight:
-            results = [rescale_width_pad_or_crop_height(img) for img in pil_imgs]
+            results = [rescale_width_pad_or_crop_height(img) for img in images]
         elif mode == PreproMode.AspectRatioCrop:
-            results = [keep_aspect_ratio_and_crop(img) for img in pil_imgs]
+            results = [keep_aspect_ratio_and_crop(img) for img in images]
         elif mode == PreproMode.AspectRatioPad:
-            results = [keep_aspect_ratio_and_pad(img) for img in pil_imgs]
+            results = [keep_aspect_ratio_and_pad(img) for img in images]
 
         results = [np.array(img) for img in results]
         results = np.asarray(results)
-        print(results.shape)
-
-        self._lock.release()
         return results
 
 def crop(image, target_width, target_height):
