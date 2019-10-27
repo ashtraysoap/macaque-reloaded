@@ -1,12 +1,13 @@
 import json
 import os
+from random import random
 from collections import namedtuple
 from io import BytesIO
 
 from flask import Flask, render_template, request, send_file
 from PIL import Image
 
-from data import create_dataset
+from data import create_dataset, Dataset
 from visualizations import attention_map_jpg, attention_map_for_original_img
 from metrics import evaluate
 from feature_extractors import create_feature_extractor
@@ -38,19 +39,43 @@ def init():
 @APP.route('/demo_caption', methods=['POST'])
 def single_img_caption():
 
+    # Access the user-sent image from the request object.
     fname = request.files['input-file'].filename
     print(request.files['input-file'])
     request.files['input-file'].save(fname)
 
-    response_json = {}
+    # Create a dataset to contain the image.
+    ds = Dataset(
+        name='dataset_' + str(int(random() * 1000000)),
+        prefix='./',
+        batch_size=1,
+        images=True)
+    ds.initialize(sources=[fname])
+    ds_id = STATE.add_dataset(ds)
 
-    img = Image.open(fname)
+    if STATE.demo_runner_id is None:
+        STATE.add_demo_runner()
+    runner_id = STATE.demo_runner_id
 
-    if STATE.demo_runner is None:
-        STATE.demo_runner = create_demo_runner()
-    out = STATE.demo_runner.run_on_images([img])[0]
-    # return fake dataset
-    return "okej"
+    out = STATE.runners[runner_id].run(ds)
+
+    r = Result(runId=STATE.get_current_run_counter(),
+        runnerId=runner_id,
+        datasetId=ds_id,
+        results=out)
+    STATE.add_results(r)
+
+    return json.dumps({
+        'runId': STATE.get_current_run_counter() - 1,
+        'runnerId': runner_id,
+        'datasetId': ds_id,
+        'captions': list(map(lambda x: {
+            'greedyCaption': [] if x['greedy'] is None 
+                else x['greedy']['caption'],
+            'beamSearchCaptions': [] if x['beam_search'] is None 
+                else x['beam_search']['captions']
+        }, out))
+    })
 
 @APP.route('/add_dataset', methods=['POST'])
 def add_dataset():

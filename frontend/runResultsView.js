@@ -127,7 +127,6 @@ RunResultsView.propTypes = {
     results: PropTypes.shape(
         {
             runId: PropTypes.number,
-            runnerId: PropTypes.number,
             captions: PropTypes.shape({
                 greedyCaption: PropTypes.arrayOf(PropTypes.string),
                 beamSearchCaptions: PropTypes.arrayOf(
@@ -138,6 +137,5 @@ RunResultsView.propTypes = {
     instanceId: PropTypes.number.isRequired,
     onCaptionClick: PropTypes.func.isRequired,
     fetchAttentionMap: PropTypes.func.isRequired,
-    runners: PropTypes.arrayOf(PropTypes.object).isRequired,
     metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

@@ -173,9 +173,19 @@ function DataInstanceEntry(props) {
     let { name, metrics, handleClick } = props;
     let entries = [name].concat(metrics);
 
+    const divStyle = {
+        display: 'inline-block',
+        margin: '3px'
+    }
+
+    const es = entries.map(e => <div key={e.toString()} style={divStyle}>{e}</div>);
+
     return (
         <div onClick={handleClick}>
-            <TableRow entries={entries}/>
+            {/* <TableRow entries={entries}/> */}
+            <div className="dataEntry">
+                {es}
+            </div>
         </div>
     );
 }

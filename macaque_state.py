@@ -1,3 +1,5 @@
+from runner import create_demo_runner
+
 class MacaqueState():
     def __init__(self):
         self._datasets = []
@@ -7,7 +9,7 @@ class MacaqueState():
         self._runners = []
         self._run_results = []
         self._user = None
-        self._demo_runner = None
+        self._demo_runner_id = None
 
     @property
     def datasets(self):
@@ -42,13 +44,9 @@ class MacaqueState():
         return self._user
 
     @property
-    def demo_runner(self):
-        return self._demo_runner
+    def demo_runner_id(self):
+        return self._demo_runner_id
     
-    @demo_runner.setter
-    def demo_runner(self, val):
-        self._demo_runner = val
-
     def add_dataset(self, ds):
         ds.idx = len(self.datasets)
         self.datasets.append(ds)
@@ -79,3 +77,9 @@ class MacaqueState():
 
     def get_current_run_counter(self):
         return len(self._run_results)
+
+    def add_demo_runner(self):
+        dr = create_demo_runner()
+        r_id = self.add_runner(dr)
+        self._demo_runner_id = r_id
+        return r_id

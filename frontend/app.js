@@ -53,6 +53,7 @@ class App extends React.Component {
             metrics: [ "BLEU", "METEOR", "chrf3" ],
             results: [],
             selectedTab: "Home",
+            demoResults: null
         };
     }
 
@@ -123,7 +124,10 @@ class App extends React.Component {
         let mainTab = null;
 
         if (id === "Home") {
-            mainTab = <HomeTab/>;
+            mainTab = <HomeTab
+                results={this.state.demoResults}
+                onServerResponse={(res) => { console.log(res); this.setState({demoResults: res})}}
+            />;
         } else if (id === "About") {
             mainTab = <AboutTab/>;
         } else if (id === "Configure") {

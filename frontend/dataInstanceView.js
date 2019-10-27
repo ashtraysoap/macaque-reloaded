@@ -57,7 +57,6 @@ class DataInstanceView extends React.Component {
             instanceId={instance.id}
             onCaptionClick={this.onCaptionClick}
             fetchAttentionMap={this.fetchAttentionMap}
-            runners={this.props.runners}
             metrics={this.props.metrics}
         />;
 
