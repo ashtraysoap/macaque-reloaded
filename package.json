@@ -19,9 +19,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/SamMichalik/macaque-reloaded/issues"
+    "url": "https://github.com/saimioul/macaque-reloaded/issues"
   },
-  "homepage": "https://github.com/SamMichalik/macaque-reloaded#readme",
+  "homepage": "https://github.com/saimioul/macaque-reloaded#readme",
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
