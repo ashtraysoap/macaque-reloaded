@@ -88,12 +88,15 @@ class RunResultsView extends React.Component {
                     {bsView}
                 </div>
                 
-                <div id="metrics">
-                    <span className="resultsSpan" onClick={() => switchState('showMetrics')}>
-                        Metrics
-                    </span>
-                    {metrics}
-                </div>
+                {
+                    this.props.metrics.length > 0 &&
+                        <div id="metrics">
+                            <span className="resultsSpan" onClick={() => switchState('showMetrics')}>
+                                Metrics
+                            </span>
+                            {metrics}
+                        </div>
+                }
             </div>
         );
     }

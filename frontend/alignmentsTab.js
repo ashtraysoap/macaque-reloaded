@@ -46,7 +46,7 @@ class AlignmentsTab extends React.Component {
 
 function ImageWithCaptionFrame(props) {
     return (
-        <div style={{display: "inline-block", padding: "5px"}}>
+        <div style={{display: "inline-block", padding: "5px", marginRight: "20px"}}>
             <img style={{display: "block"}} src={props.src} alt=""/>
             <div style={{display: "block"}}>{props.token}</div>
         </div>

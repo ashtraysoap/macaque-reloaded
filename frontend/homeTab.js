@@ -18,7 +18,6 @@ class HomeTab extends React.Component {
         };
 
         this.getResultsForElement = this.getResultsForElement.bind(this);
-        this.getScoresForElement = this.getScoresForElement.bind(this);
         this.fetchAttentionMap = this.fetchAttentionMap.bind(this);
         this.onCaptionClick = this.onCaptionClick.bind(this);
         this.onImageSubmit = this.onImageSubmit.bind(this);
@@ -46,8 +45,8 @@ class HomeTab extends React.Component {
         return (
             <div className="homeTab">
 
-                <label>Input image: </label>
                 <form method="post" encType="multipart/form-data">
+                    <label>Input image: </label>
                     <input id="inFile" 
                         type="file" 
                         name="input-file" 
@@ -115,29 +114,9 @@ class HomeTab extends React.Component {
                 runnerId: r.runnerId,
                 datasetId: r.datasetId,
                 captions: r.captions[elemId],
-                scores: this.getScoresForElement(r.scores, elemId)
             }
         });
     }
-
-    getScoresForElement(scores, elemId) {
-        let results = {};
-
-        for (let m in scores) {
-
-            results[m] = {
-                greedy: scores[m].greedy.scores[elemId]
-            };
-            
-            results[m].beamSearch = [];
-
-            for (let h of scores[m].beamSearch) {
-                results[m].beamSearch.push(h.scores[elemId]);
-            }
-        }
-        return results;
-    }
-
 }
 
 HomeTab.propTypes = {
