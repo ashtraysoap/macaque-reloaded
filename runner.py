@@ -2,7 +2,14 @@ from preprocessing import create_preprocessor, PreproMode
 from model_wrappers import create_model_wrapper
 
 def create_runner(macaque_state, runner_config):
-    """Creates a runner from the config dictionary."""
+    """Creates a runner from the config dictionary.
+    
+    Args:
+        macaque_state: A MacaqueState instance holding the application state.
+        runner_config: A dictionary with the keys `prepro`, `encoder` and `model`.
+    Returns:
+        A Runner instance for the given configuration.
+    """
 
     if runner_config['prepro'] is not None:
         prepro_id = int(runner_config['prepro'])
@@ -27,10 +34,21 @@ def create_runner(macaque_state, runner_config):
         prepro=prepro)
 
 class Runner():
+    """Class which allows performing inference on datasets.
+
+    The Runner class holds the configuration for a run - optionally
+    the preprocessor and the feature extractor, and a model.
+
+    Attributes:
+        idx: An integer, the id of the instance in the global state.
+        preprocessor: A Preprocessor instance.
+    """
+
     def __init__(self,
         model,
         feature_extractor=None,
         prepro=None):
+        """Initializes the Runner."""
 
         self._prepro = prepro
         self._feature_extractor = feature_extractor
@@ -50,6 +68,14 @@ class Runner():
         return self._prepro
 
     def run(self, dataset):
+        """Runs the model specified by the runner on a dataset.
+
+        Args:
+            dataset: A Dataset instance to be run on.
+        Returns:
+            A list of dictionaries containing the run results.
+        """
+
         res = []
         if dataset.feature_maps:
             if not self._model.runs_on_features:
@@ -81,6 +107,14 @@ class Runner():
         return res
 
     def run_on_images(self, images):
+        """Runs the runner on images.
+
+        Args:
+            images: A list of PIL.Image instances.
+        Returns:
+            A list of dictionaries containing the run results.
+        """
+
         if self._prepro:
             images = self._prepro.preprocess_images(images)
         else:
@@ -101,6 +135,15 @@ class Runner():
         ]
 
 def create_demo_runner():
+    """Creates a demonstrational runner.
+
+    Creates a defualt runner, not specified by a user configuration.
+    It is used to demonstrate Macaque's features.
+
+    Returns:
+        A Runner instance.
+    """
+
     prepro_cfg = {
         'targetWidth': 224,
         'targetHeight': 224,
