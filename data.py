@@ -7,6 +7,15 @@ from PIL import Image
 import numpy as np
 
 def create_dataset(json_config):
+    """Creates a Dataset instance from the configuration.
+
+    Args:
+        json_config: A dictionary with keys `name`, `prefix`, `batchSize` and
+            optionally `sources` and `references`.
+    Returns:
+        A initialized Dataset instance built based on the configuration.
+    """
+
     ds = Dataset(name=json_config['name'],
                 prefix=json_config['prefix'],
                 batch_size=json_config['batchSize'])
@@ -24,14 +33,35 @@ def create_dataset(json_config):
 
 
 class DataInstance:
+    """Class representing a Dataset element.
+
+    A DataInstance stores information about an element of the
+    dataset. Upon loading, it may store the image data, or the feature
+    map, depending on the modality of the element.
+
+    Attributes:
+        idx: An integer index of the element in the dataset.
+        source: A string file path locating the element resource.
+        references: A list of reference captions for the element, may be empty.
+        source_caption: The source caption of the element, may be None.
+        image: A PIL Image, may be None.
+        prepro_img: A PIL Image, may be None.
+        feature_map: A Numpy array, may be None.
+    """
+
     def __init__(self, idx, source):
+        """Creates a DataInstance instance.
+        
+        Args:
+            idx: An integer representing the index of the element in
+                the dataset.
+            source: A string file path locating the instance resource.
+        """
+        
         self._idx = idx
         self._source = source
-        self._caption = None
         self._references = []
         self._source_caption = None
-        self._alignments = None
-        self._beam_search_output = None
 
         self._image = None
         self._prepro_img = None
@@ -52,6 +82,10 @@ class DataInstance:
     @property
     def references(self):
         return self._references
+
+    @property
+    def source_caption(self):
+        return self._source_caption
 
     @image.setter
     def image(self, val):
@@ -74,7 +108,41 @@ class DataInstance:
         self._feature_map = val
 
 class Dataset:
+    """Class representing datasets.
+
+    The Dataset class holds all the elements of the dataset, general
+    information about the dataset and provides means to iterate over it.
+
+    Attributes:
+        idx: An integer index of the dataset in the global state's dataset list.
+        name: A string name of the dataset.
+        count: The number of elements in the dataset.
+        batch_size: An integral size of the batch.
+        prefix: A string path to the directory where the dataset elements
+            are located.
+        elements: A list of DataInstance instances.
+        images: A boolean value, whether the dataset contains the elements'
+            images.
+        preprocessed_images: A boolean value, whether the dataset contains 
+            the elements' preprocessed images.
+        feature_maps: A boolean value, whether the dataset contains elements'
+            feature maps.
+    """
+
     def __init__(self, name, prefix, batch_size, images=False, features=False, prepro=False):
+        """Creates a Dataset instance.
+
+        Args:
+            name: A string for the dataset name.
+            prefix: A string path specifying the location of the elements.
+            batch_size: The size of the batch.
+            images: A Boolean, whether the dataset elements are images.
+            features: A Boolean, whether the dataset elements are feature maps.
+            prepro: A boolean, whether the elements are already preprocessed.
+        Raises:
+            ValueError: The directory given by `prefix` does not exist.
+        """
+
         self._name = name
         self._prefix = prefix
         self._batch_size = batch_size
@@ -142,6 +210,19 @@ class Dataset:
         return self._preprocessed_imgs
 
     def initialize(self, sources=None, fp=None):
+        """Initialize the dataset.
+
+        Only after calling this method, elements of the dataset
+        are instantiated in DataInstances.
+
+        Args:
+            sources: A list of strings. Each string is a file name, which
+                should be found in the directory given by the dataset's
+                `prefix` attribute.
+            fp: A file path. The file should contain file names on separate
+                lines, specifying the files containing dataset elements.
+        """
+
         if sources:
             sources = [s.rstrip() for s in sources]
 
