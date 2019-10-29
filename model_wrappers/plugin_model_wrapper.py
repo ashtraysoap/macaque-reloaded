@@ -8,7 +8,33 @@ IFC_CLASS = "ModelWrapper"
 IFC_METHOD = "run"
 
 class PluginModelWrapper(ModelWrapper):
+    """Class for models from user provided modules.
+    
+    The user can provide his own implementation of a model that 
+    can be used in Macaque's pipeline, upon satisfying an interface 
+    in his module. The module has to contain a class with a method 
+    of specific names and signature.
+
+    Attributes:
+        runs_on_features: A boolean value, whether the model runs on features
+            or on images.
+    """
+
     def __init__(self, plugin_path, runs_on_features):
+        """Initialize a PluginModelWrapper instance.
+
+        Args:
+            plugin_path: A string path to the plugin module.
+            runs_on_features: A boolean value, whether the model runs on features.
+                If False, it is assumed it runs on images.
+        Raises:
+            ValueError: The file given by `plugin_path` does not exist.
+            ValueError: The file given by `plugin_path` does not end with .py.
+            ValueError: The file does not contain the interface class.
+            ValueError: The interface class does not contain the interface
+                method.
+        """
+
         self._runs_on_features = runs_on_features
 
         if not os.path.isfile(plugin_path):
@@ -52,10 +78,12 @@ class PluginModelWrapper(ModelWrapper):
         return self._runs_on_features
 
     def run(self, inputs):
-        """
+        """Run the model on inputs.
+
+        Args:
+            inputs: A Numpy Array of inputs.
         Returns:
-            A list of dictionaries. Each dictionary contains the keys
-            `caption`, `alignments`, `beam_search_output_graph`.
+            A list of dictionaries holding the results.
         """
         y = self._run(inputs)
         # validate results

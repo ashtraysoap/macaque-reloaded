@@ -1,4 +1,6 @@
 class ModelWrapper:
+    """Base class for model wrappers."""
+
     def __init__(self):
         self._idx
         self._input_shape
@@ -13,9 +15,4 @@ class ModelWrapper:
         self._idx = val
 
     def run(self, inputs):
-        """
-        Returns:
-            A list of dictionaries. Each dictionary contains the keys
-            `caption`, `alignments`, `beam_search_output_graph`.
-        """
         raise NotImplementedError()
