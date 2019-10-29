@@ -5,6 +5,15 @@ import numpy as np
 from PIL import Image
 
 def create_preprocessor(prepro_config):
+    """Create a Preprocessor from a configuration dictionary.
+
+    Args:
+        prepro_config: A dictionary with keys `targetWidth`, `targetHeight` and
+            `mode`.
+    Returns:
+        A Preprocessor instance.
+    """
+
     print(prepro_config)
     w = prepro_config['targetWidth']
     h = prepro_config['targetHeight']
@@ -15,6 +24,16 @@ def create_preprocessor(prepro_config):
     return Preprocessor(target_width=w, target_height=h, mode=m)
 
 class PreproMode(Enum):
+    """Class enumerating all supported preprocessing modes.
+
+    Supported modes are:
+        AspectRatioCrop
+        AspectRatioPad
+        RescaleWidthRescaleHeight
+        RescaleWidthPadOrCropHeight
+        RescaleHeightPadOrCropWidth
+    """
+
     AspectRatioCrop = 1
     AspectRatioPad = 2
     RescaleWidthRescaleHeight = 3
@@ -22,7 +41,29 @@ class PreproMode(Enum):
     RescaleHeightPadOrCropWidth = 5
 
 class Preprocessor():
+    """Class for preprocessing images.
+
+    Typically, models have som restrictions on the format of their input.
+    This class is used to preprocess the images from the dataset into a
+    format accepted and expected by the model.
+
+    Attributes:
+        idx: An integral index of the preprocessor in the global state's
+            list of preprocessors.
+        target_width: The target width of images.
+        target_height: The target height of images.
+        mode: A PreproMode specifying the type of preprocessing.
+    """
+
     def __init__(self, target_width=224, target_height=224, mode=PreproMode.AspectRatioCrop):
+        """Initialize a Preprocessor
+
+        Args:
+            target_width: The target width of images.
+            target_height: The target height of images.
+            mode: A PreproMode specifying the type of preprocessing.
+        """
+
         self._target_width = target_width
         self._target_height = target_height
         self._mode = mode
@@ -52,9 +93,15 @@ class Preprocessor():
     def preprocess(self, dataset):
         """Preprocesses images from the dataset.
 
-            Returns:
-                A numpy array of preprocessed images.
+        Args:
+            dataset: A Dataset instance.
+        Returns:
+            A numpy array of preprocessed images.
         """
+
+        # Loading of images is not thread-safe and may occur 
+        # concurrently due to the asynchronicity in the browser's
+        # JavaScript engine and the Flask server.
         self._lock.acquire()
 
         dataset.load_images()
@@ -68,10 +115,10 @@ class Preprocessor():
     def preprocess_images(self, images):
         """Preprocess a list of PIL Images.
 
-            Args:
-                images: A list of PIL Images.
-            Returns:
-                A numpy array of preprocessed images.
+        Args:
+            images: A list of PIL Images.
+        Returns:
+            A numpy array of preprocessed images.
         """
 
         def rescale_width_rescale_height(img):
@@ -131,9 +178,16 @@ class Preprocessor():
         return results
 
 def crop(image, target_width, target_height):
+    """Crops the center of the image.
+
+    Args:
+        image: The input PIL Image.
+        target_width: The width of the target image.
+        target_height: The height of the target image.
+    Returns:
+        The cropped PIL Image.
     """
-    crop die center of dis image
-    """
+
     w = image.width
     h = image.height
     d_w = w - target_width
@@ -145,9 +199,19 @@ def crop(image, target_width, target_height):
     return image.crop((left, upper, right, lower))
 
 def pad(image, target_width, target_height):
+    """Pads the image with zeroes.
+
+    The original image is placed in the center of the
+    new, padded image.
+
+    Args:
+        image: The input PIL Image.
+        target_width: The width of the target image.
+        target_height: The height of the target image.
+    Returns:
+        The padded PIL Image.
     """
-    pad die image so thad di original is placed center
-    """
+
     img_padded = np.zeros((target_height, target_width, 3))
     w = image.width
     h = image.height
