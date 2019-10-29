@@ -263,7 +263,7 @@ def load_attention_map(run, element, caption, token):
 
 @APP.route('/load_attention_map_for_original_img/<int:run>/<int:element>/<int:caption>/<int:token>', methods=['GET'])
 def load_attention_map_for_original_img(run, element, caption, token):
-     """Handles the request for an image visualizing the attention map.
+    """Handles the request for an image visualizing the attention map.
 
     Visualizes the attention map on the original image.
 
