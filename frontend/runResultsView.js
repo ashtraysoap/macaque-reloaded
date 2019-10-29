@@ -89,7 +89,7 @@ class RunResultsView extends React.Component {
                 </div>
                 
                 {
-                    this.props.metrics.length > 0 &&
+                    this.props.metrics.length > 0 && Object.keys(this.props.results.scores).length > 0 &&
                         <div id="metrics">
                             <span className="resultsSpan" onClick={() => switchState('showMetrics')}>
                                 Metrics

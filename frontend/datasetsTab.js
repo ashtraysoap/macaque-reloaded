@@ -19,6 +19,15 @@ class DatasetsTab extends React.Component {
         const sel = this.state.selected;
         const dsNames = p.datasets.map(d => d.name);
 
+        if (p.datasets.length === 0)
+            return (
+                <div className="datasetsTab">
+                    <div className="datasetCenter">
+                        No datasets present. Add a dataset in the Configure tab.
+                    </div>
+                </div>
+            );
+
         return (
             <div className="datasetsTab">
                 <SidePanel

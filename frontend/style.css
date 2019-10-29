@@ -79,6 +79,9 @@ body {
     border: solid 4px black;
     border-radius: 15px;
     line-height: 3;
+    width: 66vw;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .listHeader {
@@ -202,6 +205,21 @@ body {
     border-bottom: solid 1px #ccc;
 }
 
+.runToggle {
+    display: inline;
+    border: solid #9198e534;
+    border-radius: 4px;
+    margin: 10px;
+}
+
+.runToggle > span {
+    padding: 2px;
+}
+
+.runToggle > span ~ span {
+    border-left: solid #9198e534;
+}
+
 .sidePanel {
     width: 15vw;
     padding-left: 5vw;
@@ -219,8 +237,8 @@ body {
 }
 
 #runsBar {
-    display: table;
-    border: solid grey;
+    /* display: table; */
+    text-align: center;
 }
 
 

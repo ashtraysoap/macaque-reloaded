@@ -35,7 +35,7 @@ class DataInstanceView extends React.Component {
         // Create a navigation bar button for each run.
         let runsNav;
         if (results.length === 0) {
-            runsNav = <h3>No runs available</h3>;
+            runsNav = <h4>No runs available</h4>;
         } else {
             runsNav = results.map((r) => 
                 <RunToggler 
@@ -115,9 +115,9 @@ class DataInstanceView extends React.Component {
 
 function RunToggler(props) {
     return (
-        <div style={{display: "inline", border: "solid purple", margin: "5px"}} onClick={props.onClick}>
-            <span style={{padding: "2px"}}>{props.runId}</span>
-            <span style={{padding: "2px"}}>{props.runnerName}</span>
+        <div className="runToggle" onClick={props.onClick}>
+            <span>{props.runId}</span>
+            <span>{props.runnerName}</span>
         </div>
     );
 }
