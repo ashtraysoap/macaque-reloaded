@@ -243,45 +243,75 @@ class Dataset:
         self._count = len(self._elements)
 
     def to_json(self):
+        """JSON serializes the dataset.
+
+        Returns:
+            A string representing the JSON-serialized dataset instance.
+        """
+
         return json.dumps(self, cls=DatasetEncoder)
 
     def load_images(self):
+        """Loads the image data into the dataset.
         """
-        For each element loads the image associated with
-        its `source` attribute. Images are in the PIL format.
-        """
+
         for e in self.elements:
             e.image = Image.open(e.source)
         self._images = True
 
     def load_image(self, elementId):
+        """Loads the image data of a dataset element.
+
+        Args:
+            elementId: The index of the dataset element.
+        Returns:
+            A PIL Image corresponding to the image data of the
+            element specified by `elementId`.
+        """
+
         e = self.elements[elementId]
         return Image.open(e.source)
 
     def attach_prepro_images(self, images):
-        """
+        """Attaches preprocessed images to the dataset's elements.
+
         Args:
-            images: ??????????
+            images: An iterable of Numpy Arrays.
         """
-        # TODO: check validity of args
 
         for elem, img in zip(self.elements, images):
             elem.prepro_img = img
         self._preprocessed_imgs = True
 
     def attach_features(self, features):
-        """
+        """Attaches features to the dataset's elements.
+
         Args:
-            features: A numpy array of feature maps.
+            features: A Numpy Array of feature maps.
         """
+        
         for elem, fm in zip(self.elements, features):
             elem.feature_map = fm
         self._feature_maps = True
 
     def attach_features_from_file_list(self, prefix="", sources=None):
+        """Attaches features to the dataset's elements.
+
+        Only feature maps serialized in the .npy and .npz formats are
+        supported.
+
+        Args:
+            prefix: A string path to the directory containing stored feature
+                maps.
+            sources: A string path to the file containing filenames of the
+                stored features, filename per line.
+        Raises:
+            ValueError: File given by `sources` does not exist.
+            ValueError: The number of elements in the dataset and the number of
+                feature maps do not match.
+            ValueError: Unsupported file format for feature maps.
         """
-            Requires documentation.
-        """
+
         if not sources:
             srcs = os.listdir(prefix)
         else:
@@ -311,6 +341,20 @@ class Dataset:
         self._feature_maps = True
 
     def attach_references(self, refs_fp):
+        """Attaches reference captions to the dataset's elements.
+
+        In the case of multiple reference captions for instance, call
+        this method repeatedly, once for each reference set.
+
+        Args:
+            refs_fp: A string path to the file containing reference captions,
+                caption per line.
+        Raises:
+            RuntimeError: The file given by `refs_fp` does not exist.
+            RuntimeError: The number of dataset elements and reference captions
+                does not match.
+        """
+
         if not os.path.exists(refs_fp):
             raise RuntimeError("Given references file path %s does not exist" %refs_fp)
 
@@ -345,7 +389,23 @@ def _tokenize(string):
     return string.split()
 
 class DatasetEncoder(json.JSONEncoder):
+    """Dataset JSON-encoder class.
+
+    This class serves for serializing Dataset instances into JSON.
+    To JSON-encode a Dataset instance, pass it as an argument to
+    one of the serialization methods from the json module or call
+    its `default` method. For example, json.dumps(dataset, cls=DatasetEncoder).
+    """
+
     def default(self, dataset):
+        """JSON encode a dataset.
+
+        Args:
+            dataset: A Dataset instance.
+        Returns:
+            A JSON-compatible Python dictionary with the encoded dataset.
+        """
+
         instance_encoder = DataInstanceEncoder()
         return {
             "id": dataset.idx,
@@ -357,7 +417,23 @@ class DatasetEncoder(json.JSONEncoder):
         }
 
 class DataInstanceEncoder(json.JSONEncoder):
+    """DataInstance JSON-encoder class.
+
+    To JSON-encode a DataInstance instance, instantiate this class
+    and call its default method on the data instance. Or pass the
+    class along with the data instance to one of the json module's
+    serialization methods, as in json.dumps(dataInstance, cls=DataInstanceEncoder).
+    """
+
     def default(self, inst):
+        """JSON encode a data instance.
+
+        Args:
+            inst: A DataInstance instance.
+        Returns:
+            A JSON-compatible Python dictionary with the encoded data instance.
+        """
+
         return {
             "id": inst.idx,
             "source": inst.source,
