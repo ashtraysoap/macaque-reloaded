@@ -437,9 +437,6 @@ class DataInstanceEncoder(json.JSONEncoder):
         return {
             "id": inst.idx,
             "source": inst.source,
-            "caption": inst._caption,
             "source_caption": inst._source_caption,
             "references": inst._references,
-            "alignments": inst._alignments,
-            "beam_search_output": inst._beam_search_output
         }
