@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { RunResultsView } from './runResultsView.js';
+import { basename } from './utils.js';
 
 import './style.css';
 
@@ -56,13 +57,14 @@ class DataInstanceView extends React.Component {
             instanceId={instance.id}
             onCaptionClick={this.onCaptionClick}
             fetchAttentionMap={this.fetchAttentionMap}
+            metrics={this.props.metrics}
         />;
 
         return (
             <div className="transparentLayer" onClick={() => this.props.onClick()}>
                 <div className="instanceView" onClick={(e) => e.stopPropagation()}>
-                    {instance.source}
-                    <div style={{border: "solid blue"}}>
+                    {basename(instance.source)}
+                    <div>
                         <img src={this.state.imgSrc} alt=""/>
                     </div>
                     <div id="runsBar">
@@ -142,7 +144,8 @@ DataInstanceView.propTypes = {
     )).isRequired,
     dataset: PropTypes.number.isRequired,
     onClick: PropTypes.func.isRequired,
-    runners: PropTypes.array.isRequired
+    runners: PropTypes.arrayOf(PropTypes.object).isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 RunToggler.propTypes = {

@@ -13,11 +13,7 @@ class InterfaceMethod(Enum):
     RunOnDataset = 2
 
 IFC_CLASS = "FeatureExtractorWrapper"
-IFC_METHODS = {
-    InterfaceMethod.RunOnPaths: 'run_on_paths',
-    InterfaceMethod.RunOnImages: 'run_on_images',
-    InterfaceMethod.RunOnDataset: 'run_on_dataset'
-}
+IFC_METHOD = "extract_features"
 
 class PluginFeatureExtractor(FeatureExtractor):
     def __init__(self, plugin_path):
@@ -50,38 +46,24 @@ class PluginFeatureExtractor(FeatureExtractor):
         wrapper_class = getattr(module, IFC_CLASS)
         self._model_wrapper = wrapper_class()
 
-        if hasattr(wrapper_class, IFC_METHODS[InterfaceMethod.RunOnPaths]):
-            self._method_id = InterfaceMethod.RunOnPaths
-        elif hasattr(wrapper_class, IFC_METHODS[InterfaceMethod.RunOnImages]):
-            self._method_id = InterfaceMethod.RunOnImages
-        elif hasattr(wrapper_class, IFC_METHODS[InterfaceMethod.RunOnDataset]):
-            self._method_id = InterfaceMethod.RunOnDataset
-        else:
-            raise ValueError("The class {} in {} does not provide any of the interface methods."
-                .format(IFC_CLASS, plugin_path))
+        if not hasattr(wrapper_class, IFC_METHOD):
+            raise ValueError("The class {} in {} does not provide the method {}."
+                .format(IFC_CLASS, plugin_path, IFC_METHOD))
 
-        self._method = getattr(self._model_wrapper, IFC_METHODS[self._method_id])
+        self._method = getattr(self._model_wrapper, IFC_METHOD)
 
-    def extract_features(self, dataset):
-        elems = dataset.elements
-        results = []
+
+    def extract_features(self, images):
+        """Extract features from the given images.
+        
+        Args:
+            images: A numpy array of images.
+
+        Returns:
+            A numpy array of features.
+        """
     
-        if self._method_id == InterfaceMethod.RunOnPaths:
-            prefix = dataset.prefix
-            paths = [os.path.join(prefix, e.source) for e in elems]
-            results = self._method(paths)
-        elif self._method_id == InterfaceMethod.RunOnImages:
-            if dataset.preprocessed_imgs:
-                imgs = [e.prepro_img for e in elems]
-            else:
-                if not dataset.images:
-                    dataset.load_images()
-                imgs = [e.image for e in elems]
-            results = self._method(imgs)
-        elif self._method_id == InterfaceMethod.RunOnDataset:
-            results = self._method(dataset)
-        else:
-            raise RuntimeError()
+        results = self._method(images)
 
         if isinstance(results, list):
             results = np.array(results)

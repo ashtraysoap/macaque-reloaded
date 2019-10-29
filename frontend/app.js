@@ -4,10 +4,14 @@ import React from 'react';
 import { AboutTab } from './aboutTab.js';
 import { AddDatasetTab } from './addDatasetTab.js';
 import { ConfigTab } from './configTab.js';
-import { DatasetTab } from './datasetTab.js';
+import { DatasetsTab } from './datasetsTab.js';
 import { Header } from './header.js';
-import { ModelTab } from './modelTab.js';
+import { HomeTab } from './homeTab.js';
 import { Navigation } from './nav.js';
+import { AddPreproTab } from './addPreproTab.js';
+import { AddEncoderTab } from './addEncoderTab.js';
+import { AddModelTab } from './newAddModelTab.js';
+import { AddRunnerTab } from './addRunnerTab.js';
 
 /*
 
@@ -46,11 +50,11 @@ class App extends React.Component {
             encoders: [],
             models: [],
             runners: [],
-            metrics: [ "BLEU1", "BLEU2", "BLEU3", "BLEU4", "METEOR" ],
+            metrics: [ "BLEU", "METEOR", "chrf3" ],
             results: [],
-            selectedTab: "About",
+            selectedTab: "Home",
+            demoResults: null
         };
-        this.state.defaultTabs = [ "About", "Add Dataset", "Configure" ];
     }
 
     handleSelectedTabChange(tabKey) {
@@ -116,56 +120,59 @@ class App extends React.Component {
 
     render() {
         const s = this.state;
-        const runners = s.runners.map(r => r.name);
-        const datasets = s.datasets.map(d => d.name);
-        const defaultTabs = s.defaultTabs;
         const id = s.selectedTab;
         let mainTab = null;
 
-        if (id === "Configure") {
-            mainTab = <ConfigTab 
-                addPrepro={this.addPrepro}
-                addEncoder={this.addEncoder}
-                addModel={this.addModel}
-                addRunner={this.addRunner}
-                preprocessors={this.state.preprocessors}
-                encoders={this.state.encoders}
-                models={this.state.models}
+        if (id === "Home") {
+            mainTab = <HomeTab
+                results={this.state.demoResults}
+                onServerResponse={(res) => { console.log(res); this.setState({demoResults: res})}}
             />;
-        } else if (id === "Add Dataset") {
-            mainTab = <AddDatasetTab onServerResponse={this.addDataset}/>
         } else if (id === "About") {
-            mainTab = <AboutTab />;
-        } else if (runners.includes(id)) {
-            const m = s.runners.filter(m => m.name === id)[0];
-            mainTab =  <ModelTab model={m} />
-        } else if (datasets.includes(id)) {
-            const d = s.datasets.filter(d => d.name === id)[0];
-            const results = s.results.filter(r => r.datasetId === d.id);
-            mainTab = <DatasetTab 
-                dataset={d} 
+            mainTab = <AboutTab/>;
+        } else if (id === "Configure") {
+            mainTab = <ConfigTab
+                dataset={<AddDatasetTab
+                    onServerResponse={this.addDataset}
+                />}
+                prepro={<AddPreproTab
+                    addPrepro={this.addPrepro}
+                />}
+                encoder={<AddEncoderTab
+                    addEncoder={this.addEncoder}
+                />}
+                model={<AddModelTab
+                    addModel={this.addModel}
+                />}
+                runner={<AddRunnerTab
+                    preprocessors={s.preprocessors}
+                    encoders={s.encoders}
+                    models={s.models}
+                    addRunner={this.addRunner}
+                />}
+            />
+        } else if (id === "Datasets") {
+
+            mainTab = <DatasetsTab
+                datasets={s.datasets}
+                results={s.results}
+                runners={s.runners}
+                metrics={s.metrics}
                 onResultsResponse={this.addResults}
                 onMetricScoresResponse={this.addMetricScoresToResults}
-                results={results}
-                runners={this.state.runners}
-                metrics={this.state.metrics}
-            />
+            />;
+
+        } else if (id === "Models") {
+        
         }
 
         return (
             <div>
                 <Header
-                    nav={
-                        <Navigation
-                            datasetNames={datasets} 
-                            runnerNames={runners} 
-                            defaultNames={defaultTabs}
-                            onSelectedChange={this.handleSelectedTabChange}
-                        />
-                    } />
-                <div className="mainTab">
-                    {mainTab}
-                </div>
+                    onSelectedChange={this.handleSelectedTabChange}
+                    selected={id}
+                    />
+                {mainTab}
             </div>
         );
     }

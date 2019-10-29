@@ -3,8 +3,9 @@ import React from 'react';
 
 import { DataInstanceView } from './dataInstanceView.js';
 import { DatasetMenu } from './datasetMenu.js';
-import { ScoreTable } from './scoreTable.js';
+import { Scores } from './scoreTable.js';
 import { TableRow } from './utils.js';
+import { DataEntriesList } from './dataEntriesList.js';
 
 import './style.css';
 
@@ -24,6 +25,7 @@ class DatasetTab extends React.Component {
         this.moveViewLeft = this.moveViewLeft.bind(this);
         this.moveViewRight = this.moveViewRight.bind(this);
         this.getInstance = this.getInstance.bind(this);
+        this.filterScoresForList = this.filterScoresForList.bind(this);
     }
 
     get showingElementView() {
@@ -66,40 +68,52 @@ class DatasetTab extends React.Component {
         return x;
     }
 
+    filterScoresForList() {
+        let res = this.props.results.filter(r => r.scores !== undefined);
+        return res.map(r => { return { runId: r.runId, scores: r.scores } });
+    }
+
     render() {
-        const results = this.props.results;
+        const p = this.props;
+        const results = p.results;
         const idx = this.state.elemIdx;
-        console.log(results);
         const selectedResults = this.getResultsForElement(results, idx);
+
         const view = this.showingElementView ? <DataInstanceView 
             dataInstance={this.getInstance()} 
-            dataset={this.props.dataset.id}
+            dataset={p.dataset.id}
             results={selectedResults}
             onClick={this.closeView}
-            runners={this.props.runners}
+            runners={p.runners}
+            metrics={p.metrics}
             /> : null;
 
-        let elems = this.props.dataset.elements;
-        elems = elems.map(e => <DataInstanceEntry key={e.id} dataInstance={e} handleClick={() => this.showView(e.id)}/>);
+        const list = <DataEntriesList
+            entries={p.dataset.elements}
+            scores={this.filterScoresForList()}
+            handleEntryClick={(idx) => this.showView(idx)}
+        />;
 
         return (
-            <div style={{display: "table"}}>
-                <div style={{display: "table-cell"}}>
-                    {elems}
-                    {view}
-                </div>
-                <div style={{display: "table-cell", border: "solid black"}}>
-                    <ScoreTable 
-                        results={this.props.results}
-                        runnerNames={this.props.runners.map(r => r.name)}
-                    />
+            <div>
+                <div className="datasetRight">
                     <DatasetMenu 
-                        dataset={this.props.dataset.id}
-                        runnerNames={this.props.runners.map(r => r.name)}
-                        metricNames={this.props.metrics}
-                        onResultsResponse={this.props.onResultsResponse}
-                        onMetricScoresResponse={this.props.onMetricScoresResponse}
+                        dataset={p.dataset.id}
+                        runnerNames={p.runners.map(r => r.name)}
+                        metricNames={p.metrics}
+                        onResultsResponse={p.onResultsResponse}
+                        onMetricScoresResponse={p.onMetricScoresResponse}
                     />
+                    <Scores
+                        results={p.results}
+                        runners={p.runners}
+                        metrics={p.metrics}    
+                    />
+                </div>
+
+                <div className="datasetCenter">
+                    {list}
+                    {view}
                 </div>
             </div>
         );
@@ -111,9 +125,28 @@ class DatasetTab extends React.Component {
                 runId: r.runId,
                 runnerId: r.runnerId,
                 datasetId: r.datasetId,
-                captions: r.captions[elemId]
+                captions: r.captions[elemId],
+                scores: this.getScoresForElement(r.scores, elemId)
             }
         });
+    }
+
+    getScoresForElement(scores, elemId) {
+        let results = {};
+
+        for (let m in scores) {
+
+            results[m] = {
+                greedy: scores[m].greedy.scores[elemId]
+            };
+            
+            results[m].beamSearch = [];
+
+            for (let h of scores[m].beamSearch) {
+                results[m].beamSearch.push(h.scores[elemId]);
+            }
+        }
+        return results;
     }
 
 }

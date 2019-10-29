@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { AddSomethingTab } from './addSomethingTab.js';
+
 export { AddRunnerTab };
 
 
@@ -60,33 +62,38 @@ class AddRunnerTab extends React.Component {
         };
 
         return (
+            <AddSomethingTab>
             <div>
-                <label>preprocessor</label>
-                <select value={s.prepro === null ? "none" : ps[s.prepro]} onChange={setPrepro}>
-                    <option value='none'>none</option>
-                    { ps.map(p => <option value={p} key={p}>{p}</option>) }
-                </select>
-
-                <label>encoder</label>
-                <select value={s.encoder === null ? "none" : es[s.encoder]} onChange={setEncoder}>
-                    <option value='none'>none</option>
-                    { es.map(e => <option value={e} key={e}>{e}</option>) }
-                </select>
-
-                <label>model</label>
-                <select value={s.model === null ? "none" : ms[s.model]} onChange={setModel}>
-                    <option value='none'>none</option>
-                    { ms.map(m => <option value={m} key={m}>{m}</option>) }
-                </select>
-
+                <div className="addModelPartLabel">Runner</div>
+                <label>name</label>
                 <input 
                     type="text"
                     name="name"
                     value={s.name}
                     onChange={e => this.setState({ name: e.target.value })}
                 />
+                <br/>
+                <label>preprocessor</label>
+                <select value={s.prepro === null ? "none" : ps[s.prepro]} onChange={setPrepro}>
+                    <option value='none'>none</option>
+                    { ps.map(p => <option value={p} key={p}>{p}</option>) }
+                </select>
+                <br/>
+                <label>encoder</label>
+                <select value={s.encoder === null ? "none" : es[s.encoder]} onChange={setEncoder}>
+                    <option value='none'>none</option>
+                    { es.map(e => <option value={e} key={e}>{e}</option>) }
+                </select>
+                <br/>
+                <label>model</label>
+                <select value={s.model === null ? "none" : ms[s.model]} onChange={setModel}>
+                    <option value='none'>none</option>
+                    { ms.map(m => <option value={m} key={m}>{m}</option>) }
+                </select>
+                <br/>
                 <button onClick={this.addRunner}>Add run configuration</button>
             </div>
+            </AddSomethingTab>
         );
     }
 }

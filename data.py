@@ -7,6 +7,15 @@ from PIL import Image
 import numpy as np
 
 def create_dataset(json_config):
+    """Creates a Dataset instance from the configuration.
+
+    Args:
+        json_config: A dictionary with keys `name`, `prefix`, `batchSize` and
+            optionally `sources` and `references`.
+    Returns:
+        A initialized Dataset instance built based on the configuration.
+    """
+
     ds = Dataset(name=json_config['name'],
                 prefix=json_config['prefix'],
                 batch_size=json_config['batchSize'])
@@ -24,14 +33,35 @@ def create_dataset(json_config):
 
 
 class DataInstance:
+    """Class representing a Dataset element.
+
+    A DataInstance stores information about an element of the
+    dataset. Upon loading, it may store the image data, or the feature
+    map, depending on the modality of the element.
+
+    Attributes:
+        idx: An integer index of the element in the dataset.
+        source: A string file path locating the element resource.
+        references: A list of reference captions for the element, may be empty.
+        source_caption: The source caption of the element, may be None.
+        image: A PIL Image, may be None.
+        prepro_img: A PIL Image, may be None.
+        feature_map: A Numpy array, may be None.
+    """
+
     def __init__(self, idx, source):
+        """Creates a DataInstance instance.
+        
+        Args:
+            idx: An integer representing the index of the element in
+                the dataset.
+            source: A string file path locating the instance resource.
+        """
+        
         self._idx = idx
         self._source = source
-        self._caption = None
         self._references = []
         self._source_caption = None
-        self._alignments = None
-        self._beam_search_output = None
 
         self._image = None
         self._prepro_img = None
@@ -52,6 +82,10 @@ class DataInstance:
     @property
     def references(self):
         return self._references
+
+    @property
+    def source_caption(self):
+        return self._source_caption
 
     @image.setter
     def image(self, val):
@@ -74,7 +108,41 @@ class DataInstance:
         self._feature_map = val
 
 class Dataset:
+    """Class representing datasets.
+
+    The Dataset class holds all the elements of the dataset, general
+    information about the dataset and provides means to iterate over it.
+
+    Attributes:
+        idx: An integer index of the dataset in the global state's dataset list.
+        name: A string name of the dataset.
+        count: The number of elements in the dataset.
+        batch_size: An integral size of the batch.
+        prefix: A string path to the directory where the dataset elements
+            are located.
+        elements: A list of DataInstance instances.
+        images: A boolean value, whether the dataset contains the elements'
+            images.
+        preprocessed_images: A boolean value, whether the dataset contains 
+            the elements' preprocessed images.
+        feature_maps: A boolean value, whether the dataset contains elements'
+            feature maps.
+    """
+
     def __init__(self, name, prefix, batch_size, images=False, features=False, prepro=False):
+        """Creates a Dataset instance.
+
+        Args:
+            name: A string for the dataset name.
+            prefix: A string path specifying the location of the elements.
+            batch_size: The size of the batch.
+            images: A Boolean, whether the dataset elements are images.
+            features: A Boolean, whether the dataset elements are feature maps.
+            prepro: A boolean, whether the elements are already preprocessed.
+        Raises:
+            ValueError: The directory given by `prefix` does not exist.
+        """
+
         self._name = name
         self._prefix = prefix
         self._batch_size = batch_size
@@ -142,6 +210,19 @@ class Dataset:
         return self._preprocessed_imgs
 
     def initialize(self, sources=None, fp=None):
+        """Initialize the dataset.
+
+        Only after calling this method, elements of the dataset
+        are instantiated in DataInstances.
+
+        Args:
+            sources: A list of strings. Each string is a file name, which
+                should be found in the directory given by the dataset's
+                `prefix` attribute.
+            fp: A file path. The file should contain file names on separate
+                lines, specifying the files containing dataset elements.
+        """
+
         if sources:
             sources = [s.rstrip() for s in sources]
 
@@ -162,45 +243,75 @@ class Dataset:
         self._count = len(self._elements)
 
     def to_json(self):
+        """JSON serializes the dataset.
+
+        Returns:
+            A string representing the JSON-serialized dataset instance.
+        """
+
         return json.dumps(self, cls=DatasetEncoder)
 
     def load_images(self):
+        """Loads the image data into the dataset.
         """
-        For each element loads the image associated with
-        its `source` attribute. Images are in the PIL format.
-        """
+
         for e in self.elements:
             e.image = Image.open(e.source)
         self._images = True
 
     def load_image(self, elementId):
+        """Loads the image data of a dataset element.
+
+        Args:
+            elementId: The index of the dataset element.
+        Returns:
+            A PIL Image corresponding to the image data of the
+            element specified by `elementId`.
+        """
+
         e = self.elements[elementId]
         return Image.open(e.source)
 
     def attach_prepro_images(self, images):
-        """
+        """Attaches preprocessed images to the dataset's elements.
+
         Args:
-            images: ??????????
+            images: An iterable of Numpy Arrays.
         """
-        # TODO: check validity of args
 
         for elem, img in zip(self.elements, images):
             elem.prepro_img = img
         self._preprocessed_imgs = True
 
     def attach_features(self, features):
-        """
+        """Attaches features to the dataset's elements.
+
         Args:
-            features: A numpy array of feature maps.
+            features: A Numpy Array of feature maps.
         """
+        
         for elem, fm in zip(self.elements, features):
             elem.feature_map = fm
         self._feature_maps = True
 
     def attach_features_from_file_list(self, prefix="", sources=None):
+        """Attaches features to the dataset's elements.
+
+        Only feature maps serialized in the .npy and .npz formats are
+        supported.
+
+        Args:
+            prefix: A string path to the directory containing stored feature
+                maps.
+            sources: A string path to the file containing filenames of the
+                stored features, filename per line.
+        Raises:
+            ValueError: File given by `sources` does not exist.
+            ValueError: The number of elements in the dataset and the number of
+                feature maps do not match.
+            ValueError: Unsupported file format for feature maps.
         """
-            Requires documentation.
-        """
+
         if not sources:
             srcs = os.listdir(prefix)
         else:
@@ -230,6 +341,20 @@ class Dataset:
         self._feature_maps = True
 
     def attach_references(self, refs_fp):
+        """Attaches reference captions to the dataset's elements.
+
+        In the case of multiple reference captions for instance, call
+        this method repeatedly, once for each reference set.
+
+        Args:
+            refs_fp: A string path to the file containing reference captions,
+                caption per line.
+        Raises:
+            RuntimeError: The file given by `refs_fp` does not exist.
+            RuntimeError: The number of dataset elements and reference captions
+                does not match.
+        """
+
         if not os.path.exists(refs_fp):
             raise RuntimeError("Given references file path %s does not exist" %refs_fp)
 
@@ -264,7 +389,23 @@ def _tokenize(string):
     return string.split()
 
 class DatasetEncoder(json.JSONEncoder):
+    """Dataset JSON-encoder class.
+
+    This class serves for serializing Dataset instances into JSON.
+    To JSON-encode a Dataset instance, pass it as an argument to
+    one of the serialization methods from the json module or call
+    its `default` method. For example, json.dumps(dataset, cls=DatasetEncoder).
+    """
+
     def default(self, dataset):
+        """JSON encode a dataset.
+
+        Args:
+            dataset: A Dataset instance.
+        Returns:
+            A JSON-compatible Python dictionary with the encoded dataset.
+        """
+
         instance_encoder = DataInstanceEncoder()
         return {
             "id": dataset.idx,
@@ -276,13 +417,26 @@ class DatasetEncoder(json.JSONEncoder):
         }
 
 class DataInstanceEncoder(json.JSONEncoder):
+    """DataInstance JSON-encoder class.
+
+    To JSON-encode a DataInstance instance, instantiate this class
+    and call its default method on the data instance. Or pass the
+    class along with the data instance to one of the json module's
+    serialization methods, as in json.dumps(dataInstance, cls=DataInstanceEncoder).
+    """
+
     def default(self, inst):
+        """JSON encode a data instance.
+
+        Args:
+            inst: A DataInstance instance.
+        Returns:
+            A JSON-compatible Python dictionary with the encoded data instance.
+        """
+
         return {
             "id": inst.idx,
             "source": inst.source,
-            "caption": inst._caption,
             "source_caption": inst._source_caption,
             "references": inst._references,
-            "alignments": inst._alignments,
-            "beam_search_output": inst._beam_search_output
         }

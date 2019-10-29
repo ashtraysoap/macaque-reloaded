@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { range, zip } from './utils.js';
 import { AlignmentsTab } from './alignmentsTab.js';
-import { BeamSearchOutputView } from './beamSearchOutputView.js'
+import { BeamSearchOutputView } from './beamSearchOutputView.js';
+import { CaptionTab } from './captionTab.js';
+import { ElementScoreTable } from './scoreTable.js';
 
 export { RunResultsView };
 
@@ -12,8 +13,6 @@ class RunResultsView extends React.Component {
     constructor(props) {
         super(props);
 
-        console.log('results: ', this.props.results);
-
         this.getSelectedCaption = this.getSelectedCaption.bind(this);
         this.setInitialCapID = this.setInitialCapID.bind(this);
 
@@ -21,7 +20,9 @@ class RunResultsView extends React.Component {
 
         this.state = {
             showAlignments: false,
+            showCaption: true,
             showBSOut: false,
+            showMetrics: false,
             captionId: cid
         };
     }
@@ -29,13 +30,22 @@ class RunResultsView extends React.Component {
     render() {
         const caption = this.getSelectedCaption();
         const cid = this.state.captionId;
+        
+        const switchState = b => {
+            let s = this.state;
+            s[b] = !s[b];
+            this.setState(s);
+        };
 
-        let toks = zip(caption, range(caption.length));
-        toks = toks.map(([token, id]) => <CaptionToken 
-            key={id} 
-            caption={token} 
-            onClick={() => this.props.onCaptionClick(cid, id)}
-        />);
+        let captionTab = !this.state.showCaption ? null :
+            <CaptionTab 
+                caption={caption}
+                onTokenClick={(tokId) => this.props.onCaptionClick(cid, tokId)}
+                captionId={this.state.captionId}
+                greedy={true}
+                beamSize={this.props.results.captions.beamSearchCaptions.length}
+                onCaptionChange={(cid) => this.setState({ captionId: cid })}
+            />;
 
         let attTab = !this.state.showAlignments ? null :
             <AlignmentsTab 
@@ -44,36 +54,49 @@ class RunResultsView extends React.Component {
                 instanceId={this.props.instanceId}
                 captionId={cid}
                 fetchAttentionMap={this.props.fetchAttentionMap}
-            />
+            />;
 
         let bsView = !this.state.showBSOut ? null :
-            <BeamSearchOutputView />
+            <BeamSearchOutputView />;
+
+        let metrics = !this.state.showMetrics ? null :
+            <ElementScoreTable
+               scores={this.props.results.scores} 
+               metrics={this.props.metrics}
+            />;
 
         return (
             <div>
-                <CaptionToggler 
-                    captionId={this.state.captionId}
-                    beamSize={this.props.results.captions.beamSearchCaptions.length}
-                    onChange={(cid) => this.setState({ captionId: cid })}
-                />
-                <div id="caption" style={{border: "solid green"}}>
-                    <div style={{display: "inline"}}>
-                        {toks}
-                    </div>
+                <div>
+                    <span className="resultsSpan" onClick={() => switchState('showCaption')}>
+                        Caption
+                    </span>
+                    {captionTab}
                 </div>
-                <div id="alignments" style={{border: "solid pink"}}>
-                    <span onClick={() => this.setState({ showAlignments: !this.state.showAlignments })}>
+
+                <div id="alignments">
+                    <span className="resultsSpan" onClick={() => switchState('showAlignments')}>
                         Alignments
                     </span>
                     {attTab}
                 </div>
-                <div id="beamSearch" style={{border: "solid #5081C1"}}>
-                    <span onClick={() => this.setState({ showBSOut: !this.state.showBSOut })}>
+                
+                <div id="beamSearch">
+                    <span className="resultsSpan" onClick={() => switchState('showBSOut')}>
                         Beam Search Output Graph
                     </span>
                     {bsView}
                 </div>
-                <div id="metrics" style={{border: "solid purple"}}>Metrics Table</div>
+                
+                {
+                    this.props.metrics.length > 0 &&
+                        <div id="metrics">
+                            <span className="resultsSpan" onClick={() => switchState('showMetrics')}>
+                                Metrics
+                            </span>
+                            {metrics}
+                        </div>
+                }
             </div>
         );
     }
@@ -81,7 +104,7 @@ class RunResultsView extends React.Component {
     // returns the currently selected caption as an array of string tokens.
     getSelectedCaption() {
         const cid = this.state.captionId;
-        if (cid === 0) {
+        if (cid == 0) {
             return this.props.results.captions.greedyCaption;
         } else if (cid > 0) {
             return this.props.results.captions.beamSearchCaptions[cid - 1];
@@ -103,34 +126,10 @@ class RunResultsView extends React.Component {
     }
 }
 
-function CaptionToken(props) {
-    return (
-        <div style={{display: "inline", padding: "3px"}} 
-            onClick={props.onClick}>{props.caption}
-        </div>
-    );
-}
-
-function CaptionToggler(props) {
-    const greedyOpt = <option value={0} >greedy hypothesis</option>; // what if greedy c. not provided?
-    const bsOpts = range(props.beamSize).map(i => 
-        <option key={i} value={i + 1}>{`beam search hypothesis ${i + 1}`}</option>)
-    return (
-        <div>
-            <select value={props.captionId} onChange={e => props.onChange(e.target.value)}>
-                {greedyOpt}
-                {bsOpts}
-            </select>
-        </div>
-    );
-}
-
-
 RunResultsView.propTypes = {
     results: PropTypes.shape(
         {
             runId: PropTypes.number,
-            runnerId: PropTypes.number,
             captions: PropTypes.shape({
                 greedyCaption: PropTypes.arrayOf(PropTypes.string),
                 beamSearchCaptions: PropTypes.arrayOf(
@@ -140,11 +139,6 @@ RunResultsView.propTypes = {
     ).isRequired,
     instanceId: PropTypes.number.isRequired,
     onCaptionClick: PropTypes.func.isRequired,
-    fetchAttentionMap: PropTypes.func.isRequired
-};
-
-CaptionToggler.propTypes = {
-    captionId: PropTypes.number,
-    beamSize: PropTypes.number,
-    onChange: PropTypes.func
+    fetchAttentionMap: PropTypes.func.isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

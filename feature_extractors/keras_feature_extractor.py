@@ -38,6 +38,9 @@ class KerasFeatureExtractor(FeatureExtractor):
 
     def extract_features(self, images):
         """
+        Args:
+            images: A numpy array of images from the source dataset.
+
         Returns:
             A numpy array of extracted features.
         """
