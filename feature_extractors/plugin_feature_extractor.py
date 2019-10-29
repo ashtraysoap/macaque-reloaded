@@ -7,16 +7,30 @@ import numpy as np
 
 from .feature_extractor import FeatureExtractor
 
-class InterfaceMethod(Enum):
-    RunOnPaths = 0
-    RunOnImages = 1
-    RunOnDataset = 2
 
 IFC_CLASS = "FeatureExtractorWrapper"
 IFC_METHOD = "extract_features"
 
 class PluginFeatureExtractor(FeatureExtractor):
+    """Class for feature extractors from user provided modules.
+    
+    The user can provide his own implementation of a feature extractor
+    that can be used in Macaque's model pipeline, upon satisfying an
+    interface in his module. The module has to contain a class with a
+    method of specific names and signature.
+    """
+
     def __init__(self, plugin_path):
+        """Initialize a PluginFeatureExtractor instance.
+        
+        Args:
+            plugin_path: A string path to the plugin module.
+        Raises:
+            ValueError: The file in `plugin_path` does not exist.
+            ValueError: The file in `plugin_path` does not end in .py.
+            ValueError: The file does not contain the interface class.
+            ValueError: The interface class does not contain the interface method.
+        """
         
         if not os.path.isfile(plugin_path):
             raise ValueError("The file %s does not exist." % plugin_path)
@@ -57,10 +71,13 @@ class PluginFeatureExtractor(FeatureExtractor):
         """Extract features from the given images.
         
         Args:
-            images: A numpy array of images.
-
+            images: A Numpy Array of images.
         Returns:
-            A numpy array of features.
+            A Numpy Array of features.
+        Raises:
+            RuntimeError: The results returned by the plugin are not in a
+                supported format. Supported format are either Python list or
+                Numpy Arrays.
         """
     
         results = self._method(images)
@@ -68,6 +85,6 @@ class PluginFeatureExtractor(FeatureExtractor):
         if isinstance(results, list):
             results = np.array(results)
         elif not isinstance(results, np.ndarray):
-            raise RuntimeError("Features are neither a list nor a numpy array.")
+            raise RuntimeError("Features are neither a list nor a Numpy Array.")
 
         return results

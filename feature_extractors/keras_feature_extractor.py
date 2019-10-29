@@ -25,7 +25,35 @@ MODELS = {
 }
 
 class KerasFeatureExtractor(FeatureExtractor):
+    """A class for interfacing with Keras pretrained encoders.
+
+    On the first usage of a network type the network weights will be 
+    downloaded. This may take some time.
+
+    Supported networks are:
+        Xception
+        VGG16
+        VGG19
+        ResNet50
+        ResNet101
+        ResNet152
+        ResNet50V2
+        ResNet101V2
+        ResNet152V2
+        ResNeXt50
+        ResNeXt101
+        InceptionV3
+    """
+
     def __init__(self, net_id):
+        """Initialize a KerasFeatureExtractor instance.
+        
+        Args:
+            net_id: A string identifier of the network.
+        Raises:
+            ValueError: Unsupported network.
+        """
+
         if not net_id in MODELS:
             raise ValueError("Unsupported network %s." % net_id)
 
@@ -37,13 +65,14 @@ class KerasFeatureExtractor(FeatureExtractor):
         self._input_size = enc_spec.input_size
 
     def extract_features(self, images):
-        """
-        Args:
-            images: A numpy array of images from the source dataset.
+        """Extracts features from the images.
 
+        Args:
+            images: A Numpy Array of images from the source dataset.
         Returns:
-            A numpy array of extracted features.
+            A Numpy Array of extracted features.
         """
+
         xs = [self._preprocess_input(x) for x in images]
         xs = np.asarray(xs)
 

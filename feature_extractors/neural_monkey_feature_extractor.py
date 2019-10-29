@@ -25,6 +25,15 @@ VGG_RGB_MEANS = [[[123.68, 116.779, 103.939]]]
 
 
 class NeuralMonkeyFeatureExtractor(FeatureExtractor):
+    """A class for interacting with pretrained NeuralMonkey encoders.
+    
+    Supported networks are:
+        VGG16
+        VGG19
+        ResNet50V2
+        ResNet101V2
+        ResNet152V2
+    """
     
     def __init__(self, 
                 net, 
@@ -40,6 +49,7 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
             conv_map: The string identifier of the convolutional
                 map which should be extracted as features.
         """
+
         if net not in MODELS:
             raise ValueError("Unsupported network %s." % net)
         
@@ -75,9 +85,9 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
         """Extracts features from the dataset.
         
         Args:
-            images: A numpy array of images.
+            images: A Numpy Array of images.
         Returns:
-            A list of numpy arrays, the extracted feature maps.
+            A list of Numpy Arrays, the extracted feature maps.
         """
 
         width = self._net_spec.input_size[0]
