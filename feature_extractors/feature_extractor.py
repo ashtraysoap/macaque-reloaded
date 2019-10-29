@@ -1,4 +1,6 @@
 class FeatureExtractor():
+    """Base class for all feature extractors."""
+
     def __init__(self):
         self._idx
 
@@ -11,11 +13,4 @@ class FeatureExtractor():
         self._idx = val
 
     def extract_features(self, images):
-        """
-        Arguments:
-            images: a numpy array of the dataset's images.
-
-        Returns:
-            A numpy array of feature maps extracted from the dataset's images.
-        """
-        pass
+        raise NotImplementedError()

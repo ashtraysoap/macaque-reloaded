@@ -8,12 +8,41 @@ from .plugin_feature_extractor import PluginFeatureExtractor
 SLIM_PATH = "/home/sam/Documents/CodeBox/BC/code/lib/tensorflow-models/research/slim"
 
 class FeatureExtractorId(Enum):
+    """Class enumerating supported feature extractor types."""
+
     Keras = "keras"
     Slim = "tf-slim"
     Plugin = "plugin"
     Null = "none"
 
 def create_feature_extractor(extractor_config):
+    """Creates a FeatureExtractor from the config dictionary.
+
+    Args:
+        extractor_config: A dictionary with the following structure
+            {
+                'type': { 'tf-slim' | 'keras' | 'plugin' | 'none' },
+                'keras': {
+                    'netType': { see KerasFeatureExtractor for supported values }
+                },
+                'plugin': {
+                    'path': { a string path to the plugin source }
+                },
+                'tfSlim': {
+                    'netType': { see NeuralMonkeyFeatureExtractor for supported values },
+                    'checkpoint': { a string path to the model checkpoint },
+                    'featureMap': { the feature map to choose as output,
+                        see NeuralMonkeyFeatureExtractor for options },
+                    'slimPath': { a string path to the Tensorflow Slim repository }
+                }
+            }
+            Only values for the selected type need to be provided.
+    Returns:
+        A feature extractor instance depending on the configuration.
+    Raises:
+        ValueError: Unsupported `type` value.
+    """
+
     extractor_id = extractor_config['type']
 
     if extractor_id == FeatureExtractorId.Slim.value:
