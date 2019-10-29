@@ -4,6 +4,20 @@ from PIL import Image, ImageFilter
 from preprocessing import PreproMode, crop
 
 def attention_map_jpg(alphas, image=None, target_w=None, target_h=None):
+    """Applies an attention map on top of the original image.
+
+    Args:
+        alphas: The attention weights as a list of lists of numbers.
+        image: The original or preprocessed image as a Numpy Array of 
+            shape (W, H, 3).
+        target_w: The target width of the output image. The width of the 
+            `image` parameter overrides this.
+        target_h: The target height of the output image. The height of the
+            `image` parameter overrides this.
+    Returns:
+        A PIL Image representing the input image with the visualized attention.
+    """
+
     alphas = np.asarray(alphas).astype('uint8')
     att_map = Image.fromarray(alphas)
 
@@ -20,12 +34,18 @@ def attention_map_jpg(alphas, image=None, target_w=None, target_h=None):
     target_h = target_h if target_h else pil_img.height
     att_map = rescale_and_smooth(att_map, target_w, target_h)
 
-    return apply_attention_mask(pil_img, att_map)
+    return _apply_attention_mask(pil_img, att_map)
 
 
-def rescale_and_smooth(pil_image, target_w=224, target_h=224, smooth=True):
-    """Returns the original image rescaled
-    and smoothened by a Gaussian filter
+def rescale_and_smooth(pil_image, target_w=224, target_h=224):
+    """Rescales and applies a Gaussian filter to the input image.
+    
+    Args:
+        pil_image: A PIL Image.
+        target_w: The width of the output.
+        target_h: The height of the output.
+    Returns:
+        A PIL Image.
     """
 
     w = pil_image.width
@@ -35,10 +55,16 @@ def rescale_and_smooth(pil_image, target_w=224, target_h=224, smooth=True):
     return n_img
 
 
-def apply_attention_mask(orig_pil_img, mask_pil_img, alpha_channel=0.8):
-    """Applies the attention mask to the original image by pasting it
-    on top with a selected alpha channel, thus visualizing the workings
-    of the model's attention component on the image.
+def _apply_attention_mask(orig_pil_img, mask_pil_img, alpha_channel=0.8):
+    """ Pastes the attention map mask on top of the original image.
+    
+    Args:
+        orig_pil_img: The original image as a PIL Image instance.
+        mask_pil_img: The attention map as a PIL Image instance.
+        alpha_channel: A value between 0 and 1 specifying the opacity
+            of the attention map mask.
+    Returns:
+        The composed image as a PIL Image instance.
     """
 
     assert (orig_pil_img.height == mask_pil_img.height) and \
@@ -54,6 +80,24 @@ def apply_attention_mask(orig_pil_img, mask_pil_img, alpha_channel=0.8):
     return cp
 
 def attention_map_for_original_img(alphas, image, prepro, alpha_channel=0.8):
+    """Applies the attention map to the original image.
+
+    The attention maps are computed from the preprocessed images. This
+    function transform the attention map to correspond to the original
+    image.
+
+    Args:
+        alphas: The attention weights as a list of lists of numbers.
+        image: The original image as a PIL Image.
+        prepro: A PreproMode instance, specifying the type of preprocessing,
+            that was applied to the original image.
+        alpha_channel: A value between 0 and 1 specifying the opacity
+            of the attention map mask.
+    Returns:
+        The attention map visualization on top of the original image, as a
+        PIL Image instance.
+    """
+
     att_map = attention_map_jpg(
         alphas=alphas, 
         image=None,
