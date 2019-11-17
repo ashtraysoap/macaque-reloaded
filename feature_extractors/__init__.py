@@ -24,6 +24,8 @@ def create_feature_extractor(extractor_config):
                 'type': { 'tf-slim' | 'keras' | 'plugin' | 'none' },
                 'keras': {
                     'netType': { see KerasFeatureExtractor for supported values }
+                    'layerSpec':
+                    'ckptPath':
                 },
                 'plugin': {
                     'path': { a string path to the plugin source }
@@ -58,7 +60,11 @@ def create_feature_extractor(extractor_config):
     elif extractor_id == FeatureExtractorId.Keras.value:
         keras_config = extractor_config['keras']
         net_type = keras_config['netType']
-        extractor = KerasFeatureExtractor(net_id=net_type)
+        layer_spec = keras_config['layerSpec']
+        ckpt_path = keras_config['ckptPath']
+        extractor = KerasFeatureExtractor(net_id=net_type,
+                    layer_spec=layer_spec,
+                    ckpt_path=ckpt_path)
 
     elif extractor_id == FeatureExtractorId.Plugin.value:
         plugin_config = extractor_config['plugin']

@@ -1,8 +1,8 @@
 from collections import namedtuple
 from importlib import import_module
 import os
-
 from keras.preprocessing import image
+from keras import Model
 import numpy as np
 
 from .feature_extractor import FeatureExtractor
@@ -45,11 +45,13 @@ class KerasFeatureExtractor(FeatureExtractor):
         InceptionV3
     """
 
-    def __init__(self, net_id):
+    def __init__(self, net_id, layer_spec="", ckpt_path=""):
         """Initialize a KerasFeatureExtractor instance.
         
         Args:
             net_id: A string identifier of the network.
+            layer: The name of the layer to use for feature extraction.
+            ckpt_path: A path to the stored model checkpoint.
         Raises:
             ValueError: Unsupported network.
         """
@@ -57,10 +59,22 @@ class KerasFeatureExtractor(FeatureExtractor):
         if not net_id in MODELS:
             raise ValueError("Unsupported network %s." % net_id)
 
+        weights = 'imagenet' if not ckpt_path else ckpt_path
         enc_spec = MODELS[net_id]
         module = import_module('keras.applications.' + enc_spec.module)
-        model_constr = getattr(module, enc_spec.net) 
-        self._model = model_constr(weights='imagenet', include_top=False, pooling=None)
+        model_constr = getattr(module, enc_spec.net)
+        self._model = model_constr(weights=weights, include_top=False, pooling=None)
+        
+        if layer_spec:
+            #try:
+            layer = self._model.get_layer(layer_spec)
+            self._model = Model(inputs=self._model.input, outputs=layer.output)
+            # except ValueError:
+            #     pass
+
+        # A Keras bug requires calling this function. 
+        # See https://github.com/keras-team/keras/issues/6462.
+        self._model._make_predict_function()            
         self._preprocess_input = getattr(module, 'preprocess_input')
         self._input_size = enc_spec.input_size
 
