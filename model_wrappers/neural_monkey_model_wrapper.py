@@ -1,23 +1,28 @@
 import os
-
+import pdb
 import numpy as np
 
 from neuralmonkey.dataset import Dataset
 from neuralmonkey.experiment import Experiment
 
 from .model_wrapper import ModelWrapper
+from beam_search_output import BeamSearchOutputGraph
 
 class NeuralMonkeyModelWrapper(ModelWrapper):
     def __init__(self,
                 runs_on_features,
                 config_path,
                 vars_path,
-                image_series="",
-                feature_series="",
+                data_series="",
                 src_caption_series="",
                 caption_series="",
                 alignments_series="",
-                bs_graph_series=""):
+                bs_graph_series="bs_target"):
+        """
+        caption_series -> GreedyRunner output_series
+        alignments_series -> WordAlignmentRunner output_series
+        bs_graph_series -> BeamSearchRunner output_series
+        """
 
         if not os.path.isfile(config_path):
             raise ValueError("File {} does not exist.".format(config_path))
@@ -25,8 +30,7 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         self._runs_on_features = runs_on_features
         self._config_path = config_path
         self._vars_path = vars_path
-        self._image_series = image_series
-        self._feature_series = feature_series
+        self._data_series = data_series
         self._src_caption_series = src_caption_series
         self._caption_series = caption_series
         self._alignments_series = alignments_series
@@ -40,66 +44,72 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
     def runs_on_features(self):
         return self._runs_on_features
 
-    def run(self, dataset):
+    def run(self, inputs):
         """
+        Args:
+            inputs: A Numpy Array of inputs.
         Returns:
             A list of dictionaries. Each dictionary contains the keys
             `caption`, `alignments`, `beam_search_output_graph`.
         """
-        elems = dataset.elements
 
+        n_elems = inputs.shape[0]
         # enc-dec model (runs on images)
-        if self._image_series:
-            if dataset.preprocessed_imgs:
-                imgs = [e.prepro_img for e in elems]
-            else:
-                if not dataset.images:
-                    dataset.load_images()
-                imgs = [e.image for e in elems]
-            
+        if not self._runs_on_features:
             if self._src_caption_series:
-                # handle multimodal translation case
+                # TODO: handle multimodal translation case
                 pass
             else:
-                ds = Dataset("macaque_data", {self._image_series: lambda: np.array(imgs)}, {})
+                ds = Dataset("macaque_data", {self._data_series: lambda: inputs}, {})
 
         # dec-only model (runs on feature maps)
-        elif self._feature_series:
-            if dataset.feature_maps:
-                feats = [e.feature_map for e in elems]
-            else:
-                raise RuntimeError("The dataset does not contain any features.")
-            
+        else:
             if self._src_caption_series:
-                # handle multimodal translation case
+                # TODO: handle multimodal translation case
                 pass
             else:
-                ds = Dataset("macaque_data", {self._feature_series: lambda: np.array(feats)}, {})
-        
-        else:
-            raise NotImplementedError()
+                ds = Dataset("macaque_data", {self._data_series: lambda: inputs}, {})
 
-        runners_results, output_series = self._exp.run_model(dataset=ds, write_out=False)
+        _, output_series = self._exp.run_model(dataset=ds, write_out=False)
 
         if self._caption_series:
             captions = output_series[self._caption_series]
         else:
-            captions = [None] * dataset.count
+            captions = [None] * n_elems
         if self._alignments_series:
             alignments = output_series[self._alignments_series]
         else:
-            alignments = [None] * dataset.count
+            alignments = [None] * n_elems
         if self._bs_graph_series:
-            bs_graph_output = output_series[self._bs_graph_series]
+            bs_out = output_series[self._bs_graph_series]
+            graphs = []
+            for b in bs_out:
+                graphs.append(BeamSearchOutputGraph(
+                    scores=b['scores'],
+                    tokens=b['tokens'],
+                    parent_ids=b['parent_ids'],
+                    alignments=b['alignments']))
+            hyps = [g.collect_hypotheses() for g in graphs]
+            bs_caps = [h['tokens'] for h in hyps]
+            bs_attns = [h['alignments'] for h in hyps]
         else:
-            bs_graph_output = [None] * dataset.count
+            graphs = [None] * n_elems
+            bs_caps = [None] * n_elems
+            bs_attns = [None] * n_elems
+
         
         results = []
-        for c, a, b in zip(captions, alignments, bs_graph_output):
+        for c, a, bs_g, bs_c, bs_a in zip(captions, alignments, graphs, bs_caps, bs_attns):
             results.append({
-                'caption': c,
-                'alignments': a,
-                'beam_search_output_graph': b
+                'greedy': {
+                    'caption': c,
+                    'alignments': a
+                },
+                'beam_search': {
+                    'captions': bs_c,
+                    'alignments': bs_a,
+                    'graph': bs_g
+                }
             })
 
         return results

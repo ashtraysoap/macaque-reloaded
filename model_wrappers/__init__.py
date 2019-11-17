@@ -27,10 +27,8 @@ def create_model_wrapper(model_config):
                     'configPath': { a string path to the Neural Monkey 
                         configuration file }
                     'varsPath': { a string path to the model checkpoint }
-                    'imageSeries': { the name of the data series under which 
-                        images are expected }
-                    'featureSeries': { the name of the data series under which 
-                        features are expected }
+                    'dataSeries': { the name of the data series under which 
+                        model input data are expected }
                     'srcCaptionSeries': { the name of the data series under 
                         which source captions are expected }
                 },
@@ -48,21 +46,27 @@ def create_model_wrapper(model_config):
 
     model_type = model_config['type']
     runs_on_features = False if model_config['input'] == "images" else True
+
     if model_type == ModelType.NeuralMonkey.value:
         
         nm_config = model_config['neuralmonkey']
         config_path = nm_config['configPath']
         vars_path = nm_config['varsPath']
-        image_series = nm_config['imageSeries']
-        feature_series = nm_config['featureSeries']
+        data_series = nm_config['dataSeries']
         src_caption_series = nm_config['srcCaptionSeries']
+
+        greedy_series = nm_config['greedySeries']
+        attn_series = nm_config['attnSeries']
+        bs_series = nm_config['bsSeries']
 
         model = NeuralMonkeyModelWrapper(config_path=config_path,
                 vars_path=vars_path,
-                image_series=image_series,
-                feature_series=feature_series,
+                data_series=data_series,
                 src_caption_series=src_caption_series,
-                runs_on_features=runs_on_features)
+                runs_on_features=runs_on_features,
+                caption_series=greedy_series,
+                alignments_series=attn_series,
+                bs_graph_series=bs_series)
 
     elif model_type == ModelType.Plugin.value:
         plugin_config = model_config['plugin']
