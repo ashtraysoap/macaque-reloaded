@@ -12,18 +12,22 @@ class AddModelTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "papaya",
-            type: "plugin",
-            input: "images",
+            name: "akamafera",
+            type: "neuralmonkey",
+            input: "features",
             plugin: { path: "/home/sam/Documents/CodeBox/BC/code/macaque/tests/mock_plugin_model.py" },
             neuralmonkey: {
-                configPath: "",
-                varsPath: "",
-                dataSeries: "",
-                srcCaptionSeries: ""
+                configPath: "/home/sam/thesis-code/NeuralMonkeyModels/experiment.ini",
+                varsPath: "/media/sam/Kafka/190424-1/avg-0",
+                dataSeries: "images",
+                srcCaptionSeries: "",
+                greedySeries: "greedy_caption",
+                attnSeries: "alpha",
+                bsSeries: "bs_target"
             }
         };
         this.addModel = this.addModel.bind(this);
+        this.NMvalueChange = this.NMvalueChange.bind(this);
     }
 
     addModel() {
@@ -60,10 +64,10 @@ class AddModelTab extends React.Component {
                 vars={this.state.neuralmonkey.varsPath}
                 dataSeries={this.state.neuralmonkey.dataSeries}
                 srcCaptionSeries={this.state.neuralmonkey.srcCaptionSeries}
-                onCfgChange={e => this.setState({ neuralmonkey: { configPath: e.target.value } })}
-                onVarsChange={e => this.setState({ neuralmonkey: { varsPath: e.target.value } })}
-                onDataSeriesChange={e => this.setState({ neuralmonkey: { dataSeries: e.target.value } })}
-                onSrcCapSeriesChange={e => this.setState({ neuralmonkey: { srcCaptionSeries: e.target.value } })}
+                greedySeries={this.state.neuralmonkey.greedySeries}
+                attnSeries={this.state.neuralmonkey.attnSeries}
+                bsSeries={this.state.neuralmonkey.bsSeries}
+                handleChange={this.NMvalueChange}
             />;
         }
 
@@ -97,6 +101,12 @@ class AddModelTab extends React.Component {
             </AddSomethingTab>
         );
     }
+
+    NMvalueChange(key, value) {
+        let nmCfg = this.state.neuralmonkey;
+        nmCfg[key] = value;
+        this.setState({ neuralmonkey: nmCfg });
+    }
 }
 
 function NeuralMonkeyModel(props) {
@@ -121,7 +131,27 @@ function NeuralMonkeyModel(props) {
                 source caption series: <input type="text" 
                                         name="srcCaptionSeries"
                                         value={props.srcCaptionSeries} 
-                                        onChange={props.onSrcCapSeriesChange} />
+                                        onChange={props.onSrcCapSeriesChange}
+                />
+                <br/>
+                greedy caption series: <input 
+                                        type="text"
+                                        name="greedySeries"
+                                        value={props.greedySeries}
+                                        onChange={e => props.handleChange("greedySeries", e.target.value)}
+                />
+                <br/>
+                greedy alignment series: <input type="text"
+                                            name="attnSeries"
+                                            value={props.attnSeries}
+                                            onChange={e => props.handleChange("attnSeries", e.target.value)}
+                />
+                <br/>
+                beam search output series: <input type="text"
+                                            name="bsSeries"
+                                            value={props.bsSeries}
+                                            onChange={e => props.handleChange("bsSeries", e.target.value)}
+                />
             </form>
         </div>
     );
@@ -137,8 +167,8 @@ NeuralMonkeyModel.propTypes = {
     vars: PropTypes.string.isRequired,
     dataSeries: PropTypes.string.isRequired,
     srcCaptionSeries: PropTypes.string.isRequired,
-    onCfgChange: PropTypes.func.isRequired,
-    onVarsChange: PropTypes.func.isRequired,
-    onDataSeriesChange: PropTypes.func.isRequired,
-    onSrcCapSeriesChange: PropTypes.func.isRequired
+    greedySeries: PropTypes.string.isRequired,
+    attnSeries: PropTypes.string.isRequired,
+    bsSeries: PropTypes.string.isRequired,
+    handleChange: PropTypes.func.isRequired
 };

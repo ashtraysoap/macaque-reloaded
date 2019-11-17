@@ -78,7 +78,7 @@ class DatasetTab extends React.Component {
         const results = p.results;
         const idx = this.state.elemIdx;
         const selectedResults = this.getResultsForElement(results, idx);
-
+        
         const view = this.showingElementView ? <DataInstanceView 
             dataInstance={this.getInstance()} 
             dataset={p.dataset.id}

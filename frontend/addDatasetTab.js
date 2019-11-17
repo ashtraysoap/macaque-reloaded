@@ -12,7 +12,9 @@ class AddDatasetTab extends React.Component {
             prefix: "/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/flickr8k_sample_imgs",
             sources: "/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/flickr8k_sample_imgs.txt",
             references: [],
-            batchSize: 32
+            srcCaptions: "",
+            batchSize: 32,
+            errorLog: []
         }
         this.handleChange = this.handleChange.bind(this);
         this.addReference = this.addReference.bind(this);
@@ -48,8 +50,12 @@ class AddDatasetTab extends React.Component {
             }
         }).then(res => res.json())
         .then(response => {
-            console.log('Success:', JSON.stringify(response));
-            this.props.onServerResponse(response);
+            if (response.name === undefined) {
+                console.log(response.log);
+                this.setState({ errorLog: response.log });
+            } else {
+                this.props.onServerResponse(response);   
+            }
         })
         .catch(error => console.log('Error:', error));
     }

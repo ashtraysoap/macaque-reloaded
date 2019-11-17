@@ -12,21 +12,24 @@ class AddEncoderTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "",
+            name: "xaxana",
             type: "keras",
             plugin: {
                 path: ""
             },
             keras: {
-                netType: ""
+                netType: "VGG16",
+                layerSpec: "block5_conv3",
+                ckptPath: ""
             },
             tfSlim: {
-                netType: "",
+                netType: "VGG16",
                 checkpoint: "",
                 featureMap: ""
             }
         };
         this.addEncoder = this.addEncoder.bind(this);
+        this.handleKerasChange = this.handleKerasChange.bind(this);
     }
 
     addEncoder() {
@@ -60,7 +63,9 @@ class AddEncoderTab extends React.Component {
         } else if (type === 'keras') {
             innerForm = <KerasEncoder
                 netType={this.state.keras.netType}
-                handleNetChange={(e) => { this.setState({ keras: { netType: e.target.value }}); }}
+                layerSpec={this.state.keras.layerSpec}
+                ckptPath={this.state.keras.ckptPath}
+                handleChange={this.handleKerasChange}
             />;
         } else if (type === 'neuralmonkey') {
             innerForm = <NeuralMonkeyEncoder 
@@ -96,6 +101,12 @@ class AddEncoderTab extends React.Component {
             </AddSomethingTab>
         );
     }
+
+    handleKerasChange(key, value) {
+        let kerasCfg = this.state.keras;
+        kerasCfg[key] = value;
+        this.setState({ keras: kerasCfg });
+    }
 }
 
 class KerasEncoder extends React.Component {
@@ -119,9 +130,21 @@ class KerasEncoder extends React.Component {
                 <form>
                     <label>network</label>
                     <select value={this.props.netType} 
-                        onChange={this.props.handleNetChange}>
+                        onChange={e => this.props.handleChange("netType", e.target.value)}>
                         {nets}
                     </select>
+                    <br/>
+                    layer <input type="text"
+                        name="layer"
+                        value={this.props.layerSpec}
+                        onChange={e => this.props.handleChange("layerSpec", e.target.value)}
+                    />
+                    <br/>
+                    checkpoint path <input type="text"
+                        name="ckpt"
+                        value={this.props.ckptPath}
+                        onChange={e => this.props.handleChange("ckptPath", e.target.value)}
+                    />
                 </form>
             </div>
         )
@@ -200,7 +223,7 @@ AddEncoderTab.propTypes = {
 
 KerasEncoder.propTypes = {
     netType: PropTypes.string.isRequired,
-    handleNetChange: PropTypes.func.isRequired
+    handleChange: PropTypes.func.isRequired
 };
 
 NeuralMonkeyEncoder.propTypes = {
