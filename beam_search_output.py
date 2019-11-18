@@ -1,4 +1,4 @@
-from json import JSONEncoder
+from json import JSONEncoder, dumps
 from neuralmonkey.vocabulary import START_TOKEN, END_TOKEN, PAD_TOKEN
 
 import pdb
@@ -142,6 +142,9 @@ class BeamSearchOutputGraph():
         hyps = list(zip(*hyps))
 
         return {'tokens': hyps[0], 'scores': hyps[1], 'alignments': hyps[2]}
+
+    def to_json(self):
+        return dumps(self, cls=BeamSearchOutputGraphEncoder)
 
 
 class BeamSearchOutputGraphEncoder(JSONEncoder):

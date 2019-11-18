@@ -29,6 +29,7 @@ from model_wrappers import create_model_wrapper
 from preprocessing import create_preprocessor
 from runner import create_runner, create_demo_runner
 
+import pdb
 
 Result = namedtuple('Result', ['runId', 'runnerId', 'datasetId', 'results'])
 
@@ -287,6 +288,17 @@ def load_attention_map_for_original_img(run, element, caption, token):
     prepro = STATE.runners[run_res.runnerId].preprocessor
     img = attention_map_for_original_img(alphas=alphas, image=img, prepro=prepro)
     return img_to_jpg_raw(img)
+
+@APP.route('/load_bs_graph/<int:run>/<int:instance>', methods=['GET'])
+def load_bs_graph(run, instance):
+    res = STATE.run_results[run]
+    graph = res.results[instance]['beam_search']['graph']
+    if graph is not None:
+        o = graph.to_json()
+        print(o)
+        return o
+    else:
+        return None
 
 @APP.route('/evaluate_metric/<int:dataset>/<string:metric>', methods=['GET'])
 def evaluate_metric(dataset, metric):

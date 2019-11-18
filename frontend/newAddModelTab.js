@@ -116,22 +116,22 @@ function NeuralMonkeyModel(props) {
                 configuration file: <input type="text" 
                                             name="config" 
                                             value={props.cfg} 
-                                            onChange={props.onCfgChange} />
+                                            onChange={e => props.handleChange("config", e.target.value)} />
                                 <br/>
                 variables file: <input type="text" 
                                             name="vars" 
                                             value={props.vars} 
-                                            onChange={props.onVarsChange} />
+                                            onChange={e => props.handleChange("vars", e.target.value)} />
                                 <br/>
                 data series: <input type="text"
                                     name="dataSeries" 
                                     value={props.dataSeries} 
-                                    onChange={props.onDataSeriesChange} />
+                                    onChange={e => props.handleChange("dataSeries", e.target.value)} />
                                 <br/>
                 source caption series: <input type="text" 
                                         name="srcCaptionSeries"
                                         value={props.srcCaptionSeries} 
-                                        onChange={props.onSrcCapSeriesChange}
+                                        onChange={e => props.handleChange("srcCaptionSeries", e.target.value)}
                 />
                 <br/>
                 greedy caption series: <input 

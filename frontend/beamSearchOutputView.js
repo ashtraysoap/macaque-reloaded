@@ -22,29 +22,32 @@ class BeamSearchOutputView extends React.Component {
     }
 
     componentDidMount() {
-        //const root = this.props.beamSearchOutputGraph;
-        const root = {
-            token: "START",
-            score: 0.0,
-            children: [
-                {
-                    token: "cat",
-                    score: 3.4,
-                    children: [
-                        {
-                            token: "walrus",
-                            score: 7.7,
-                            children: []
-                        }
-                    ]
-                },
-                {
-                    token: "doggy",
-                    score: 3.6,
-                    children: []
-                }
-            ]
-        };
+        if (this.props.graph === null)
+            return;
+
+        const root = this.props.graph;
+        // const root = {
+        //     token: "START",
+        //     score: 0.0,
+        //     children: [
+        //         {
+        //             token: "cat",
+        //             score: 3.4,
+        //             children: [
+        //                 {
+        //                     token: "walrus",
+        //                     score: 7.7,
+        //                     children: []
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             token: "doggy",
+        //             score: 3.6,
+        //             children: []
+        //         }
+        //     ]
+        // };
 
         let d3Tree = d3.layout.tree()
             .size([500, 500]);
@@ -143,6 +146,6 @@ function click(node) {
     }
   }
 
-// BeamSearchOutputView.propTypes = {
-//     beamSearchOutputGraph: PropTypes.object.isRequired
-// };
+BeamSearchOutputView.propTypes = {
+    graph: PropTypes.object.isRequired
+};

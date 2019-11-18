@@ -15,6 +15,7 @@ class RunResultsView extends React.Component {
 
         this.getSelectedCaption = this.getSelectedCaption.bind(this);
         this.setInitialCapID = this.setInitialCapID.bind(this);
+        this.fetchBeamSearchGraph = this.fetchBeamSearchGraph.bind(this);
 
         const cid = this.setInitialCapID();
 
@@ -23,8 +24,11 @@ class RunResultsView extends React.Component {
             showCaption: true,
             showBSOut: false,
             showMetrics: false,
-            captionId: cid
+            captionId: cid,
+            bsGraph: null
         };
+
+        this.fetchBeamSearchGraph();
     }
 
     render() {
@@ -57,7 +61,9 @@ class RunResultsView extends React.Component {
             />;
 
         let bsView = !this.state.showBSOut ? null :
-            <BeamSearchOutputView />;
+            <BeamSearchOutputView 
+                graph={this.state.bsGraph}
+            />;
 
         let metrics = !this.state.showMetrics ? null :
             <ElementScoreTable
@@ -123,6 +129,14 @@ class RunResultsView extends React.Component {
         if (bsCaps.length > 0)
             return 1;
         return null;
+    }
+
+    fetchBeamSearchGraph() {
+        return fetch(`/load_bs_graph/${this.props.results.runId}/${this.props.instanceId}`)
+        .then(res => res.json())
+        .then(res => {
+            this.setState({ bsGraph: res });
+        });
     }
 }
 
