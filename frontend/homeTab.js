@@ -50,8 +50,6 @@ class HomeTab extends React.Component {
     }
 
     render() {
-        console.log("rendering");
-
         return (
             <div className="homeTab">
 
@@ -107,7 +105,6 @@ class HomeTab extends React.Component {
     fetchAttentionMapForBSToken(alignments) {
         // If alignments are null, show original image.
         if (alignments === null) {
-            console.log(this.imgSrc);
             this.setState({tokenId: null, imgSrc: this.imgSrc});
         } else {
             let init = {
@@ -134,7 +131,6 @@ class HomeTab extends React.Component {
     }
 
     fetchBeamSearchGraph() {
-        console.log("fetching graph");
         return fetch(`/load_bs_graph/${this.props.results.runId}/${0}`)
         .then(res => res.json())
         .then(res => {
