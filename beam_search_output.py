@@ -78,8 +78,14 @@ class BeamSearchOutputGraph():
                  tokens,
                  parent_ids,
                  alignments):
-        self._root = BeamSearchOutputGraphNode(0, "START", None)
-        
+        self._root = BeamSearchOutputGraphNode(0, "<s>", None)
+
+        # Get rid of start tokens from all hypotheses.
+        scores = scores[1:]
+        tokens = tokens[1:]
+        parent_ids = parent_ids[1:]
+        alignments = alignments[1:]
+
         max_time = len(tokens)
         beam_size = len(tokens[0])
         opened_hyp = [None] * beam_size
@@ -88,10 +94,10 @@ class BeamSearchOutputGraph():
         for t in range(max_time):
             future_opened_hyp = [None] * beam_size
             for b in range(beam_size):
-                if tokens[t][b] != END_TOKEN or tokens[t][b] != PAD_TOKEN:
+                if tokens[t][b] != PAD_TOKEN:
                     node = BeamSearchOutputGraphNode(score=scores[t,b].item(),
                                                     token=tokens[t][b],
-                                                    alignment=alignments[t,b])
+                                                    alignment=alignments[t][b])
                     opened_hyp[parent_ids[t,b]].children.append(node)
                     future_opened_hyp[b] = node
             opened_hyp = future_opened_hyp

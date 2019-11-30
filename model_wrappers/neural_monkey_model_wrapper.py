@@ -1,6 +1,8 @@
-import os
 import pdb
+
+import os
 import numpy as np
+from math import sqrt
 
 from neuralmonkey.dataset import Dataset
 from neuralmonkey.experiment import Experiment
@@ -84,14 +86,17 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
             bs_out = output_series[self._bs_graph_series]
             graphs = []
             for b in bs_out:
+                attns = [_transform_alignments(a) for a in b['alignments']]
                 graphs.append(BeamSearchOutputGraph(
                     scores=b['scores'],
                     tokens=b['tokens'],
                     parent_ids=b['parent_ids'],
-                    alignments=b['alignments']))
+                    alignments=attns))
+
             hyps = [g.collect_hypotheses() for g in graphs]
             bs_caps = [h['tokens'] for h in hyps]
             bs_attns = [h['alignments'] for h in hyps]
+            #bs_attns = [[_transform_alignments(h) for h in hyp['alignments']] for hyp in hyps]
         else:
             graphs = [None] * n_elems
             bs_caps = [None] * n_elems
@@ -113,3 +118,28 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
             })
 
         return results
+
+def _transform_alignments(alignments):
+    """Reshape and normalize alignments.
+
+    Args:
+        alignments: A list of Numpy Arrays. Each Array stands for an
+            attention map during a decoding step.
+    Returns:
+        The normalized alignments reshaped into 2D.
+    """
+    res = []
+    for a in alignments:
+        a = _normalize_alignments(a)
+        ndim = len(a.shape)
+        if ndim == 2:
+            res.append(a)
+        elif ndim == 1:
+            x = int(sqrt(a.shape[0]))
+            res.append(np.reshape(a, [x, x]))
+    return res
+
+def _normalize_alignments(a):
+    max = np.amax(a)
+    a = a / max
+    return np.uint8(225 * a)

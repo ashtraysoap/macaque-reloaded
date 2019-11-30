@@ -10,7 +10,7 @@ class AddRunnerTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "krtek",
+            name: "jelen v ruji",
             prepro: null,
             encoder: null,
             model: null

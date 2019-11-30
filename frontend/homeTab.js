@@ -9,8 +9,12 @@ class HomeTab extends React.Component {
     constructor(props) {
         super(props);
 
-        this.imgSrc = this.props.results === null ? null :
-            `/load_image/${this.props.results.datasetId}/${0}`;
+        if (this.props.results === null) {
+            this.imgSrc = null;
+        } else {
+            let r = this.getResultsForElement([res], 0)[0];
+            this.imgSrc = `/load_image/${r.datasetId}/${0}`;
+        }
 
         this.state = {
             imgSrc: this.imgSrc,
@@ -19,6 +23,8 @@ class HomeTab extends React.Component {
 
         this.getResultsForElement = this.getResultsForElement.bind(this);
         this.fetchAttentionMap = this.fetchAttentionMap.bind(this);
+        this.fetchAttentionMapForBSToken = this.fetchAttentionMapForBSToken.bind(this);
+        this.fetchBeamSearchGraph = this.fetchBeamSearchGraph.bind(this);
         this.onCaptionClick = this.onCaptionClick.bind(this);
         this.onImageSubmit = this.onImageSubmit.bind(this);
     }
@@ -36,12 +42,16 @@ class HomeTab extends React.Component {
         .then(res => res.json())
         .then(res => {
             let r = this.getResultsForElement([res], 0)[0];
+            this.imgSrc = `/load_image/${r.datasetId}/${0}`;
             this.setState({imgSrc: `/load_image/${r.datasetId}/${0}`});
             this.props.onServerResponse(r);
-        });
+        })
+        .then(() => this.fetchBeamSearchGraph());
     }
 
     render() {
+        console.log("rendering");
+
         return (
             <div className="homeTab">
 
@@ -64,7 +74,9 @@ class HomeTab extends React.Component {
                             instanceId={0}
                             onCaptionClick={this.onCaptionClick}
                             fetchAttentionMap={this.fetchAttentionMap}
+                            fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
                             metrics={[]}
+                            graph={this.state.bsGraph}
                         />
                     </div>
                 }
@@ -89,6 +101,44 @@ class HomeTab extends React.Component {
             const view = new Uint8Array(ab);
             const url = URL.createObjectURL(new Blob([view], { type: "image/jpeg" }));
             return url;
+        });
+    }
+
+    fetchAttentionMapForBSToken(alignments) {
+        // If alignments are null, show original image.
+        if (alignments === null) {
+            console.log(this.imgSrc);
+            this.setState({tokenId: null, imgSrc: this.imgSrc});
+        } else {
+            let init = {
+                method: 'POST',
+                body: JSON.stringify({
+                    run: this.props.results.runId,
+                    element: 0,
+                    alignments: alignments
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            fetch('/load_attention_map_for_bs_token', init)
+            .then(res => res.arrayBuffer())
+            .then(ab => {
+                const view = new Uint8Array(ab);
+                const url = URL.createObjectURL(new Blob([view], { type: "image/jpeg" }));
+                return url;
+            })
+            .then(url => this.setState({ imgSrc: url, tokenId: null}));
+        }
+    }
+
+    fetchBeamSearchGraph() {
+        console.log("fetching graph");
+        return fetch(`/load_bs_graph/${this.props.results.runId}/${0}`)
+        .then(res => res.json())
+        .then(res => {
+            this.setState({ bsGraph: res });
         });
     }
 

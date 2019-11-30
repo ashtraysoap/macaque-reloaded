@@ -79,7 +79,6 @@ def single_img_caption():
 
     # Access the user-sent image from the request object.
     fname = request.files['input-file'].filename
-    print(request.files['input-file'])
     request.files['input-file'].save(fname)
 
     # Create a dataset to contain the image.
@@ -104,17 +103,7 @@ def single_img_caption():
         results=out)
     STATE.add_results(r)
 
-    return json.dumps({
-        'runId': STATE.get_current_run_counter() - 1,
-        'runnerId': runner_id,
-        'datasetId': ds_id,
-        'captions': list(map(lambda x: {
-            'greedyCaption': [] if x['greedy'] is None 
-                else x['greedy']['caption'],
-            'beamSearchCaptions': [] if x['beam_search'] is None 
-                else x['beam_search']['captions']
-        }, out))
-    })
+    return _jsonify_results(out, runner_id, ds_id)
 
 @APP.route('/add_dataset', methods=['POST'])
 def add_dataset():
@@ -186,38 +175,28 @@ def add_runner():
     idx = STATE.add_runner(runner)
     return str(idx)
 
-@APP.route('/run_on_dataset/<int:datasetId>/<int:runnerId>', methods=['GET'])
-def run_on_dataset(datasetId, runnerId):
+@APP.route('/run_on_dataset/<int:dataset_id>/<int:runner_id>', methods=['GET'])
+def run_on_dataset(dataset_id, runner_id):
     """Handle request for running a runner on a dataset.
 
     Args:
-        datasetId: The integral ID of the dataset.
-        runnerId: The integral ID of the runner.
+        dataset_id: The integral ID of the dataset.
+        runner_id: The integral ID of the runner.
     Returns:
         A JSON string containing the serialized results of the run.
     """
 
-    runner = STATE.runners[runnerId]
-    dataset = STATE.datasets[datasetId]
+    runner = STATE.runners[runner_id]
+    dataset = STATE.datasets[dataset_id]
     outputs = runner.run(dataset)
     r = Result(runId=STATE.get_current_run_counter(),
-        runnerId=runnerId,
-        datasetId=datasetId,
+        runnerId=runner_id,
+        datasetId=dataset_id,
         results=outputs)
 
     # store the results into the state.
     STATE.add_results(r)
-    return json.dumps({
-        'runId': STATE.get_current_run_counter() - 1,
-        'runnerId': runnerId,
-        'datasetId': datasetId,
-        'captions': list(map(lambda x: {
-            'greedyCaption': [] if x['greedy'] is None 
-                else x['greedy']['caption'],
-            'beamSearchCaptions': [] if x['beam_search'] is None 
-                else x['beam_search']['captions']
-        }, outputs))
-    })
+    return _jsonify_results(outputs, runner_id, dataset_id)
 
 @APP.route('/load_image/<int:dataset>/<int:element>', methods=['GET'])
 def load_image(dataset, element):
@@ -289,13 +268,30 @@ def load_attention_map_for_original_img(run, element, caption, token):
     img = attention_map_for_original_img(alphas=alphas, image=img, prepro=prepro)
     return img_to_jpg_raw(img)
 
+@APP.route('/load_attention_map_for_bs_token', methods=['POST'])
+def load_attention_map_for_bs_token():
+    """
+    """
+    json_data = _get_json_from_request()
+    run = json_data['run']
+    element = json_data['element']
+    alignments = json_data['alignments']
+    
+    run_res = STATE.run_results[run]
+    img = STATE.datasets[run_res.datasetId].load_image(element)
+    prepro = STATE.runners[run_res.runnerId].preprocessor
+    img = attention_map_for_original_img(alphas=alignments, 
+            image=img, 
+            prepro=prepro)
+    return img_to_jpg_raw(img)
+
+
 @APP.route('/load_bs_graph/<int:run>/<int:instance>', methods=['GET'])
 def load_bs_graph(run, instance):
     res = STATE.run_results[run]
     graph = res.results[instance]['beam_search']['graph']
     if graph is not None:
         o = graph.to_json()
-        print(o)
         return o
     else:
         return None
@@ -388,3 +384,16 @@ def img_to_jpg_raw(img):
     blob = BytesIO()
     img.save(blob, 'JPEG')
     return blob.getvalue()
+
+def _jsonify_results(results, runner_id, dataset_id):
+    return json.dumps({
+        'runId': STATE.get_current_run_counter() - 1,
+        'runnerId': runner_id,
+        'datasetId': dataset_id,
+        'captions': list(map(lambda x: {
+            'greedyCaption': [] if x['greedy'] is None 
+                else x['greedy']['caption'],
+            'beamSearchCaptions': [] if x['beam_search'] is None 
+                else x['beam_search']['captions']
+        }, results))
+    })

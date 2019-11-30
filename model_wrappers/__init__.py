@@ -31,6 +31,9 @@ def create_model_wrapper(model_config):
                         model input data are expected }
                     'srcCaptionSeries': { the name of the data series under 
                         which source captions are expected }
+                    'greedySeries':
+                    'attnSeries':
+                    'bsSeries':
                 },
                 'plugin': {
                     'path': { a string path to the plugin source }

@@ -11,12 +11,14 @@ class BeamSearchOutputView extends React.Component {
     constructor(props) {
         super(props);
         this.componentDidMount = this.componentDidMount.bind(this);
+        this.componentDidUpdate = this.componentDidUpdate.bind(this);
+        this.handleNodeClick = this.handleNodeClick.bind(this);
     }
 
     render() {
         return (
             <div>
-                <svg></svg>
+                <svg id="BSGraph"></svg>
             </div>
         );
     }
@@ -26,35 +28,13 @@ class BeamSearchOutputView extends React.Component {
             return;
 
         const root = this.props.graph;
-        // const root = {
-        //     token: "START",
-        //     score: 0.0,
-        //     children: [
-        //         {
-        //             token: "cat",
-        //             score: 3.4,
-        //             children: [
-        //                 {
-        //                     token: "walrus",
-        //                     score: 7.7,
-        //                     children: []
-        //                 }
-        //             ]
-        //         },
-        //         {
-        //             token: "doggy",
-        //             score: 3.6,
-        //             children: []
-        //         }
-        //     ]
-        // };
 
         let d3Tree = d3.layout.tree()
-            .size([500, 500]);
+            .size([1000, 1000]);
 
         let svg = d3.select("svg")
-            .attr("width", 700)
-            .attr("height", 700)
+            .attr("width", 1500)
+            .attr("height", 1500)
             .append("g")
             .attr("transform", "translate(" + 100 + "," + 20 + ")");
 
@@ -109,43 +89,28 @@ class BeamSearchOutputView extends React.Component {
             .attr("d", diagonal);
     }
 
+    componentDidUpdate() {
+        this.componentDidMount();
+    }
+
     handleNodeClick(node) {
-        console.log(node);
+        if (!node.displayed) {
+            if (node.alignment === null || node.alignment === undefined) {
+                // No alignment present, will display original image.
+                this.props.displayAlignment(null);
+            } else {
+                this.props.displayAlignment(node.alignment);
+                node.displayed = true;
+            }
+        } else {
+            // Already displaying node's alignment; display the original image.
+            node.displayed = false;
+            this.props.displayAlignment(null);
+        }
     }
 }
 
-function click(node) {
-    if (!node.displayed) {
-      acquireImage(node);
-      if (!node.imageUrl) {
-        // fetch the image
-        var init = {
-          method: 'POST',
-          body: JSON.stringify(node.alignment)
-        };
-  
-        fetch('single_alpha', init).then(response => {
-          response.blob().then(blob => {
-            node.imageUrl = URL.createObjectURL(blob);
-          })
-          .then(() => {
-            d3.select("img")
-              .attr("src", node.imageUrl)
-          });
-        });
-      }
-      else {
-        d3.select("img")
-          .attr("src", node.imageUrl)
-      }
-    }
-    else {
-      d3.select("img")
-        .attr("src", url);
-      releaseImage(node);
-    }
-  }
-
 BeamSearchOutputView.propTypes = {
-    graph: PropTypes.object.isRequired
+    graph: PropTypes.object.isRequired,
+    displayAlignment: PropTypes.func.isRequired
 };

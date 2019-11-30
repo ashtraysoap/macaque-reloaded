@@ -1,5 +1,6 @@
 from preprocessing import create_preprocessor, PreproMode
 from model_wrappers import create_model_wrapper
+from feature_extractors import create_feature_extractor
 
 def create_runner(macaque_state, runner_config):
     """Creates a runner from the config dictionary.
@@ -151,19 +152,28 @@ def create_demo_runner():
     }
     prepro = create_preprocessor(prepro_cfg)
 
-    # model_cfg = {
-    #     'type': 'neuralmonkey',
-    #     'input': 'images',
-    #     'configPath': None,
-    #     'varsPath': None,
-    #     'imageSeries':
-    # }
+    encoder_cfg = {
+        'type': 'keras',
+        'keras': {
+            'netType': "VGG16",
+            'layerSpec': "block5_conv3",
+            'ckptPath': ""
+        }
+    }
+    encoder = create_feature_extractor(encoder_cfg)
+
     model_cfg = {
-        'type': 'plugin',
+        'type': 'neuralmonkey',
         'input': 'images',
-        'plugin': {
-            'path': '/home/sam/thesis-code/macaque/tests/mock_plugin_model.py',
+        'neuralmonkey': {
+            'configPath': "/home/sam/thesis-code/NeuralMonkeyModels/experiment.ini",
+            'varsPath': "/media/sam/Kafka/190424-1/avg-0",
+            'dataSeries': "images",
+            'srcCaptionSeries': "",
+            'greedySeries': "greedy_caption",
+            'attnSeries': "alpha",
+            'bsSeries': "bs_target"
         }
     }
     model = create_model_wrapper(model_cfg)
-    return Runner(model=model, prepro=prepro)
+    return Runner(model=model, feature_extractor=encoder, prepro=prepro)

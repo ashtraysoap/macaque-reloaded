@@ -15,6 +15,7 @@ class DataInstanceView extends React.Component {
 
         this.fetchAttentionMap = this.fetchAttentionMap.bind(this);
         this.fetchAttentionMapForOriginal = this.fetchAttentionMapForOriginal.bind(this);
+        this.fetchAttentionMapForBSToken = this.fetchAttentionMapForBSToken.bind(this);
         this.onCaptionClick = this.onCaptionClick.bind(this);
 
         this.imgSrc = `/load_image/${this.props.dataset}/${this.props.dataInstance.id}`;
@@ -57,6 +58,7 @@ class DataInstanceView extends React.Component {
             instanceId={instance.id}
             onCaptionClick={this.onCaptionClick}
             fetchAttentionMap={this.fetchAttentionMap}
+            fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
             metrics={this.props.metrics}
         />;
 
@@ -94,6 +96,34 @@ class DataInstanceView extends React.Component {
             const url = URL.createObjectURL(new Blob([view], { type: "image/jpeg" }));
             return url;
         });
+    }
+
+    fetchAttentionMapForBSToken(alignments) {
+        // If alignments are null, show original image.
+        if (alignments === null) {
+            this.setState({tokenId: null, imgSrc: this.imgSrc});
+        } else {
+            let init = {
+                method: 'POST',
+                body: JSON.stringify({
+                    run: this.props.results[0].runId,
+                    element: this.props.dataInstance.id,
+                    alignments: alignments
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            fetch('/load_attention_map_for_bs_token', init)
+            .then(res => res.arrayBuffer())
+            .then(ab => {
+                const view = new Uint8Array(ab);
+                const url = URL.createObjectURL(new Blob([view], { type: "image/jpeg" }));
+                return url;
+            })
+            .then(url => this.setState({ imgSrc: url, tokenId: null}));
+        }
     }
 
     onCaptionClick(captionId, tokenId) {

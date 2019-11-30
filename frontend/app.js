@@ -126,7 +126,7 @@ class App extends React.Component {
         if (id === "Home") {
             mainTab = <HomeTab
                 results={this.state.demoResults}
-                onServerResponse={(res) => { console.log(res); this.setState({demoResults: res})}}
+                onServerResponse={(res) => {this.addResults(res); this.setState({demoResults: res})}}
             />;
         } else if (id === "About") {
             mainTab = <AboutTab/>;

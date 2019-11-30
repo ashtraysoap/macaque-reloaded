@@ -28,7 +28,8 @@ class RunResultsView extends React.Component {
             bsGraph: null
         };
 
-        this.fetchBeamSearchGraph();
+        if (this.props.graph === undefined)
+            this.fetchBeamSearchGraph();
     }
 
     render() {
@@ -62,7 +63,8 @@ class RunResultsView extends React.Component {
 
         let bsView = !this.state.showBSOut ? null :
             <BeamSearchOutputView 
-                graph={this.state.bsGraph}
+                graph={this.props.graph ? this.props.graph : this.state.bsGraph}
+                displayAlignment={a => this.props.fetchAttentionMapForBSToken(a)}
             />;
 
         let metrics = !this.state.showMetrics ? null :
@@ -154,5 +156,7 @@ RunResultsView.propTypes = {
     instanceId: PropTypes.number.isRequired,
     onCaptionClick: PropTypes.func.isRequired,
     fetchAttentionMap: PropTypes.func.isRequired,
+    fetchAttentionMapForBSToken: PropTypes.func.isRequired,
     metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
+    graph: PropTypes.object
 };
