@@ -9,7 +9,7 @@ def validate_cfg(cfg,
     runner=False):
     """
     """
-    
+
     if dataset:
         return validate_dataset_cfg(cfg, state)
     elif prepro:
@@ -46,7 +46,6 @@ def validate_dataset_cfg(cfg, state):
     
     if cfg['srcCaptions'] != "" and not os.path.isfile(cfg['scrCaptions']):
         log['srcCaptions'] = "The file given by srcCaptions does not exist."
-
     return log
 
 def validate_preprocessor_cfg(cfg, state):
@@ -55,14 +54,13 @@ def validate_preprocessor_cfg(cfg, state):
     log = {}
     if cfg['name'] in prepros:
         log['name'] = "A preprocessor with this name already exists."
-    
     return log
 
 def validate_encoder_cfg(cfg, state):
-    pass
+    return {}
 
 def validate_model_cfg(cfg, state):
-    pass
+    return {}
 
 def validate_runner_cfg(cfg, state):
 
@@ -70,3 +68,4 @@ def validate_runner_cfg(cfg, state):
     log = {}
     if cfg['name'] in runners:
         log['name'] = "A runner with this name already exists."
+    return log

@@ -133,7 +133,11 @@ def add_preprocessor():
     """
 
     json_data = _get_json_from_request()
-    # validate json
+    
+    error_log = validate_cfg(json_data, STATE, prepro=True)
+    if error_log != {}:
+        return json.dumps({ 'log': error_log })
+    
     prepro = create_preprocessor(json_data)
     idx = STATE.add_preprocessor(prepro)
     return json.dumps({
@@ -149,7 +153,11 @@ def add_feature_extractor():
     """
 
     json_data = _get_json_from_request()
-    # validate json
+    
+    error_log = validate_cfg(json_data, STATE, encoder=True)
+    if error_log != {}:
+        return json.dumps({ 'log': error_log })
+
     encoder = create_feature_extractor(json_data)
     idx = STATE.add_feature_extractor(encoder)
     return json.dumps({
@@ -165,7 +173,11 @@ def add_model():
     """
 
     json_data = _get_json_from_request()
-    # validate json
+    
+    error_log = validate_cfg(json_data, STATE, model=True)
+    if error_log != {}:
+        return json.dumps({ 'log': error_log })
+
     model = create_model_wrapper(json_data)
     idx = STATE.add_model(model)
     return json.dumps({
@@ -181,7 +193,11 @@ def add_runner():
     """
 
     json_data = _get_json_from_request()
-    # validate json
+    
+    error_log = validate_cfg(json_data, STATE, runner=True)
+    if error_log != {}:
+        return json.dumps({ 'log': error_log })
+
     runner = create_runner(STATE, json_data)
     idx = STATE.add_runner(runner)
     return json.dumps({
