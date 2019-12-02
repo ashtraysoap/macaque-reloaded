@@ -28,6 +28,7 @@ from feature_extractors import create_feature_extractor
 from model_wrappers import create_model_wrapper
 from preprocessing import create_preprocessor
 from runner import create_runner, create_demo_runner
+from validation import validate_cfg
 
 import pdb
 
@@ -114,7 +115,11 @@ def add_dataset():
     """
 
     json_data = _get_json_from_request()
-    # validate json_data
+    
+    error_log = validate_cfg(json_data, STATE, dataset=True)
+    if error_log != {}:
+        return json.dumps({ 'log': error_log })
+    
     ds = create_dataset(json_data)
     STATE.add_dataset(ds)
     return ds.to_json()
@@ -131,7 +136,9 @@ def add_preprocessor():
     # validate json
     prepro = create_preprocessor(json_data)
     idx = STATE.add_preprocessor(prepro)
-    return str(idx)
+    return json.dumps({
+        'id': idx
+    })
 
 @APP.route('/add_encoder', methods=['POST'])
 def add_feature_extractor():
@@ -145,7 +152,9 @@ def add_feature_extractor():
     # validate json
     encoder = create_feature_extractor(json_data)
     idx = STATE.add_feature_extractor(encoder)
-    return str(idx)
+    return json.dumps({
+        'id': idx
+    })
 
 @APP.route('/add_model', methods=['POST'])
 def add_model():
@@ -159,7 +168,9 @@ def add_model():
     # validate json
     model = create_model_wrapper(json_data)
     idx = STATE.add_model(model)
-    return str(idx)
+    return json.dumps({
+        'id': idx
+    })
 
 @APP.route('/add_runner', methods=['POST'])
 def add_runner():
@@ -173,7 +184,9 @@ def add_runner():
     # validate json
     runner = create_runner(STATE, json_data)
     idx = STATE.add_runner(runner)
-    return str(idx)
+    return json.dumps({
+        'id': idx
+    })
 
 @APP.route('/run_on_dataset/<int:dataset_id>/<int:runner_id>', methods=['GET'])
 def run_on_dataset(dataset_id, runner_id):

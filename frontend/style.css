@@ -130,6 +130,27 @@ body {
     color: black;
 }
 
+.pendingTab {
+    background-color: orange;
+    border-style: 3px solid;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+.errorTab {
+    background-color: red;
+    border-style: 3px solid;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+.successTab {
+    background-color: green;
+    border-style: 3px solid;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
 .sideTab {
     float: left;
     width: 12vw;

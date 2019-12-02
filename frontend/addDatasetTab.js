@@ -3,6 +3,10 @@ import React from 'react';
 
 import { InformativeInput } from './utils.js';
 import { AddSomethingTab } from './addSomethingTab.js';
+import { PendingTab, SuccessTab, ErrorTab } from './statusTabs.js';
+
+export { AddDatasetTab };
+
 
 class AddDatasetTab extends React.Component {
     constructor(props) {
@@ -14,7 +18,7 @@ class AddDatasetTab extends React.Component {
             references: [],
             srcCaptions: "",
             batchSize: 32,
-            errorLog: []
+            errorLog: [],
         }
         this.handleChange = this.handleChange.bind(this);
         this.addReference = this.addReference.bind(this);
@@ -42,6 +46,8 @@ class AddDatasetTab extends React.Component {
 
     handleDatasetSubmit() {         
         const s = this.state;
+        this.setState({ status: "waiting" });
+
         fetch('/add_dataset', {
             method: 'POST',
             body: JSON.stringify(s),
@@ -52,8 +58,15 @@ class AddDatasetTab extends React.Component {
         .then(response => {
             if (response.name === undefined) {
                 console.log(response.log);
-                this.setState({ errorLog: response.log });
+                this.setState({ 
+                    errorLog: response.log,
+                    status: "error"
+                 });
             } else {
+                this.setState({ 
+                    status: "ok",
+                    errorLog: {}
+                });
                 this.props.onServerResponse(response);   
             }
         })
@@ -75,6 +88,15 @@ class AddDatasetTab extends React.Component {
             />
         );
 
+        let statusTab = null;
+        if (this.state.status === "waiting") {
+            statusTab = <PendingTab text="neco delam"/>;
+        } else if (this.state.status === "ok") {
+            statusTab = <SuccessTab text="hezky"/>;
+        } else if (this.state.status === "error") {
+            statusTab = <ErrorTab text="spatny"/>
+        }
+
         return (
             <AddSomethingTab>
                 <div>
@@ -83,6 +105,7 @@ class AddDatasetTab extends React.Component {
                         name="dataset name"
                         value={s.name}
                         optional={false}
+                        error={s.errorLog.name}
                         hint="A name for the dataset."
                         handleChange={(e) => this.handleChange("name", e.target.value)}
                     />
@@ -90,6 +113,7 @@ class AddDatasetTab extends React.Component {
                         name="path prefix"
                         value={s.prefix}
                         optional={false}
+                        error={s.errorLog.prefix}
                         hint="The path to the directory containing dataset element files."
                         handleChange={(e) => this.handleChange("prefix", e.target.value)}
                     />
@@ -97,6 +121,7 @@ class AddDatasetTab extends React.Component {
                         name="sources"
                         value={s.sources}
                         optional={true}
+                        error={s.errorLog.sources}
                         hint="The path to a file containing a list of dataset elements
                             to be used. Each line should contain one element given as its
                             corresponding filename."
@@ -106,6 +131,8 @@ class AddDatasetTab extends React.Component {
                     <button onClick={this.addReference}>add reference</button>
                     <br/>
                     <button onClick={this.handleDatasetSubmit}>load dataset</button>
+
+                    {statusTab}
                 </div>
             </AddSomethingTab>
         );
@@ -115,5 +142,3 @@ class AddDatasetTab extends React.Component {
 AddDatasetTab.propTypes = {
     onServerResponse: PropTypes.func.isRequired
 };
-
-export { AddDatasetTab };

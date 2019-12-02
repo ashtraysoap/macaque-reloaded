@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { InformativeInput } from './utils.js';
 import { AddSomethingTab } from './addSomethingTab.js';
+import { PendingTab, ErrorTab, SuccessTab } from './statusTabs.js';
 
 export { AddPreproTab };
 
@@ -21,23 +22,38 @@ class AddPreproTab extends React.Component {
 
     addPrepro() {
         const preproCfg = this.state;
+        this.setState({ status: "waiting" });
+
         fetch('/add_prepro', {
             method: 'POST',
             body: JSON.stringify(preproCfg),
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(res => res.text() )
-        .then(serverPreproIdx => {
-            let preproIdx = this.props.addPrepro(preproCfg);
-            if (Number(serverPreproIdx) !== preproIdx) {
-                console.log("Prepro ids don't match!");
+        }).then(res => res.json() )
+        .then(res => {
+            if (res.id === undefined) {
+                this.setState({ status: "error" });
+            } else {
+                this.setState({ status: "ok" });
+                let preproIdx = this.props.addPrepro(preproCfg);
+                if (Number(res.id) !== preproIdx) {
+                    console.log("Prepro ids don't match!");
+                }
             }
         })
         .catch(error => console.log('Error:', error));
     }
 
     render() {
+        let statusTab = null;
+        if (this.state.status === "waiting") {
+            statusTab = <PendingTab text="neco dela"/>;
+        } else if (this.state.status === "error") {
+            statusTab = <ErrorTab text="spatne"/>;
+        } else if (this.state.status === "ok") {
+            statusTab = <SuccessTab text="hezky"/>;
+        }
 
         return (
             <AddSomethingTab>
@@ -65,6 +81,7 @@ class AddPreproTab extends React.Component {
                 </select>
                 <br/>
                 <button onClick={this.addPrepro}>Add preprocessor</button>
+                {statusTab}
             </div>
             </AddSomethingTab>
         );

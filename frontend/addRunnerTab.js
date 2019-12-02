@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { AddSomethingTab } from './addSomethingTab.js';
+import { SuccessTab, ErrorTab, PendingTab } from './statusTabs.js';
 
 export { AddRunnerTab };
 
@@ -19,19 +20,24 @@ class AddRunnerTab extends React.Component {
     }
 
     addRunner() {
-        console.log(this.state);
         const runnerCfg = this.state;
+        this.setState({ status: "waiting" });
         fetch('/add_runner', {
             method: 'POST',
             body: JSON.stringify(runnerCfg),
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(res => res.text())
-        .then(serverRunnerIdx => {
-            let runnerIdx = this.props.addRunner(runnerCfg);
-            if (Number(serverRunnerIdx) !== runnerIdx) {
-                console.log("Runner ids don't match!");
+        }).then(res => res.json())
+        .then(res => {
+            if (res.id === undefined) {
+                this.setState({ status: "error" });
+            } else {
+                this.setState({ status: "ok" });
+                let runnerIdx = this.props.addRunner(runnerCfg);
+                if (Number(res.id) !== runnerIdx) {
+                    console.log("Runner ids don't match!");
+                }
             }
         })
         .catch(error => console.log('Error:', error));
@@ -60,6 +66,15 @@ class AddRunnerTab extends React.Component {
                 model: e.target.value === "none" ? null : ms.indexOf(e.target.value)
             });
         };
+
+        let statusTab = null;
+        if (s.status === "ok") {
+            statusTab = <SuccessTab text="hezky"/>;
+        } else if (s.status === "error") {
+            statusTab = <ErrorTab text="spatne"/>;
+        } else if (s.status === "waiting") {
+            statusTab = <PendingTab text="neco dela"/>;
+        }
 
         return (
             <AddSomethingTab>
@@ -92,6 +107,7 @@ class AddRunnerTab extends React.Component {
                 </select>
                 <br/>
                 <button onClick={this.addRunner}>Add run configuration</button>
+                {statusTab}
             </div>
             </AddSomethingTab>
         );

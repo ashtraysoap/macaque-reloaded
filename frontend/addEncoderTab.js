@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { InformativeInput } from './utils.js';
 import { AddSomethingTab } from './addSomethingTab.js';
+import { PendingTab, ErrorTab, SuccessTab } from './statusTabs.js';
 
 export { AddEncoderTab };
 
@@ -33,6 +34,8 @@ class AddEncoderTab extends React.Component {
     }
 
     addEncoder() {
+        this.setState({ status: "waiting" });
+
         const encoderCfg = this.state;
         fetch('/add_encoder', {
             method: 'POST',
@@ -40,12 +43,17 @@ class AddEncoderTab extends React.Component {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(res => res.text())
-        .then(serverEncoderIdx => {
-            let encoderIdx = this.props.addEncoder(encoderCfg);
-            if (Number(serverEncoderIdx) !== encoderIdx) {
-                console.log("Encoder ids don't match!");
-            }
+        }).then(res => res.json())
+        .then(res => {
+            if (res.id === undefined) {
+                this.setState({ status: "error" });
+            } else {
+                this.setState({ status: "ok" });
+                let encoderIdx = this.props.addEncoder(encoderCfg);
+                if (Number(res.id) !== encoderIdx) {
+                    console.log("Encoder ids don't match!");
+                }
+            }    
         })
         .catch(error => console.log('Error:', error));
     }
@@ -53,6 +61,16 @@ class AddEncoderTab extends React.Component {
     render() {
         const type = this.state.type;
         let innerForm = null;
+        let statusTab = null;
+
+        if (this.state.status === "waiting") {
+            statusTab = <PendingTab text="neco dela"/>;
+        } else if (this.state.status === "ok") {
+            statusTab = <SuccessTab text="hezky"/>
+        } else if (this.state.status === "error") {
+            statusTab = <ErrorTab text="spatny"/>
+        }
+
 
         if (type === 'plugin') {
             innerForm = <InformativeInput name="plugin path" 
@@ -97,6 +115,8 @@ class AddEncoderTab extends React.Component {
                     </form>
                     {innerForm}
                     <button onClick={this.addEncoder}>Add encoder</button>
+
+                    {statusTab}
                 </div>
             </AddSomethingTab>
         );

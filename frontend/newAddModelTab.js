@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { InformativeInput } from './utils.js';
 import { AddSomethingTab } from './addSomethingTab.js';
+import { SuccessTab, ErrorTab, PendingTab } from './statusTabs.js';
 
 export { AddModelTab };
 
@@ -32,17 +33,23 @@ class AddModelTab extends React.Component {
 
     addModel() {
         const modelCfg = this.state;
+        this.setState({ status: "waiting" });
         fetch('/add_model', {
             method: 'POST',
             body: JSON.stringify(modelCfg),
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(res => res.text())
-        .then(serverModelIdx => {
-            let modelIdx = this.props.addModel(modelCfg);
-            if (Number(serverModelIdx) !== modelIdx) {
-                console.log("Model ids don't match!");
+        }).then(res => res.json())
+        .then(res => {
+            if (res.id === undefined) {
+                this.setState({ status: "error" });
+            } else {
+                this.setState({ status: "ok"});
+                let modelIdx = this.props.addModel(modelCfg);
+                if (Number(res.id) !== modelIdx) {
+                    console.log("Model ids don't match!");
+                }    
             }
         })
         .catch(error => console.log('Error:', error));
@@ -71,6 +78,15 @@ class AddModelTab extends React.Component {
             />;
         }
 
+        let statusTab = null;
+        if (this.state.status === "ok") {
+            statusTab = <SuccessTab text="hezky"/>;
+        } else if (this.state.status === "error") {
+            statusTab = <ErrorTab text="spatne"/>;
+        } else if (this.state.status === "waiting") {
+            statusTab = <PendingTab text="neco delam"/>;
+        }
+
         return (
             <AddSomethingTab>
                 <div>
@@ -97,6 +113,7 @@ class AddModelTab extends React.Component {
                     </form>
                     {innerForm}
                     <button onClick={this.addModel}>Add model</button>
+                    {statusTab}
                 </div>
             </AddSomethingTab>
         );

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { RunResultsView } from './runResultsView.js';
+import { PendingTab } from './statusTabs.js';
 
 export { HomeTab };
 
@@ -18,7 +19,8 @@ class HomeTab extends React.Component {
 
         this.state = {
             imgSrc: this.imgSrc,
-            tokenId: null
+            tokenId: null,
+            waiting: false
         };
 
         this.getResultsForElement = this.getResultsForElement.bind(this);
@@ -30,6 +32,7 @@ class HomeTab extends React.Component {
     }
 
     onImageSubmit() {
+        this.setState({ waiting: true });
 
         // prepare the image blob for transfer
         let formData = new FormData();
@@ -43,7 +46,10 @@ class HomeTab extends React.Component {
         .then(res => {
             let r = this.getResultsForElement([res], 0)[0];
             this.imgSrc = `/load_image/${r.datasetId}/${0}`;
-            this.setState({imgSrc: `/load_image/${r.datasetId}/${0}`});
+            this.setState({ 
+                imgSrc: `/load_image/${r.datasetId}/${0}`,
+                waiting: false
+            });
             this.props.onServerResponse(r);
         })
         .then(() => this.fetchBeamSearchGraph());
@@ -62,6 +68,11 @@ class HomeTab extends React.Component {
                         onInput={this.onImageSubmit}
                         />
                 </form>
+
+                {
+                    this.state.waiting &&
+                    <PendingTab text="Processing image."/>
+                }
 
                 {
                     this.props.results !== null &&
