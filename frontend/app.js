@@ -7,10 +7,9 @@ import { ConfigTab } from './configTab.js';
 import { DatasetsTab } from './datasetsTab.js';
 import { Header } from './header.js';
 import { HomeTab } from './homeTab.js';
-import { Navigation } from './nav.js';
 import { AddPreproTab } from './addPreproTab.js';
 import { AddEncoderTab } from './addEncoderTab.js';
-import { AddModelTab } from './newAddModelTab.js';
+import { AddModelTab } from './addModelTab.js';
 import { AddRunnerTab } from './addRunnerTab.js';
 
 /*
