@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { AddSomethingTab } from './addSomethingTab.js';
 import { SuccessTab, ErrorTab, PendingTab } from './statusTabs.js';
-import { InformativeInput } from './utils.js';
+import { InformativeInput, InformativeLabel } from './utils.js';
 
 export { AddRunnerTab };
 
@@ -86,6 +86,7 @@ class AddRunnerTab extends React.Component {
             <AddSomethingTab>
             <div>
                 <div className="addModelPartLabel">Runner</div>
+                
                 <InformativeInput
                     name="text"
                     value={s.name}
@@ -94,25 +95,38 @@ class AddRunnerTab extends React.Component {
                     hint="The name of the runner."
                     error={s.errorLog.name}
                 />
-                <label>preprocessor</label>
-                <select value={s.prepro === null ? "none" : ps[s.prepro]} onChange={setPrepro}>
-                    <option value='none'>none</option>
-                    { ps.map(p => <option value={p} key={p}>{p}</option>) }
-                </select>
-                <br/>
-                <label>encoder</label>
-                <select value={s.encoder === null ? "none" : es[s.encoder]} onChange={setEncoder}>
-                    <option value='none'>none</option>
-                    { es.map(e => <option value={e} key={e}>{e}</option>) }
-                </select>
-                <br/>
-                <label>model</label>
-                <select value={s.model === null ? "none" : ms[s.model]} onChange={setModel}>
-                    <option value='none'>none</option>
-                    { ms.map(m => <option value={m} key={m}>{m}</option>) }
-                </select>
-                <br/>
+
+                <InformativeLabel
+                    name="preprocessor"
+                    hint=""
+                    optional={false}>
+                    <select value={s.prepro === null ? "none" : ps[s.prepro]} onChange={setPrepro}>
+                        <option value='none'>none</option>
+                        { ps.map(p => <option value={p} key={p}>{p}</option>) }
+                    </select>    
+                </InformativeLabel>
+
+                <InformativeLabel name="encoder"
+                    hint=""
+                    optional={false}>
+                    <select value={s.encoder === null ? "none" : es[s.encoder]} onChange={setEncoder}>
+                        <option value='none'>none</option>
+                        { es.map(e => <option value={e} key={e}>{e}</option>) }
+                    </select>
+                </InformativeLabel>
+
+                <InformativeLabel
+                    name="model"
+                    hint=""
+                    optional={false}>
+                    <select value={s.model === null ? "none" : ms[s.model]} onChange={setModel}>
+                        <option value='none'>none</option>
+                        { ms.map(m => <option value={m} key={m}>{m}</option>) }
+                    </select>
+                </InformativeLabel>
+
                 <button onClick={this.addRunner}>Add run configuration</button>
+                
                 {statusTab}
             </div>
             </AddSomethingTab>
