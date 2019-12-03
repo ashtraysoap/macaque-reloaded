@@ -49,7 +49,6 @@ def validate_dataset_cfg(cfg, state):
     return log
 
 def validate_preprocessor_cfg(cfg, state):
-    
     prepros = map(lambda x: x.name, state.preprocessors)
     log = {}
     if cfg['name'] in prepros:
@@ -63,7 +62,6 @@ def validate_model_cfg(cfg, state):
     return {}
 
 def validate_runner_cfg(cfg, state):
-
     runners = map(lambda x: x.name, state.runners)
     log = {}
     if cfg['name'] in runners:

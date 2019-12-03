@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { InformativeInput } from './utils.js';
+import { InformativeInput, InformativeLabel } from './utils.js';
 import { AddSomethingTab } from './addSomethingTab.js';
 import { SuccessTab, ErrorTab, PendingTab } from './statusTabs.js';
 
@@ -25,7 +25,8 @@ class AddModelTab extends React.Component {
                 greedySeries: "greedy_caption",
                 attnSeries: "alpha",
                 bsSeries: "bs_target"
-            }
+            },
+            errorLog: {}
         };
         this.addModel = this.addModel.bind(this);
         this.NMvalueChange = this.NMvalueChange.bind(this);
@@ -43,13 +44,10 @@ class AddModelTab extends React.Component {
         }).then(res => res.json())
         .then(res => {
             if (res.id === undefined) {
-                this.setState({ status: "error" });
+                this.setState({ status: "error", errorLog: res.log });
             } else {
-                this.setState({ status: "ok"});
-                let modelIdx = this.props.addModel(modelCfg);
-                if (Number(res.id) !== modelIdx) {
-                    console.log("Model ids don't match!");
-                }    
+                this.setState({ status: "ok", errorLog: {} });
+                this.props.addModel(modelCfg);
             }
         })
         .catch(error => console.log('Error:', error));
@@ -60,9 +58,10 @@ class AddModelTab extends React.Component {
         let innerForm = null;
 
         if (type === 'plugin') {
-            innerForm = <InformativeInput name="plugin path" 
+            innerForm = <InformativeInput name="plugin path"
                 value={this.state.plugin.path}
                 optional={false}
+                hint="The path to the plugin source."
                 handleChange={(e) => { this.setState({ plugin: { path: e.target.value }}); }}
             />
         } else if (type === 'neuralmonkey') {
@@ -93,24 +92,27 @@ class AddModelTab extends React.Component {
                     <div className="addModelPartLabel">Model</div>
                     <InformativeInput name="name" value={this.state.name} 
                         optional={false}
+                        hint="The name of the model unique among models."
+                        error={this.state.errorLog.name}
                         handleChange={(e) => { this.setState({ name: e.target.value }); }}
                     />
-                    <form>
-                        <label>runs on</label>
+
+                    <InformativeLabel name="runs on" optional={false}>
                         <select value={this.state.input}
                             onChange={(e) => { this.setState({ input: e.target.value }); }}>
                             <option value='features' >features</option>
                             <option value='images' >images</option>
                         </select>
-                    </form>
-                    <form>
-                        <label>type</label>
+                    </InformativeLabel>
+
+                    <InformativeLabel name="type" hint="The type of model interface." optional={false}>
                         <select value={type} 
                             onChange={(e) => { this.setState({ type: e.target.value}); }} >
                             <option value='plugin' >plugin</option>
                             <option value='neuralmonkey' >Neural Monkey</option>
                         </select>
-                    </form>
+                    </InformativeLabel>
+                    
                     {innerForm}
                     <button onClick={this.addModel}>Add model</button>
                     {statusTab}
@@ -129,47 +131,69 @@ class AddModelTab extends React.Component {
 function NeuralMonkeyModel(props) {
     return (
         <div>
-            <form>
-                configuration file: <input type="text" 
-                                            name="config" 
-                                            value={props.cfg} 
-                                            onChange={e => props.handleChange("config", e.target.value)} />
-                                <br/>
-                variables file: <input type="text" 
-                                            name="vars" 
-                                            value={props.vars} 
-                                            onChange={e => props.handleChange("vars", e.target.value)} />
-                                <br/>
-                data series: <input type="text"
-                                    name="dataSeries" 
-                                    value={props.dataSeries} 
-                                    onChange={e => props.handleChange("dataSeries", e.target.value)} />
-                                <br/>
-                source caption series: <input type="text" 
-                                        name="srcCaptionSeries"
-                                        value={props.srcCaptionSeries} 
-                                        onChange={e => props.handleChange("srcCaptionSeries", e.target.value)}
-                />
-                <br/>
-                greedy caption series: <input 
-                                        type="text"
-                                        name="greedySeries"
-                                        value={props.greedySeries}
-                                        onChange={e => props.handleChange("greedySeries", e.target.value)}
-                />
-                <br/>
-                greedy alignment series: <input type="text"
-                                            name="attnSeries"
-                                            value={props.attnSeries}
-                                            onChange={e => props.handleChange("attnSeries", e.target.value)}
-                />
-                <br/>
-                beam search output series: <input type="text"
-                                            name="bsSeries"
-                                            value={props.bsSeries}
-                                            onChange={e => props.handleChange("bsSeries", e.target.value)}
-                />
-            </form>
+
+            <InformativeInput
+                name="configuration file"
+                value={props.cfg}
+                onChange={e => props.handleChange("config", e.target.value)}
+                optional={false}
+                hint="The path to the Neural Monkey configuration file."
+                error={undefined}
+            />
+
+            <InformativeInput
+                name="variables file"
+                value={props.vars}
+                onChange={e => props.handleChange("vars", e.target.value)}
+                optional={false}
+                hint="The path to the experiment's variables."
+                error={undefined}
+            />
+
+            <InformativeInput
+                name="data series"
+                value={props.dataSeries}
+                onChange={e => props.handleChange("dataSeries", e.target.value)}
+                optional={false}
+                hint="The name of the data series under which inputs are fed."
+                error={undefined}
+            />
+
+            <InformativeInput
+                name="source caption series"
+                value={props.srcCaptionSeries}
+                onChange={e => props.handleChange("srcCaptionSeries", e.target.value)}
+                optional={true}
+                hint="The name of the source captions data series."
+                error={undefined}
+            />
+
+            <InformativeInput
+                name="greedy caption series"
+                value={props.greedySeries}
+                onChange={e => props.handleChange("greedySeries", e.target.value)}
+                optional={true}
+                hint="The name of the greedy captions data series."
+                error={undefined}
+            />
+
+            <InformativeInput
+                name="greedy alignment series"
+                value={props.attnSeries}
+                onChange={e => props.handleChange("attnSeries", e.target.value)}
+                optional={true}
+                hint="The name of the greedy attention alignments data series."
+                error={undefined}
+            />
+
+            <InformativeInput
+                name="beam search output series"
+                value={props.bsSeries}
+                onChange={e => props.handleChange("bsSeries", e.target.value)}
+                optional={true}
+                hint="The name of the beam search output data series."
+                error={undefined}
+            />
         </div>
     );
 }
