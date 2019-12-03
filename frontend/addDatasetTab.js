@@ -18,7 +18,7 @@ class AddDatasetTab extends React.Component {
             references: [],
             srcCaptions: "",
             batchSize: 32,
-            errorLog: [],
+            errorLog: {},
         }
         this.handleChange = this.handleChange.bind(this);
         this.addReference = this.addReference.bind(this);
@@ -57,7 +57,6 @@ class AddDatasetTab extends React.Component {
         }).then(res => res.json())
         .then(response => {
             if (response.name === undefined) {
-                console.log(response.log);
                 this.setState({ 
                     errorLog: response.log,
                     status: "error"
@@ -89,11 +88,11 @@ class AddDatasetTab extends React.Component {
         );
 
         let statusTab = null;
-        if (this.state.status === "waiting") {
+        if (s.status === "waiting") {
             statusTab = <PendingTab text="neco delam"/>;
-        } else if (this.state.status === "ok") {
+        } else if (s.status === "ok") {
             statusTab = <SuccessTab text="hezky"/>;
-        } else if (this.state.status === "error") {
+        } else if (s.status === "error") {
             statusTab = <ErrorTab text="spatny"/>
         }
 

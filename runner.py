@@ -12,6 +12,8 @@ def create_runner(macaque_state, runner_config):
         A Runner instance for the given configuration.
     """
 
+    name = runner_config['name'] if runner_config['name'] else None
+
     if runner_config['prepro'] is not None:
         prepro_id = int(runner_config['prepro'])
         prepro = macaque_state.preprocessors[prepro_id]
@@ -30,7 +32,8 @@ def create_runner(macaque_state, runner_config):
     else:
         raise RuntimeError("A model has to be provided in the runner.")
 
-    return Runner(model=model,
+    return Runner(name=name,
+        model=model,
         feature_extractor=encoder,
         prepro=prepro)
 
@@ -48,13 +51,19 @@ class Runner():
     def __init__(self,
         model,
         feature_extractor=None,
-        prepro=None):
+        prepro=None,
+        name=None):
         """Initializes the Runner."""
 
+        self._name = name
         self._prepro = prepro
         self._feature_extractor = feature_extractor
         self._model = model
         self._idx = None
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def idx(self):

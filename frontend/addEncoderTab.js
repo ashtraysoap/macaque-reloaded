@@ -27,7 +27,8 @@ class AddEncoderTab extends React.Component {
                 netType: "VGG16",
                 checkpoint: "",
                 featureMap: ""
-            }
+            },
+            errorLog: {}
         };
         this.addEncoder = this.addEncoder.bind(this);
         this.handleKerasChange = this.handleKerasChange.bind(this);
@@ -46,13 +47,10 @@ class AddEncoderTab extends React.Component {
         }).then(res => res.json())
         .then(res => {
             if (res.id === undefined) {
-                this.setState({ status: "error" });
+                this.setState({ status: "error", errorLog: res.log });
             } else {
-                this.setState({ status: "ok" });
-                let encoderIdx = this.props.addEncoder(encoderCfg);
-                if (Number(res.id) !== encoderIdx) {
-                    console.log("Encoder ids don't match!");
-                }
+                this.setState({ status: "ok", errorLog: {} });
+                this.props.addEncoder(encoderCfg);
             }    
         })
         .catch(error => console.log('Error:', error));
@@ -76,6 +74,8 @@ class AddEncoderTab extends React.Component {
             innerForm = <InformativeInput name="plugin path" 
                 value={this.state.plugin.path}
                 optional={false}
+                hint=""
+                error={this.state.errorLog.path}
                 handleChange={(e) => { this.setState({ plugin: { path: e.target.value }}); }}
             />
         } else if (type === 'keras') {
@@ -102,14 +102,16 @@ class AddEncoderTab extends React.Component {
                     <div className="addModelPartLabel">Encoder</div>
                     <InformativeInput name="name" value={this.state.name} 
                         optional={false}
+                        hint=""
+                        error={this.state.errorLog.name}
                         handleChange={(e) => { this.setState({ name: e.target.value }); }}
                     />
                     <form>
                         <label>type</label>
                         <select value={type} 
                             onChange={(e) => { this.setState({ type: e.target.value}); }} >
-                            <option value='plugin' >plugin</option>
-                            <option value='keras' >Keras</option>
+                            <option value='plugin'>plugin</option>
+                            <option value='keras'>Keras</option>
                             <option value='neuralmonkey' >Neural Monkey / TensorFlow Slim</option>
                         </select>
                     </form>

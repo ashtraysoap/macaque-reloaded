@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { AddSomethingTab } from './addSomethingTab.js';
 import { SuccessTab, ErrorTab, PendingTab } from './statusTabs.js';
+import { InformativeInput } from './utils.js';
 
 export { AddRunnerTab };
 
@@ -14,7 +15,8 @@ class AddRunnerTab extends React.Component {
             name: "jelen v ruji",
             prepro: null,
             encoder: null,
-            model: null
+            model: null,
+            errorLog: {}
         };
         this.addRunner = this.addRunner.bind(this);
     }
@@ -22,6 +24,7 @@ class AddRunnerTab extends React.Component {
     addRunner() {
         const runnerCfg = this.state;
         this.setState({ status: "waiting" });
+
         fetch('/add_runner', {
             method: 'POST',
             body: JSON.stringify(runnerCfg),
@@ -31,13 +34,16 @@ class AddRunnerTab extends React.Component {
         }).then(res => res.json())
         .then(res => {
             if (res.id === undefined) {
-                this.setState({ status: "error" });
+                this.setState({ 
+                    status: "error", 
+                    errorLog: res.log
+                });
             } else {
-                this.setState({ status: "ok" });
-                let runnerIdx = this.props.addRunner(runnerCfg);
-                if (Number(res.id) !== runnerIdx) {
-                    console.log("Runner ids don't match!");
-                }
+                this.setState({ 
+                    status: "ok",
+                    errorLog: {}
+                });
+                this.props.addRunner(runnerCfg);
             }
         })
         .catch(error => console.log('Error:', error));
@@ -80,14 +86,14 @@ class AddRunnerTab extends React.Component {
             <AddSomethingTab>
             <div>
                 <div className="addModelPartLabel">Runner</div>
-                <label>name</label>
-                <input 
-                    type="text"
-                    name="name"
+                <InformativeInput
+                    name="text"
                     value={s.name}
-                    onChange={e => this.setState({ name: e.target.value })}
+                    optional={false}
+                    handleChange={e => this.setState({ name: e.target.value })}
+                    hint="The name of the runner."
+                    error={s.errorLog.name}
                 />
-                <br/>
                 <label>preprocessor</label>
                 <select value={s.prepro === null ? "none" : ps[s.prepro]} onChange={setPrepro}>
                     <option value='none'>none</option>

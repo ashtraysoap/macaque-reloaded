@@ -18,10 +18,11 @@ def create_preprocessor(prepro_config):
     w = prepro_config['targetWidth']
     h = prepro_config['targetHeight']
     m = prepro_config['mode']
+    n = prepro_config['name']
     w = int(w)
     h = int(h)
     m = PreproMode(int(m))
-    return Preprocessor(target_width=w, target_height=h, mode=m)
+    return Preprocessor(target_width=w, target_height=h, mode=m, name=n)
 
 class PreproMode(Enum):
     """Class enumerating all supported preprocessing modes.
@@ -55,7 +56,8 @@ class Preprocessor():
         mode: A PreproMode specifying the type of preprocessing.
     """
 
-    def __init__(self, target_width=224, target_height=224, mode=PreproMode.AspectRatioCrop):
+    def __init__(self, target_width=224, target_height=224, mode=PreproMode.AspectRatioCrop,
+        name=None):
         """Initialize a Preprocessor
 
         Args:
@@ -68,6 +70,7 @@ class Preprocessor():
         self._target_height = target_height
         self._mode = mode
         self._idx = None
+        self._name = name
         self._lock = Lock()
 
     @property
@@ -89,6 +92,10 @@ class Preprocessor():
     @property
     def mode(self):
         return self._mode
+
+    @property
+    def name(self):
+        return self._name
 
     def preprocess(self, dataset):
         """Preprocesses images from the dataset.
