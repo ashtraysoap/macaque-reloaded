@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { InformativeInput } from './utils.js';
+import { InformativeInput, InformativeLabel } from './utils.js';
 import { AddSomethingTab } from './addSomethingTab.js';
 import { PendingTab, ErrorTab, SuccessTab } from './statusTabs.js';
 
@@ -74,7 +74,7 @@ class AddEncoderTab extends React.Component {
             innerForm = <InformativeInput name="plugin path" 
                 value={this.state.plugin.path}
                 optional={false}
-                hint=""
+                hint="The path to the plugin source."
                 error={this.state.errorLog.path}
                 handleChange={(e) => { this.setState({ plugin: { path: e.target.value }}); }}
             />
@@ -100,22 +100,25 @@ class AddEncoderTab extends React.Component {
             <AddSomethingTab>
                 <div>
                     <div className="addModelPartLabel">Encoder</div>
+
                     <InformativeInput name="name" value={this.state.name} 
                         optional={false}
-                        hint=""
+                        hint="The name of the encoder. Unique among encoders."
                         error={this.state.errorLog.name}
                         handleChange={(e) => { this.setState({ name: e.target.value }); }}
                     />
-                    <form>
-                        <label>type</label>
+
+                    <InformativeLabel name="type" hint="The type of encoder interface." optional={false}>
                         <select value={type} 
                             onChange={(e) => { this.setState({ type: e.target.value}); }} >
                             <option value='plugin'>plugin</option>
                             <option value='keras'>Keras</option>
                             <option value='neuralmonkey' >Neural Monkey / TensorFlow Slim</option>
                         </select>
-                    </form>
+                    </InformativeLabel>
+                        
                     {innerForm}
+                    
                     <button onClick={this.addEncoder}>Add encoder</button>
 
                     {statusTab}
@@ -149,25 +152,28 @@ class KerasEncoder extends React.Component {
         const nets = this.networks.map((e) => <option key={e}>{e}</option>);
         return (
             <div>
-                <form>
-                    <label>network</label>
+                <InformativeLabel name="network" hint="The type of network." optional={false}>
                     <select value={this.props.netType} 
                         onChange={e => this.props.handleChange("netType", e.target.value)}>
                         {nets}
                     </select>
-                    <br/>
-                    layer <input type="text"
-                        name="layer"
-                        value={this.props.layerSpec}
-                        onChange={e => this.props.handleChange("layerSpec", e.target.value)}
-                    />
-                    <br/>
-                    checkpoint path <input type="text"
-                        name="ckpt"
-                        value={this.props.ckptPath}
-                        onChange={e => this.props.handleChange("ckptPath", e.target.value)}
-                    />
-                </form>
+                </InformativeLabel>
+
+                <InformativeInput
+                    name="layer"
+                    value={this.props.layerSpec}
+                    onChange={e => this.props.handleChange("layerSpec", e.target.value)}
+                    hint="An identifier of the layer whose output is extracted as features."
+                    optional={false}
+                />
+
+                <InformativeInput
+                    name="checkpoint path"
+                    value={this.props.ckptPath}
+                    optional={true}
+                    hint="A path to the model's weights. If not provided, Keras' default is used."
+                    onChange={e => this.props.handleChange("ckptPath", e.target.value)}
+                />
             </div>
         )
     }
@@ -212,27 +218,34 @@ class NeuralMonkeyEncoder extends React.Component {
 
         return (
             <div>
-                <form>
-                    network: <select 
+                <InformativeLabel name="network" hint="The type of network." optional={false}>
+                    <select 
                         name="net" 
                         value={this.props.netType} 
                         onChange={this.props.handleNetChange} >
                         {nets}
                     </select>
-                    <br/>
-                    checkpoint path: <input 
-                        type="text" 
-                        name="ckpt" 
-                        value={this.props.checkpoint}
-                        onChange={this.props.handleCheckpointChange}/>
-                    <br/>
-                    feature map: <select 
+                </InformativeLabel>
+
+                <InformativeInput 
+                    name="checkpoint path" 
+                    value={this.props.checkpoint}
+                    onChange={this.props.handleCheckpointChange}
+                    hint="The path to the model's weights." 
+                    optional={false}
+                />
+
+                <InformativeLabel name="feature map" 
+                    hint="An identifier of the layer whose output is used as features." 
+                    optional={false}>
+                    <select 
                         name="featureMap" 
                         value={this.props.featureMap} 
                         onChange={this.props.handleFeatureMapChange}>
                         {maps}
                     </select>
-                </form>
+                </InformativeLabel>
+
             </div>
         );
     }
