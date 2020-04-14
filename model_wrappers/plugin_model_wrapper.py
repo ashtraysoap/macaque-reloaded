@@ -20,7 +20,7 @@ class PluginModelWrapper(ModelWrapper):
             or on images.
     """
 
-    def __init__(self, plugin_path, runs_on_features):
+    def __init__(self, plugin_path, runs_on_features, name):
         """Initialize a PluginModelWrapper instance.
 
         Args:
@@ -35,7 +35,7 @@ class PluginModelWrapper(ModelWrapper):
                 method.
         """
 
-        self._runs_on_features = runs_on_features
+        super(PluginModelWrapper, self).__init__(name, runs_on_features)
 
         if not os.path.isfile(plugin_path):
             raise ValueError("The file %s does not exist." % plugin_path)
@@ -72,10 +72,6 @@ class PluginModelWrapper(ModelWrapper):
         else:
             raise ValueError("The class {} in {} does not provide the `run` method."
                 .format(IFC_CLASS, plugin_path))
-
-    @property
-    def runs_on_features(self):
-        return self._runs_on_features
 
     def run(self, inputs):
         """Run the model on inputs.

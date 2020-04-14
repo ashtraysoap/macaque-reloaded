@@ -47,7 +47,7 @@ class KerasFeatureExtractor(FeatureExtractor):
         InceptionV3
     """
 
-    def __init__(self, net_id, layer_spec="", ckpt_path=""):
+    def __init__(self, net_id, layer_spec="", ckpt_path="", name=""):
         """Initialize a KerasFeatureExtractor instance.
         
         Args:
@@ -58,6 +58,8 @@ class KerasFeatureExtractor(FeatureExtractor):
             ValueError: Unsupported network.
         """
 
+        super(KerasFeatureExtractor, self).__init__(name)
+        
         K.clear_session()
 
         if not net_id in MODELS:

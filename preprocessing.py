@@ -14,7 +14,6 @@ def create_preprocessor(prepro_config):
         A Preprocessor instance.
     """
 
-    print(prepro_config)
     w = prepro_config['targetWidth']
     h = prepro_config['targetHeight']
     m = prepro_config['mode']
@@ -22,6 +21,7 @@ def create_preprocessor(prepro_config):
     w = int(w)
     h = int(h)
     m = PreproMode(int(m))
+    print(w, h, m, n)
     return Preprocessor(target_width=w, target_height=h, mode=m, name=n)
 
 class PreproMode(Enum):

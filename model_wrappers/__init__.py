@@ -15,7 +15,7 @@ class ModelType(Enum):
     NeuralMonkey = "neuralmonkey"
     Plugin = "plugin"
 
-def create_model_wrapper(model_config):
+def create_model_wrapper(model_config, from_response=True):
     """Create a model wrapper from the config dictionary.
 
     Args:
@@ -48,11 +48,19 @@ def create_model_wrapper(model_config):
     """
 
     model_type = model_config['type']
-    runs_on_features = False if model_config['input'] == "images" else True
+    name = model_config['name']
+
+    if 'input' in model_config:
+        runs_on_features = False if model_config['input'] == "images" else True
+    else:
+        runs_on_features = True if model_config['runsOnFeatures'].lower() \
+            == 'true' else False
 
     if model_type == ModelType.NeuralMonkey.value:
-        
-        nm_config = model_config['neuralmonkey']
+        if from_response:
+            nm_config = model_config['neuralmonkey']
+        else:
+            nm_config = model_config
         config_path = nm_config['configPath']
         vars_path = nm_config['varsPath']
         data_series = nm_config['dataSeries']
@@ -69,14 +77,19 @@ def create_model_wrapper(model_config):
                 runs_on_features=runs_on_features,
                 caption_series=greedy_series,
                 alignments_series=attn_series,
-                bs_graph_series=bs_series)
+                bs_graph_series=bs_series,
+                name=name)
 
     elif model_type == ModelType.Plugin.value:
-        plugin_config = model_config['plugin']
+        if from_response:
+            plugin_config = model_config['plugin']
+        else:
+            plugin_config = model_config
         src_path = plugin_config['path']
         
         model = PluginModelWrapper(plugin_path=src_path, 
-                runs_on_features=runs_on_features)
+                runs_on_features=runs_on_features,
+                name=name)
 
     else:
         raise ValueError("Unsupported model type %s." % model_type)

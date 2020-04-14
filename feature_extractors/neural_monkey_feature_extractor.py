@@ -39,7 +39,8 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
                 net, 
                 slim_models,
                 model_checkpoint,
-                conv_map):
+                conv_map,
+                name=None):
         """Create a Nerual Monkey feature extractor. 
         
         Args:
@@ -49,6 +50,8 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
             conv_map: The string identifier of the convolutional
                 map which should be extracted as features.
         """
+
+        super(NeuralMonkeyFeatureExtractor, self).__init__(name)
 
         if net not in MODELS:
             raise ValueError("Unsupported network %s." % net)

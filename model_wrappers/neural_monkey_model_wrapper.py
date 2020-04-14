@@ -19,17 +19,19 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
                 src_caption_series="",
                 caption_series="",
                 alignments_series="",
-                bs_graph_series="bs_target"):
+                bs_graph_series="bs_target",
+                name=None):
         """
         caption_series -> GreedyRunner output_series
         alignments_series -> WordAlignmentRunner output_series
         bs_graph_series -> BeamSearchRunner output_series
         """
 
+        super(NeuralMonkeyModelWrapper, self).__init__(name, runs_on_features)
+
         if not os.path.isfile(config_path):
             raise ValueError("File {} does not exist.".format(config_path))
 
-        self._runs_on_features = runs_on_features
         self._config_path = config_path
         self._vars_path = vars_path
         self._data_series = data_series
@@ -42,10 +44,6 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         self._exp.build_model()
         self._exp.load_variables([vars_path])
 
-    @property
-    def runs_on_features(self):
-        return self._runs_on_features
-
     def run(self, inputs):
         """
         Args:
@@ -57,7 +55,7 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
 
         n_elems = inputs.shape[0]
         # enc-dec model (runs on images)
-        if not self._runs_on_features:
+        if not self.runs_on_features:
             if self._src_caption_series:
                 # TODO: handle multimodal translation case
                 pass

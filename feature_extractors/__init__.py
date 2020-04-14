@@ -15,30 +15,15 @@ class FeatureExtractorId(Enum):
     Plugin = "plugin"
     Null = "none"
 
-def create_feature_extractor(extractor_config):
+def create_feature_extractor(extractor_config, from_response=True):
     """Creates a FeatureExtractor from the config dictionary.
 
     Args:
-        extractor_config: A dictionary with the following structure
-            {
-                'type': { 'tf-slim' | 'keras' | 'plugin' | 'none' },
-                'keras': {
-                    'netType': { see KerasFeatureExtractor for supported values }
-                    'layerSpec':
-                    'ckptPath':
-                },
-                'plugin': {
-                    'path': { a string path to the plugin source }
-                },
-                'tfSlim': {
-                    'netType': { see NeuralMonkeyFeatureExtractor for supported values },
-                    'checkpoint': { a string path to the model checkpoint },
-                    'featureMap': { the feature map to choose as output,
-                        see NeuralMonkeyFeatureExtractor for options },
-                    'slimPath': { a string path to the Tensorflow Slim repository }
-                }
-            }
-            Only values for the selected type need to be provided.
+        extractor_config: A dictionary.
+        from_response: Boolean value; whether the config was sent from the client
+            in a response, or was loaded from a configuration file. This is needed
+            because the data format differs slightly.
+
     Returns:
         A feature extractor instance depending on the configuration.
     Raises:
@@ -46,30 +31,45 @@ def create_feature_extractor(extractor_config):
     """
 
     extractor_id = extractor_config['type']
+    name = extractor_config['name']
 
     if extractor_id == FeatureExtractorId.Slim.value:
-        slim_config = extractor_config['tfSlim']
+        if from_response:
+            slim_config = extractor_config['tfSlim']
+        else:
+             slim_config = extractor_config
         net_type = slim_config['netType']
         model_ckpt = slim_config['checkpoint']
         feature_map = slim_config['featureMap']
         extractor = NeuralMonkeyFeatureExtractor(net=net_type,
                     slim_models=SLIM_PATH,
                     model_checkpoint=model_ckpt,
-                    conv_map=feature_map)
+                    conv_map=feature_map,
+                    name=name)
 
     elif extractor_id == FeatureExtractorId.Keras.value:
-        keras_config = extractor_config['keras']
-        net_type = keras_config['netType']
+        if from_response:
+            keras_config = extractor_config['keras']
+        else:
+            keras_config = extractor_config
+        net_type = keras_config['network']
         layer_spec = keras_config['layerSpec']
-        ckpt_path = keras_config['ckptPath']
+        if 'checkpoint' in keras_config:
+            ckpt_path = keras_config['checkpoint']
+        else:
+            ckpt_path = ""
         extractor = KerasFeatureExtractor(net_id=net_type,
                     layer_spec=layer_spec,
-                    ckpt_path=ckpt_path)
+                    ckpt_path=ckpt_path,
+                    name=name)
 
     elif extractor_id == FeatureExtractorId.Plugin.value:
-        plugin_config = extractor_config['plugin']
+        if from_response:
+            plugin_config = extractor_config['plugin']
+        else:
+            plugin_config = extractor_config
         src_path = plugin_config['path']
-        extractor = PluginFeatureExtractor(plugin_path=src_path)
+        extractor = PluginFeatureExtractor(plugin_path=src_path, name=name)
 
     elif extractor_id == FeatureExtractorId.Null.value:
         return None

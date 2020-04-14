@@ -31,7 +31,6 @@ from preprocessing import create_preprocessor
 from runner import create_runner, create_demo_runner
 from validation import validate_cfg
 
-import pdb
 
 Result = namedtuple('Result', ['runId', 'runnerId', 'datasetId', 'results'])
 
@@ -57,6 +56,11 @@ def start_server(macaque_state):
     global STATE
     STATE = macaque_state
     APP.debug = False
+    
+    # APP.run() launches Flask's built-in HTTP server.
+    # The function call is blocking - the server waits
+    # for user requests and handles them until terminated
+    # or until an error occurs.
     APP.run()
 
 @APP.route('/', methods=['GET'])

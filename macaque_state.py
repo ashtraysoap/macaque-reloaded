@@ -1,4 +1,12 @@
-from runner import create_demo_runner
+import os
+
+from config_parser import find_configs, create_configs
+from preprocessing import create_preprocessor
+from feature_extractors import create_feature_extractor
+from model_wrappers import create_model_wrapper
+from runner import create_runner, create_demo_runner
+
+MODELS_DIR = "./models"
 
 class MacaqueState():
     """Class responsible for holding global application state.
@@ -24,6 +32,7 @@ class MacaqueState():
         self._run_results = []
         self._demo_runner_id = None
         self.demo_runner = None
+        self.create_from_configs()
 
     @property
     def datasets(self):
@@ -97,9 +106,97 @@ class MacaqueState():
             in the `runners` attribute. 
         """
 
-        # dr = create_demo_runner()
-        # r_id = self.add_runner(dr)
-        # self._demo_runner_id = r_id
-        # return r_id
         self.demo_runner = create_demo_runner()
         return
+
+    def create_from_configs(self):
+        cfgs = find_configs(MODELS_DIR)
+        cfgs = [os.path.join(MODELS_DIR, c) for c in cfgs]
+        cfgs = create_configs(cfgs)
+
+        for cfg in cfgs:
+            if 'prepro' in cfg:
+                prepro_cfg = cfg['prepro']
+                if 'name' not in prepro_cfg:
+                    raise RuntimeWarning("Preprocessor name has to be specified. \
+                        Skipping config.")
+                    continue
+                name = prepro_cfg['name']
+                if self.contains_prepro(name):
+                    pass # todo
+                prepro = create_preprocessor(prepro_cfg)
+                if prepro is not None:
+                    self.add_preprocessor(prepro)
+
+            if 'encoder' in cfg:
+                e_cfg = cfg['encoder']
+                if 'name' not in e_cfg:
+                    pass # todo
+                name = e_cfg['name']
+                if self.contains_encoder(name):
+                    pass # todo
+                encoder = create_feature_extractor(e_cfg, from_response=False)
+                if encoder is not None:
+                    self.add_feature_extractor(encoder)
+
+            if 'model' in cfg:
+                m_cfg = cfg['model']
+                if 'name' not in m_cfg:
+                    pass # todo
+                name = m_cfg['name']
+                if self.contains_model(name):
+                    pass # todo
+                model = create_model_wrapper(m_cfg, from_response=False)
+                if model is not None:
+                    self.add_model(model)
+
+            if 'runner' in cfg:
+                r_cfg = cfg['runner']
+                if 'name' not in r_cfg:
+                    pass # todo
+                name = r_cfg['name']
+                if self.contains_runner(name):
+                    pass # todo
+                runner = create_runner(self, r_cfg)
+                if runner is not None:
+                    self.add_runner(runner)
+
+    def contains_prepro(self, name):
+        ps = self.preprocessors
+        return [p for p in ps if p.name == name] != []
+
+    def contains_encoder(self, name):
+        es = self.feature_extractors
+        return [e for e in es if e.name == name] != []
+
+    def contains_model(self, name):
+        ms = self.models
+        return [m for m in ms if m.name == name] != []
+
+    def contains_runner(self, name):
+        rs = self.runners
+        return [r for r in rs if r.name == name] != []
+
+    def get_prepro(self, name):
+        for p in self.preprocessors:
+            if p.name == name:
+                return p
+        return None
+
+    def get_encoder(self, name):
+        for e in self.feature_extractors:
+            if e.name == name:
+                return e
+        return None
+    
+    def get_model(self, name):
+        for m in self.models:
+            if m.name == name:
+                return m
+        return None
+
+    def get_runner(self, name):
+        for r in self.runners:
+            if r.name == name:
+                return r
+        return None

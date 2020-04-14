@@ -20,7 +20,7 @@ class PluginFeatureExtractor(FeatureExtractor):
     method of specific names and signature.
     """
 
-    def __init__(self, plugin_path):
+    def __init__(self, plugin_path, name=None):
         """Initialize a PluginFeatureExtractor instance.
         
         Args:
@@ -32,6 +32,8 @@ class PluginFeatureExtractor(FeatureExtractor):
             ValueError: The interface class does not contain the interface method.
         """
         
+        super(PluginFeatureExtractor, self).__init__(name)
+
         if not os.path.isfile(plugin_path):
             raise ValueError("The file %s does not exist." % plugin_path)
         if not plugin_path[-3:] == '.py':
