@@ -1,7 +1,6 @@
 from json import JSONEncoder, dumps
 from neuralmonkey.vocabulary import START_TOKEN, END_TOKEN, PAD_TOKEN
 
-import pdb
 
 class BeamSearchOutputGraphNode():
     def __init__(self, score, token, alignment, children = None):

@@ -23,6 +23,7 @@ class MacaqueState():
         self._runners = []
         self._run_results = []
         self._demo_runner_id = None
+        self.demo_runner = None
 
     @property
     def datasets(self):
@@ -96,7 +97,9 @@ class MacaqueState():
             in the `runners` attribute. 
         """
 
-        dr = create_demo_runner()
-        r_id = self.add_runner(dr)
-        self._demo_runner_id = r_id
-        return r_id
+        # dr = create_demo_runner()
+        # r_id = self.add_runner(dr)
+        # self._demo_runner_id = r_id
+        # return r_id
+        self.demo_runner = create_demo_runner()
+        return

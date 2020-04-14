@@ -99,7 +99,7 @@ class Runner():
                 raise RuntimeError()
             for batch in dataset:
                 if not self._prepro:
-                    imgs = batch.get_images()
+                    imgs = batch.load_images()
                 else:
                     imgs = self._prepro.preprocess(batch)
                 if self._feature_extractor:
@@ -157,7 +157,8 @@ def create_demo_runner():
     prepro_cfg = {
         'targetWidth': 224,
         'targetHeight': 224,
-        'mode': 1
+        'mode': 1,
+        'name': "_demo_prepro"
     }
     prepro = create_preprocessor(prepro_cfg)
 
@@ -167,7 +168,8 @@ def create_demo_runner():
             'netType': "VGG16",
             'layerSpec': "block5_conv3",
             'ckptPath': ""
-        }
+        },
+        'name': "_demo_encoder"
     }
     encoder = create_feature_extractor(encoder_cfg)
 
@@ -182,7 +184,9 @@ def create_demo_runner():
             'greedySeries': "greedy_caption",
             'attnSeries': "alpha",
             'bsSeries': "bs_target"
-        }
+        },
+        'name': "_demo_model"
     }
     model = create_model_wrapper(model_cfg)
+
     return Runner(model=model, feature_extractor=encoder, prepro=prepro)

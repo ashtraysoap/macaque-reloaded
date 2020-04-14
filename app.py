@@ -9,11 +9,7 @@ from macaque_state import MacaqueState
 
 def main():
     """The application entrypoint"""
-
-    # do stuff before
-    # process cmd args
-    # load models
-    # other stuff
+    
     state = MacaqueState()
     start_server(state)
 

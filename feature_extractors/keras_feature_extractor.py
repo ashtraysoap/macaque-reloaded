@@ -1,8 +1,10 @@
 from collections import namedtuple
 from importlib import import_module
 import os
+
 from keras.preprocessing import image
 from keras import Model
+from keras import backend as K
 import numpy as np
 
 from .feature_extractor import FeatureExtractor
@@ -56,6 +58,8 @@ class KerasFeatureExtractor(FeatureExtractor):
             ValueError: Unsupported network.
         """
 
+        K.clear_session()
+
         if not net_id in MODELS:
             raise ValueError("Unsupported network %s." % net_id)
 
@@ -66,11 +70,8 @@ class KerasFeatureExtractor(FeatureExtractor):
         self._model = model_constr(weights=weights, include_top=False, pooling=None)
         
         if layer_spec:
-            #try:
             layer = self._model.get_layer(layer_spec)
             self._model = Model(inputs=self._model.input, outputs=layer.output)
-            # except ValueError:
-            #     pass
 
         # A Keras bug requires calling this function. 
         # See https://github.com/keras-team/keras/issues/6462.

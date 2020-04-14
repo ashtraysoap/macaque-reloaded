@@ -13,7 +13,7 @@ class AddEncoderTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "xaxana",
+            name: "encoder_1",
             type: "keras",
             plugin: {
                 path: ""
@@ -62,11 +62,11 @@ class AddEncoderTab extends React.Component {
         let statusTab = null;
 
         if (this.state.status === "waiting") {
-            statusTab = <PendingTab text="neco dela"/>;
+            statusTab = <PendingTab text="Processing."/>;
         } else if (this.state.status === "ok") {
-            statusTab = <SuccessTab text="hezky"/>
+            statusTab = <SuccessTab text="Encoder successfully created."/>
         } else if (this.state.status === "error") {
-            statusTab = <ErrorTab text="spatny"/>
+            statusTab = <ErrorTab text="Error."/>
         }
 
 

@@ -13,11 +13,15 @@ class RunResultsView extends React.Component {
     constructor(props) {
         super(props);
 
+        this.getCaption = this.getCaption.bind(this);
         this.getSelectedCaption = this.getSelectedCaption.bind(this);
         this.setInitialCapID = this.setInitialCapID.bind(this);
+        this.handleCaptionChange = this.handleCaptionChange.bind(this);
         this.fetchBeamSearchGraph = this.fetchBeamSearchGraph.bind(this);
+        this.fetchAttentionURLs = this.fetchAttentionURLs.bind(this);
 
         const cid = this.setInitialCapID();
+        this.fetchAttentionURLs(cid);
 
         this.state = {
             showAlignments: false,
@@ -25,7 +29,8 @@ class RunResultsView extends React.Component {
             showBSOut: false,
             showMetrics: false,
             captionId: cid,
-            bsGraph: null
+            bsGraph: null,
+            urls: []
         };
 
         if (this.props.graph === undefined)
@@ -46,19 +51,16 @@ class RunResultsView extends React.Component {
             <CaptionTab 
                 caption={caption}
                 onTokenClick={(tokId) => this.props.onCaptionClick(cid, tokId)}
-                captionId={this.state.captionId}
+                captionId={cid}
                 greedy={true}
                 beamSize={this.props.results.captions.beamSearchCaptions.length}
-                onCaptionChange={(cid) => this.setState({ captionId: cid })}
+                onCaptionChange={(cid) => this.handleCaptionChange(cid)}
             />;
 
         let attTab = !this.state.showAlignments ? null :
             <AlignmentsTab 
                 caption={caption}
-                runId={this.props.results.runId}
-                instanceId={this.props.instanceId}
-                captionId={cid}
-                fetchAttentionMap={this.props.fetchAttentionMap}
+                urls={this.state.urls}
             />;
 
         let bsView = !this.state.showBSOut ? null :
@@ -109,9 +111,7 @@ class RunResultsView extends React.Component {
         );
     }
 
-    // returns the currently selected caption as an array of string tokens.
-    getSelectedCaption() {
-        const cid = this.state.captionId;
+    getCaption(cid) {
         if (cid == 0) {
             return this.props.results.captions.greedyCaption;
         } else if (cid > 0) {
@@ -121,16 +121,45 @@ class RunResultsView extends React.Component {
         }
     }
 
+    // returns the currently selected caption as an array of string tokens.
+    getSelectedCaption() {
+        const cid = this.state.captionId;
+        return this.getCaption(cid);
+    }
+
     // sets the initially chosen caption. defaults to greedy, if it's not present
     // choose the first beam search hypothesis, if neither is present, return null.
     setInitialCapID() {
-        const greedyCap = this.props.results.captions.greedyCaption;
-        const bsCaps = this.props.results.captions.beamSearchCaptions;
-        if (greedyCap.length > 0)
-            return 0;
+        const cs = this.props.results.captions;
+        const greedyCap = cs.greedyCaption;
+        const bsCaps = cs.beamSearchCaptions;
         if (bsCaps.length > 0)
             return 1;
+        if (greedyCap.length > 0)
+            return 0;
         return null;
+    }
+
+    fetchAttentionURLs(cid) {
+        const runId = this.props.results.runId;
+        const instanceId = this.props.instanceId;
+        const cap = this.getCaption(cid);
+        this.setState({ urls: Array(cap.length) });
+        
+        for (let i = 0; i < cap.length; i++) {
+            const j = i;
+            this.props.fetchAttentionMap(runId, instanceId, cid, i)
+            .then(url => {
+                let s = this.state;
+                s.urls[j] = url;
+                this.setState(s);
+            });
+        }
+    }
+
+    handleCaptionChange(cid) {
+        this.fetchAttentionURLs(cid);
+        this.setState({ captionId: cid });
     }
 
     fetchBeamSearchGraph() {
@@ -150,7 +179,7 @@ RunResultsView.propTypes = {
                 greedyCaption: PropTypes.arrayOf(PropTypes.string),
                 beamSearchCaptions: PropTypes.arrayOf(
                     PropTypes.arrayOf(PropTypes.string))
-            })
+            }),
         }
     ).isRequired,
     instanceId: PropTypes.number.isRequired,

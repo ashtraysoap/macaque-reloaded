@@ -12,7 +12,7 @@ class AddRunnerTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "jelen v ruji",
+            name: "runner_1",
             prepro: null,
             encoder: null,
             model: null,
@@ -75,11 +75,11 @@ class AddRunnerTab extends React.Component {
 
         let statusTab = null;
         if (s.status === "ok") {
-            statusTab = <SuccessTab text="hezky"/>;
+            statusTab = <SuccessTab text="Runner successfully created."/>;
         } else if (s.status === "error") {
-            statusTab = <ErrorTab text="spatne"/>;
+            statusTab = <ErrorTab text="Error."/>;
         } else if (s.status === "waiting") {
-            statusTab = <PendingTab text="neco dela"/>;
+            statusTab = <PendingTab text="Processing."/>;
         }
 
         return (

@@ -13,10 +13,10 @@ class AddModelTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "akamafera",
+            name: "model_1",
             type: "neuralmonkey",
             input: "features",
-            plugin: { path: "/home/sam/Documents/CodeBox/BC/code/macaque/tests/mock_plugin_model.py" },
+            plugin: { path: "./tests/mock_plugin_model.py" },
             neuralmonkey: {
                 configPath: "/home/sam/thesis-code/NeuralMonkeyModels/experiment.ini",
                 varsPath: "/media/sam/Kafka/190424-1/avg-0",
@@ -79,11 +79,11 @@ class AddModelTab extends React.Component {
 
         let statusTab = null;
         if (this.state.status === "ok") {
-            statusTab = <SuccessTab text="hezky"/>;
+            statusTab = <SuccessTab text="Model successfuly created."/>;
         } else if (this.state.status === "error") {
-            statusTab = <ErrorTab text="spatne"/>;
+            statusTab = <ErrorTab text="Error."/>;
         } else if (this.state.status === "waiting") {
-            statusTab = <PendingTab text="neco delam"/>;
+            statusTab = <PendingTab text="Processing."/>;
         }
 
         return (

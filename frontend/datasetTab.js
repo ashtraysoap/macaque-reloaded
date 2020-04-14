@@ -64,7 +64,6 @@ class DatasetTab extends React.Component {
 
     getInstance() {
         let x = this.props.dataset.elements[this.state.elemIdx];
-        console.log(x); 
         return x;
     }
 

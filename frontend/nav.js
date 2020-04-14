@@ -7,7 +7,7 @@ export { Navigation, NavElement };
 function Navigation(props) {
     const callback = props.onSelectedChange;
 
-    let navElems = ['About', 'Configure', 'Datasets', 'Models'];
+    let navElems = ['About', 'Configure', 'Datasets'];
     navElems = navElems.map((e) => <NavElement 
         key={e}
         text={e}

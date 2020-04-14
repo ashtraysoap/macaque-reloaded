@@ -61,14 +61,14 @@ function CaptionToggler(props) {
 CaptionTab.propTypes = {
     caption: PropTypes.arrayOf(PropTypes.string).isRequired,
     onTokenClick: PropTypes.func.isRequired,
-    captionId: PropTypes.number.isRequired,
+    captionId: PropTypes.string.isRequired,
     onCaptionChange: PropTypes.func.isRequired,
     greedy: PropTypes.bool.isRequired,
     beamSize: PropTypes.number.isRequired
 };
 
 CaptionToggler.propTypes = {
-    captionId: PropTypes.number,
+    captionId: PropTypes.string,
     beamSize: PropTypes.number,
     onChange: PropTypes.func
 };

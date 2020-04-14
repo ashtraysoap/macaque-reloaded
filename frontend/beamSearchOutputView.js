@@ -32,6 +32,8 @@ class BeamSearchOutputView extends React.Component {
         let d3Tree = d3.layout.tree()
             .size([1000, 1000]);
 
+        d3.select("svg").selectAll("*").remove();
+
         let svg = d3.select("svg")
             .attr("width", 1500)
             .attr("height", 1500)

@@ -29,6 +29,9 @@ def create_dataset(json_config):
     for refs_fp in json_config['references']:
         ds.attach_references(refs_fp)
 
+    if json_config['srcCaps']:
+        ds.attach_src_captions(json_config['srcCaps'])
+
     return ds
 
 
@@ -86,6 +89,10 @@ class DataInstance:
     @property
     def source_caption(self):
         return self._source_caption
+    
+    @source_caption.setter
+    def source_caption(self, val):
+        self._source_caption = val
 
     @image.setter
     def image(self, val):
@@ -257,6 +264,7 @@ class Dataset:
 
         for e in self.elements:
             e.image = Image.open(e.source)
+            e.image = e.image.convert(mode='RGB')
         self._images = True
 
     def load_image(self, elementId):
@@ -370,6 +378,34 @@ class Dataset:
             e.references.append(r)
         return
 
+    def attach_src_captions(self, src_cap_fp):
+        """Attaches source captions to the dataset's elements.
+
+        Args:
+            src_cap_fp: A string path to the file containing source captions,
+                caption per line.
+        Raises:
+            RuntimeError: The file given by `src_cap_fp` does not exist.
+            RuntimeError: The number of dataset elements and source captions
+                does not match.
+        """
+
+        if not os.path.exists(src_cap_fp):
+            raise RuntimeError("Given source captions file path %s \
+                does not exist.", src_cap_fp)
+
+        src_caps = open(src_cap_fp, 'r').readlines()
+
+        if len(src_caps) != self.count:
+            raise RuntimeError("The number of dataset elements and \
+                source captions does not match.")
+        
+        src_caps = [_tokenize(c) for c in src_caps]
+
+        for e, c in zip(self.elements, src_caps):
+            e.source_caption = c
+        return
+
     def _create_offspring(self):
         return Dataset(name=self.name,
                     prefix=self.prefix,
@@ -411,7 +447,7 @@ class DatasetEncoder(json.JSONEncoder):
             "id": dataset.idx,
             "name": dataset.name,
             "prefix": dataset.prefix,
-            "batch_size": dataset.batch_size,
+            "batchSize": dataset.batch_size,
             "count": dataset.count,
             "elements": [instance_encoder.default(e) for e in dataset.elements]
         }
@@ -437,6 +473,6 @@ class DataInstanceEncoder(json.JSONEncoder):
         return {
             "id": inst.idx,
             "source": inst.source,
-            "source_caption": inst._source_caption,
+            "sourceCaption": inst._source_caption,
             "references": inst._references,
         }

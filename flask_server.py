@@ -14,6 +14,7 @@ body sent back to the client by Flask.
 
 import json
 import os
+import sys
 from random import random
 from collections import namedtuple
 from io import BytesIO
@@ -55,6 +56,7 @@ def start_server(macaque_state):
 
     global STATE
     STATE = macaque_state
+    APP.debug = False
     APP.run()
 
 @APP.route('/', methods=['GET'])
@@ -91,20 +93,20 @@ def single_img_caption():
     ds.initialize(sources=[fname])
     ds_id = STATE.add_dataset(ds)
 
-    if STATE.demo_runner_id is None:
+    if STATE.demo_runner is None:
         STATE.add_demo_runner()
-    runner_id = STATE.demo_runner_id
 
     # Compute the results
-    out = STATE.runners[runner_id].run(ds)
+    out = STATE.demo_runner.run(ds)
+    run_id = STATE.get_current_run_counter()
 
-    r = Result(runId=STATE.get_current_run_counter(),
-        runnerId=runner_id,
+    r = Result(runId=run_id,
+        runnerId=sys.maxsize,
         datasetId=ds_id,
         results=out)
     STATE.add_results(r)
 
-    return _jsonify_results(out, runner_id, ds_id)
+    return _jsonify_results(out, sys.maxsize, ds_id, run_id)
 
 @APP.route('/add_dataset', methods=['POST'])
 def add_dataset():
@@ -225,7 +227,10 @@ def run_on_dataset(dataset_id, runner_id):
 
     # store the results into the state.
     STATE.add_results(r)
-    return _jsonify_results(outputs, runner_id, dataset_id)
+    return _jsonify_results(outputs, 
+        runner_id, 
+        dataset_id, 
+        STATE.get_current_run_counter() - 1)
 
 @APP.route('/load_image/<int:dataset>/<int:element>', methods=['GET'])
 def load_image(dataset, element):
@@ -414,9 +419,9 @@ def img_to_jpg_raw(img):
     img.save(blob, 'JPEG')
     return blob.getvalue()
 
-def _jsonify_results(results, runner_id, dataset_id):
+def _jsonify_results(results, runner_id, dataset_id, run_id):
     return json.dumps({
-        'runId': STATE.get_current_run_counter() - 1,
+        'runId': run_id,
         'runnerId': runner_id,
         'datasetId': dataset_id,
         'captions': list(map(lambda x: {

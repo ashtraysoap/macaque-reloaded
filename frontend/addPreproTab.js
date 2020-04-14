@@ -12,7 +12,7 @@ class AddPreproTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "haba",
+            name: "prepro_1",
             targetWidth: "224",
             targetHeight: "224",
             mode: "1",
@@ -46,11 +46,11 @@ class AddPreproTab extends React.Component {
     render() {
         let statusTab = null;
         if (this.state.status === "waiting") {
-            statusTab = <PendingTab text="neco dela"/>;
+            statusTab = <PendingTab text="Processing"/>;
         } else if (this.state.status === "error") {
-            statusTab = <ErrorTab text="spatne"/>;
+            statusTab = <ErrorTab text="Error"/>;
         } else if (this.state.status === "ok") {
-            statusTab = <SuccessTab text="hezky"/>;
+            statusTab = <SuccessTab text="Preprocessor successfully created."/>;
         }
 
         return (

@@ -161,8 +161,6 @@ class App extends React.Component {
                 onMetricScoresResponse={this.addMetricScoresToResults}
             />;
 
-        } else if (id === "Models") {
-        
         }
 
         return (

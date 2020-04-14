@@ -12,9 +12,10 @@ class AddDatasetTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "flickr8k",
-            prefix: "/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/flickr8k_sample_imgs",
-            sources: "/home/sam/Documents/CodeBox/BC/code/macaque/tests/data/flickr8k_sample_imgs.txt",
+            name: "flickr8k_sample",
+            prefix: "./tests/data/flickr8k_sample_imgs",
+            sources: "./tests/data/flickr8k_sample_imgs.txt",
+            srcCaps: "",
             references: [],
             srcCaptions: "",
             batchSize: 32,
@@ -89,11 +90,11 @@ class AddDatasetTab extends React.Component {
 
         let statusTab = null;
         if (s.status === "waiting") {
-            statusTab = <PendingTab text="neco delam"/>;
+            statusTab = <PendingTab text="Processing."/>;
         } else if (s.status === "ok") {
-            statusTab = <SuccessTab text="hezky"/>;
+            statusTab = <SuccessTab text="Dataset successfully created."/>;
         } else if (s.status === "error") {
-            statusTab = <ErrorTab text="spatny"/>
+            statusTab = <ErrorTab text="Error"/>
         }
 
         return (
@@ -117,6 +118,14 @@ class AddDatasetTab extends React.Component {
                         handleChange={(e) => this.handleChange("prefix", e.target.value)}
                     />
                     <InformativeInput
+                        name="batch size"
+                        value={s.batchSize}
+                        optional={false}
+                        error={s.errorLog.batchSize}
+                        hint="The batch size."
+                        handleChange={(e) => this.handleChange("batchSize", e.target.value)}
+                    />
+                    <InformativeInput
                         name="sources"
                         value={s.sources}
                         optional={true}
@@ -126,10 +135,19 @@ class AddDatasetTab extends React.Component {
                             corresponding filename."
                         handleChange={(e) => this.handleChange("sources", e.target.value)}
                     />
+                    <InformativeInput
+                        name="source captions"
+                        value={s.srcCaps}
+                        optional={true}
+                        error={s.errorLog.srcCaps}
+                        hint="The path to a file containing source captions for the dataset
+                            to be used. Each line should contain one caption."
+                        handleChange={(e) => this.handleChange("srcCaps", e.target.value)}
+                    />
                     {refs}
-                    <button onClick={this.addReference}>add reference</button>
+                    <button onClick={this.addReference}>Add reference</button>
                     <br/>
-                    <button onClick={this.handleDatasetSubmit}>load dataset</button>
+                    <button onClick={this.handleDatasetSubmit}>Add dataset</button>
 
                     {statusTab}
                 </div>
