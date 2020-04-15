@@ -32,6 +32,8 @@ class MacaqueState():
         self._run_results = []
         self._demo_runner_id = None
         self.demo_runner = None
+        
+        # initialize models from configuration files
         self.create_from_configs()
 
     @property
