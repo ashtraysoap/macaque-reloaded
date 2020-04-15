@@ -183,6 +183,9 @@ class Preprocessor():
         results = np.asarray(results)
         return results
 
+    def to_json(self):
+        return { 'name': self.name }
+
 def crop(image, target_width, target_height):
     """Crops the center of the image.
 

@@ -7,3 +7,6 @@ class FeatureExtractor():
 
     def extract_features(self, images):
         raise NotImplementedError()
+
+    def to_json(self):
+        return { 'name': self.name }

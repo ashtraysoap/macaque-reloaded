@@ -76,6 +76,14 @@ class Runner():
     @property
     def preprocessor(self):
         return self._prepro
+    
+    @property
+    def feature_extractor(self):
+        return self._feature_extractor
+
+    @property
+    def model(self):
+        return self._model
 
     def run(self, dataset):
         """Runs the model specified by the runner on a dataset.
@@ -143,6 +151,17 @@ class Runner():
                 'prepro_img': i
             } for (e, i) in zip(r, images)
         ]
+
+    def to_json(self):
+        d = {
+            name: self.name,
+            model: self.model.name
+        }
+        if self.preprocessor is not None:
+            d['preprocessor'] = self.preprocessor.name
+        if self.feature_extractor is not None:
+            d['encoder'] = self.feature_extractor.name
+        return d
 
 def create_demo_runner():
     """Creates a demonstrational runner.

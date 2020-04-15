@@ -76,6 +76,19 @@ def init():
     # pri dalsich requestoch vrati home-page
     return render_template('index.html')
 
+@APP.route('/initial_state', methods=['GET'])
+def initial_state():
+    ps = [p.to_json() for p in STATE.preprocessors]
+    es = [e.to_json() for e in STATE.feature_extractors]
+    ms = [m.to_json() for m in STATE.models]
+    rs = [r.to_json() for r in STATE.runners]
+    return json.dumps({
+        'preprocessors': ps,
+        'encoders': es,
+        'models': ms,
+        'runners': rs
+    })
+
 @APP.route('/demo_caption', methods=['POST'])
 def single_img_caption():
     """Handle requests for demonstrational captioning on a single image.

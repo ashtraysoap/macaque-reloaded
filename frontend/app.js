@@ -40,7 +40,9 @@ class App extends React.Component {
         this.addModel = this.addModel.bind(this);
         this.addRunner = this.addRunner.bind(this);
         this.addResults = this.addResults.bind(this);
+        
         this.addMetricScoresToResults = this.addMetricScoresToResults.bind(this);
+
         this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
 
         this.state = {
@@ -54,6 +56,18 @@ class App extends React.Component {
             selectedTab: "Home",
             demoResults: null
         };
+
+        // fetch initial server-side Macaque state
+        fetch('/initial_state').then(response => response.json())
+        .then(result => {
+            console.log(result);
+            this.setState({
+                preprocessors: result.preprocessors,
+                encoders: result.encoders,
+                models: result.models,
+                runners: result.runners
+            });
+        });
     }
 
     handleSelectedTabChange(tabKey) {
@@ -71,6 +85,7 @@ class App extends React.Component {
         let ps = this.state.preprocessors;
         ps.push(p);
         this.setState({preprocessors: ps});
+        console.log(this.state.preprocessors);
         return this.state.preprocessors.length - 1;
     }
 
