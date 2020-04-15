@@ -21,7 +21,6 @@ def create_preprocessor(prepro_config):
     w = int(w)
     h = int(h)
     m = PreproMode(int(m))
-    print(w, h, m, n)
     return Preprocessor(target_width=w, target_height=h, mode=m, name=n)
 
 class PreproMode(Enum):
