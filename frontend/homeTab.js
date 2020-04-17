@@ -20,7 +20,8 @@ class HomeTab extends React.Component {
         this.state = {
             imgSrc: this.imgSrc,
             tokenId: null,
-            waiting: false
+            waiting: false,
+            selectedRunner: 0
         };
 
         this.getResultsForElement = this.getResultsForElement.bind(this);
@@ -56,10 +57,22 @@ class HomeTab extends React.Component {
     }
 
     render() {
+
+        let runners = <div>No runners available.</div>;
+        if (this.props.runners.length > 0) {
+            // runners = <div>{this.props.runners[this.state.selectedRunner].name}</div>;
+            runners = this.props.runners.map(r => 
+                <div key={r.name}>{r.name}</div>);
+        }
+
         return (
             <div className="homeTab">
 
-                <form method="post" encType="multipart/form-data">
+                { runners }
+
+                {
+                    this.props.runners.length > 0 &&
+                    <form method="post" encType="multipart/form-data">
                     <label>Input image: </label>
                     <input id="inFile" 
                         type="file" 
@@ -67,7 +80,8 @@ class HomeTab extends React.Component {
                         accept=".jpg"
                         onInput={this.onImageSubmit}
                         />
-                </form>
+                    </form>
+                }
 
                 {
                     this.state.waiting &&
@@ -177,6 +191,7 @@ class HomeTab extends React.Component {
 }
 
 HomeTab.propTypes = {
+    runners: PropTypes.arrayOf(PropTypes.object).isRequired,
     results: PropTypes.object,
     onServerResponse: PropTypes.func
 };

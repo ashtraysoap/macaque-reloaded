@@ -85,7 +85,6 @@ class App extends React.Component {
         let ps = this.state.preprocessors;
         ps.push(p);
         this.setState({preprocessors: ps});
-        console.log(this.state.preprocessors);
         return this.state.preprocessors.length - 1;
     }
 
@@ -133,12 +132,14 @@ class App extends React.Component {
     }
 
     render() {
+        console.log('render in app / runners: ', this.state.runners);
         const s = this.state;
         const id = s.selectedTab;
         let mainTab = null;
 
         if (id === "Home") {
             mainTab = <HomeTab
+                runners={this.state.runners}
                 results={this.state.demoResults}
                 onServerResponse={(res) => {this.addResults(res); this.setState({demoResults: res})}}
             />;

@@ -15,20 +15,26 @@ def create_runner(macaque_state, runner_config):
     name = runner_config['name'] if runner_config['name'] else None
 
     if runner_config['prepro'] is not None:
-        prepro_id = int(runner_config['prepro'])
-        prepro = macaque_state.preprocessors[prepro_id]
+        # prepro_id = int(runner_config['prepro'])
+        # prepro = macaque_state.preprocessors[prepro_id]
+        prepro = runner_config['prepro']
+        prepro = macaque_state.get_prepro(prepro)
     else:
         prepro = None
 
     if runner_config['encoder'] is not None:
-        encoder_id = int(runner_config['encoder'])
-        encoder = macaque_state.feature_extractors[encoder_id]
+        # encoder_id = int(runner_config['encoder'])
+        # encoder = macaque_state.feature_extractors[encoder_id]
+        encoder = runner_config['encoder']
+        encoder = macaque_state.get_encoder(encoder)
     else:
         encoder = None
 
     if runner_config['model'] is not None:
-        model_id = int(runner_config['model'])
-        model = macaque_state.models[model_id]
+        # model_id = int(runner_config['model'])
+        # model = macaque_state.models[model_id]
+        model = runner_config['model']
+        model = macaque_state.get_model(model)
     else:
         raise RuntimeError("A model has to be provided in the runner.")
 
@@ -154,8 +160,8 @@ class Runner():
 
     def to_json(self):
         d = {
-            name: self.name,
-            model: self.model.name
+            'name': self.name,
+            'model': self.model.name
         }
         if self.preprocessor is not None:
             d['preprocessor'] = self.preprocessor.name
