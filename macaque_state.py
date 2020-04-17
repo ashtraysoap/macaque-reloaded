@@ -4,7 +4,7 @@ from config_parser import find_configs, create_configs
 from preprocessing import create_preprocessor
 from feature_extractors import create_feature_extractor
 from model_wrappers import create_model_wrapper
-from runner import create_runner, create_demo_runner
+from runner import create_runner
 
 MODELS_DIR = "./models"
 
@@ -18,7 +18,6 @@ class MacaqueState():
         models: A list of ModelWrapper instances.
         runners: A list of Runner instances.
         run_results: A list of run results.
-        demo_runner_id: The integer id of the demonstrational runner in runners.
     """
 
     def __init__(self):
@@ -30,8 +29,6 @@ class MacaqueState():
         self._models = []
         self._runners = []
         self._run_results = []
-        self._demo_runner_id = None
-        self.demo_runner = None
         
         # initialize models from configuration files
         self.create_from_configs()
@@ -60,10 +57,6 @@ class MacaqueState():
     def run_results(self):
         return self._run_results
 
-    @property
-    def demo_runner_id(self):
-        return self._demo_runner_id
-    
     def add_dataset(self, ds):
         ds.idx = len(self.datasets)
         self.datasets.append(ds)

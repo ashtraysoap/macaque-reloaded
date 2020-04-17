@@ -124,8 +124,8 @@ class Runner():
                 nr = [
                 {
                     'greedy': e['greedy'],
-                    'beam_search': e['beam_search'],
-                    'prepro_img': i
+                    'beamSearch': e['beamSearch'],
+                    'prepro_img': None
                 } for (e, i) in zip(r, imgs)]
                 res.extend(nr)
         return res
@@ -153,8 +153,8 @@ class Runner():
         return [
             {
                 'greedy': e['greedy'],
-                'beam_search': e['beam_search'],
-                'prepro_img': i
+                'beamSearch': e['beamSearch'],
+                'preproImg': i
             } for (e, i) in zip(r, images)
         ]
 
@@ -169,49 +169,49 @@ class Runner():
             d['encoder'] = self.feature_extractor.name
         return d
 
-def create_demo_runner():
-    """Creates a demonstrational runner.
+# def create_demo_runner():
+#     """Creates a demonstrational runner.
 
-    Creates a defualt runner, not specified by a user configuration.
-    It is used to demonstrate Macaque's features.
+#     Creates a defualt runner, not specified by a user configuration.
+#     It is used to demonstrate Macaque's features.
 
-    Returns:
-        A Runner instance.
-    """
+#     Returns:
+#         A Runner instance.
+#     """
 
-    prepro_cfg = {
-        'targetWidth': 224,
-        'targetHeight': 224,
-        'mode': 1,
-        'name': "_demo_prepro"
-    }
-    prepro = create_preprocessor(prepro_cfg)
+#     prepro_cfg = {
+#         'targetWidth': 224,
+#         'targetHeight': 224,
+#         'mode': 1,
+#         'name': "_demo_prepro"
+#     }
+#     prepro = create_preprocessor(prepro_cfg)
 
-    encoder_cfg = {
-        'type': 'keras',
-        'keras': {
-            'netType': "VGG16",
-            'layerSpec': "block5_conv3",
-            'ckptPath': ""
-        },
-        'name': "_demo_encoder"
-    }
-    encoder = create_feature_extractor(encoder_cfg)
+#     encoder_cfg = {
+#         'type': 'keras',
+#         'keras': {
+#             'netType': "VGG16",
+#             'layerSpec': "block5_conv3",
+#             'ckptPath': ""
+#         },
+#         'name': "_demo_encoder"
+#     }
+#     encoder = create_feature_extractor(encoder_cfg)
 
-    model_cfg = {
-        'type': 'neuralmonkey',
-        'input': 'images',
-        'neuralmonkey': {
-            'configPath': "/home/sam/thesis-code/NeuralMonkeyModels/experiment.ini",
-            'varsPath': "/media/sam/Kafka/190424-1/avg-0",
-            'dataSeries': "images",
-            'srcCaptionSeries': "",
-            'greedySeries': "greedy_caption",
-            'attnSeries': "alpha",
-            'bsSeries': "bs_target"
-        },
-        'name': "_demo_model"
-    }
-    model = create_model_wrapper(model_cfg)
+#     model_cfg = {
+#         'type': 'neuralmonkey',
+#         'input': 'images',
+#         'neuralmonkey': {
+#             'configPath': "/home/sam/thesis-code/NeuralMonkeyModels/experiment.ini",
+#             'varsPath': "/media/sam/Kafka/190424-1/avg-0",
+#             'dataSeries': "images",
+#             'srcCaptionSeries': "",
+#             'greedySeries': "greedy_caption",
+#             'attnSeries': "alpha",
+#             'bsSeries': "bs_target"
+#         },
+#         'name': "_demo_model"
+#     }
+#     model = create_model_wrapper(model_cfg)
 
-    return Runner(model=model, feature_extractor=encoder, prepro=prepro)
+#     return Runner(model=model, feature_extractor=encoder, prepro=prepro)

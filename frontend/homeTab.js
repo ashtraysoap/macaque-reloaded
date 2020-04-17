@@ -13,7 +13,7 @@ class HomeTab extends React.Component {
         if (this.props.results === null) {
             this.imgSrc = null;
         } else {
-            let r = this.getResultsForElement([res], 0)[0];
+            let r = this.getResultsForElement(res, 0);
             this.imgSrc = `/load_image/${r.datasetId}/${0}`;
         }
 
@@ -42,16 +42,16 @@ class HomeTab extends React.Component {
         const init = { method: 'POST', body: formData };
 
         // send over the image and wait for results
-        fetch('/demo_caption', init)
+        fetch(`/single_img_caption/${this.state.selectedRunner}`, init)
         .then(res => res.json())
         .then(res => {
-            let r = this.getResultsForElement([res], 0)[0];
-            this.imgSrc = `/load_image/${r.datasetId}/${0}`;
+            //let r = this.getResultsForElement(res, 0);
+            this.imgSrc = `/load_image/${res.datasetId}/${0}`;
             this.setState({ 
-                imgSrc: `/load_image/${r.datasetId}/${0}`,
+                imgSrc: `/load_image/${res.datasetId}/${0}`,
                 waiting: false
             });
-            this.props.onServerResponse(r);
+            this.props.onServerResponse(res);
         })
         .then(() => this.fetchBeamSearchGraph());
     }
@@ -93,8 +93,9 @@ class HomeTab extends React.Component {
                     <div>
                         <img src={this.state.imgSrc} style={{ width: "30vw", height: "auto" }} alt=""/>
                         <RunResultsView
-                            results={this.props.results}
+                            results={this.props.results.results[0]}
                             instanceId={0}
+                            runId={this.props.results.runId}
                             onCaptionClick={this.onCaptionClick}
                             fetchAttentionMap={this.fetchAttentionMap}
                             fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
@@ -179,14 +180,15 @@ class HomeTab extends React.Component {
     }
 
     getResultsForElement(results, elemId) {
-        return results.map(r => {
-            return {
-                runId: r.runId,
-                runnerId: r.runnerId,
-                datasetId: r.datasetId,
-                captions: r.captions[elemId],
-            }
-        });
+        return results.results[elemId];
+        // return results.map(r => {
+        //     return {
+        //         runId: r.runId,
+        //         runnerId: r.runnerId,
+        //         datasetId: r.datasetId,
+        //         captions: r.captions[elemId],
+        //     }
+        // });
     }
 }
 

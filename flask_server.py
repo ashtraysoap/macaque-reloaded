@@ -28,7 +28,7 @@ from metrics import evaluate
 from feature_extractors import create_feature_extractor
 from model_wrappers import create_model_wrapper
 from preprocessing import create_preprocessor
-from runner import create_runner, create_demo_runner
+from runner import create_runner
 from validation import validate_cfg
 
 
@@ -89,9 +89,9 @@ def initial_state():
         'runners': rs
     })
 
-@APP.route('/demo_caption', methods=['POST'])
-def single_img_caption():
-    """Handle requests for demonstrational captioning on a single image.
+@APP.route('/single_img_caption/<int:runner_id>', methods=['POST'])
+def single_img_caption(runner_id):
+    """Handle requests for captioning on a single image.
 
     Returns:
         A JSON-serialized dictionary.
@@ -110,20 +110,21 @@ def single_img_caption():
     ds.initialize(sources=[fname])
     ds_id = STATE.add_dataset(ds)
 
-    if STATE.demo_runner is None:
-        STATE.add_demo_runner()
-
     # Compute the results
-    out = STATE.demo_runner.run(ds)
+    runner = STATE.runners[runner_id]
+    out = runner.run(ds)
     run_id = STATE.get_current_run_counter()
 
     r = Result(runId=run_id,
-        runnerId=sys.maxsize,
+        runnerId=runner_id,
         datasetId=ds_id,
         results=out)
     STATE.add_results(r)
 
-    return _jsonify_results(out, sys.maxsize, ds_id, run_id)
+    # remove the image & remove the dataset
+    #os.remove(fname)
+
+    return _jsonify_results(out, runner_id, ds_id, run_id)
 
 @APP.route('/add_dataset', methods=['POST'])
 def add_dataset():
@@ -441,10 +442,11 @@ def _jsonify_results(results, runner_id, dataset_id, run_id):
         'runId': run_id,
         'runnerId': runner_id,
         'datasetId': dataset_id,
-        'captions': list(map(lambda x: {
-            'greedyCaption': [] if x['greedy'] is None 
-                else x['greedy']['caption'],
-            'beamSearchCaptions': [] if x['beam_search'] is None 
-                else x['beam_search']['captions']
-        }, results))
+        'results': results
+        # 'captions': list(map(lambda x: {
+        #     'greedyCaption': [] if x['greedy'] is None 
+        #         else x['greedy']['caption'],
+        #     'beamSearchCaptions': [] if x['beam_search'] is None 
+        #         else x['beam_search']['captions']
+        # }, results))
     })

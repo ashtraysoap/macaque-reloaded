@@ -53,7 +53,7 @@ class RunResultsView extends React.Component {
                 onTokenClick={(tokId) => this.props.onCaptionClick(cid, tokId)}
                 captionId={cid}
                 greedy={true}
-                beamSize={this.props.results.captions.beamSearchCaptions.length}
+                beamSize={this.props.results.beamSearch.length}
                 onCaptionChange={(cid) => this.handleCaptionChange(cid)}
             />;
 
@@ -113,9 +113,9 @@ class RunResultsView extends React.Component {
 
     getCaption(cid) {
         if (cid == 0) {
-            return this.props.results.captions.greedyCaption;
+            return this.props.results.greedy;
         } else if (cid > 0) {
-            return this.props.results.captions.beamSearchCaptions[cid - 1];
+            return this.props.results.beamSearch[cid - 1];
         } else {
             return null;
         }
@@ -130,12 +130,12 @@ class RunResultsView extends React.Component {
     // sets the initially chosen caption. defaults to greedy, if it's not present
     // choose the first beam search hypothesis, if neither is present, return null.
     setInitialCapID() {
-        const cs = this.props.results.captions;
-        const greedyCap = cs.greedyCaption;
-        const bsCaps = cs.beamSearchCaptions;
-        if (bsCaps.length > 0)
+        const res = this.props.results;
+        const greedyCap = res.greedy;
+        const bsCaps = res.beamSearch;
+        if (bsCaps !== null && bsCaps.length > 0)
             return 1;
-        if (greedyCap.length > 0)
+        if (greedyCap !== null && greedyCap.length > 0)
             return 0;
         return null;
     }
@@ -172,17 +172,22 @@ class RunResultsView extends React.Component {
 }
 
 RunResultsView.propTypes = {
-    results: PropTypes.shape(
-        {
-            runId: PropTypes.number,
-            captions: PropTypes.shape({
-                greedyCaption: PropTypes.arrayOf(PropTypes.string),
-                beamSearchCaptions: PropTypes.arrayOf(
-                    PropTypes.arrayOf(PropTypes.string))
-            }),
-        }
-    ).isRequired,
+    // results: PropTypes.shape(
+    //     {
+    //         captions: PropTypes.shape({
+    //             greedyCaption: PropTypes.arrayOf(PropTypes.string),
+    //             beamSearchCaptions: PropTypes.arrayOf(
+    //                 PropTypes.arrayOf(PropTypes.string))
+    //         }),
+    //     }
+    // ).isRequired,
+    // greedyCaption: PropTypes.arrayOf(PropTypes.string),
+    // beamSearchCaptions: PropTypes.arrayOf(PropTypes.arrayOf(
+    //     PropTypes.arrayOf(PropTypes.string)
+    // )),
+    results: PropTypes.object,
     instanceId: PropTypes.number.isRequired,
+    runId: PropTypes.number.isRequired,
     onCaptionClick: PropTypes.func.isRequired,
     fetchAttentionMap: PropTypes.func.isRequired,
     fetchAttentionMapForBSToken: PropTypes.func.isRequired,
