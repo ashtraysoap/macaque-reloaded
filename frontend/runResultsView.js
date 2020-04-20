@@ -19,6 +19,10 @@ class RunResultsView extends React.Component {
         this.handleCaptionChange = this.handleCaptionChange.bind(this);
         this.fetchBeamSearchGraph = this.fetchBeamSearchGraph.bind(this);
         this.fetchAttentionURLs = this.fetchAttentionURLs.bind(this);
+        
+        this.hasAttn = false;
+        this.hasBS = this.props.results.beamSearch.captions.length > 0 ? true : false;
+        this.hasGraph = this.props.results.beamSearch.hasGraph;
 
         const cid = this.setInitialCapID();
         this.fetchAttentionURLs(cid);
@@ -33,7 +37,7 @@ class RunResultsView extends React.Component {
             urls: []
         };
 
-        if (this.props.graph === undefined)
+        if (this.props.graph === undefined && this.hasGraph)
             this.fetchBeamSearchGraph();
     }
 
@@ -113,9 +117,9 @@ class RunResultsView extends React.Component {
 
     getCaption(cid) {
         if (cid == 0) {
-            return this.props.results.greedy;
+            return this.props.results.greedy.caption;
         } else if (cid > 0) {
-            return this.props.results.beamSearch[cid - 1];
+            return this.props.results.beamSearch.captions[cid - 1];
         } else {
             return null;
         }
@@ -131,8 +135,8 @@ class RunResultsView extends React.Component {
     // choose the first beam search hypothesis, if neither is present, return null.
     setInitialCapID() {
         const res = this.props.results;
-        const greedyCap = res.greedy;
-        const bsCaps = res.beamSearch;
+        const greedyCap = res.greedy.caption;
+        const bsCaps = res.beamSearch.captions;
         if (bsCaps !== null && bsCaps.length > 0)
             return 1;
         if (greedyCap !== null && greedyCap.length > 0)
@@ -141,7 +145,19 @@ class RunResultsView extends React.Component {
     }
 
     fetchAttentionURLs(cid) {
-        const runId = this.props.results.runId;
+        if (cid === 0 && this.props.results.greedy.hasAttn)
+            this.hasAttn = true;
+        else if (cid === 0)
+            this.hasAttn = false;
+        if (cid > 0 && this.props.results.greedy.hasAttn)
+            this.hasAttn = true;
+        else if (cid > 0)
+            this.hasAttn = false;
+        
+        if (!this.hasAttn)
+            return;
+
+        const runId = this.props.runId;
         const instanceId = this.props.instanceId;
         const cap = this.getCaption(cid);
         this.setState({ urls: Array(cap.length) });
@@ -163,7 +179,7 @@ class RunResultsView extends React.Component {
     }
 
     fetchBeamSearchGraph() {
-        return fetch(`/load_bs_graph/${this.props.results.runId}/${this.props.instanceId}`)
+        return fetch(`/load_bs_graph/${this.props.runId}/${this.props.instanceId}`)
         .then(res => res.json())
         .then(res => {
             this.setState({ bsGraph: res });
@@ -186,11 +202,14 @@ RunResultsView.propTypes = {
     //     PropTypes.arrayOf(PropTypes.string)
     // )),
     results: PropTypes.object,
+
     instanceId: PropTypes.number.isRequired,
     runId: PropTypes.number.isRequired,
+    
     onCaptionClick: PropTypes.func.isRequired,
     fetchAttentionMap: PropTypes.func.isRequired,
     fetchAttentionMapForBSToken: PropTypes.func.isRequired,
+
     metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
     graph: PropTypes.object
 };

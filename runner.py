@@ -123,9 +123,9 @@ class Runner():
                     r = self._model.run(imgs)
                 nr = [
                 {
-                    'greedy': e['greedy'],
-                    'beamSearch': e['beamSearch'],
-                    'prepro_img': None
+                    'greedy': e['greedy'] if 'greedy' in e else None,
+                    'beam_search': e['beam_search'] if 'beam_search' in e else None,
+                    'prepro_img': i
                 } for (e, i) in zip(r, imgs)]
                 res.extend(nr)
         return res
@@ -152,9 +152,9 @@ class Runner():
             r = self._model.run(images)
         return [
             {
-                'greedy': e['greedy'],
-                'beamSearch': e['beamSearch'],
-                'preproImg': i
+                'greedy': e['greedy'] if 'greedy' in e else None,
+                'beam_search': e['beam_search'] if 'beam_search' in e else None,
+                'prepro_img': i
             } for (e, i) in zip(r, images)
         ]
 

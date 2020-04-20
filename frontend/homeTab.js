@@ -53,7 +53,7 @@ class HomeTab extends React.Component {
             });
             this.props.onServerResponse(res);
         })
-        .then(() => this.fetchBeamSearchGraph());
+        //.then(() => this.fetchBeamSearchGraph());
     }
 
     render() {

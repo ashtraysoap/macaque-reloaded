@@ -438,15 +438,44 @@ def img_to_jpg_raw(img):
     return blob.getvalue()
 
 def _jsonify_results(results, runner_id, dataset_id, run_id):
+    rs = []
+    for x in results:
+        r = { 'greedy': {}, 'beam_search': {}}
+        if 'greedy' not in x or x['greedy'] is None:
+            r['greedy'] = {'caption': [], 'alignments': [], 'hasAttn': False}
+        else:
+            if 'caption' in x['greedy']:
+                r['greedy']['caption'] = x['greedy']['caption']
+            if 'alignments' in x['greedy']:
+                # r['greedy']['alignments'] = x['greedy']['alignments']
+                r['greedy']['hasAttn'] = True
+            else:
+                r['greedy']['hasAttn'] = False
+        
+        if 'beam_search' not in x or x['beam_search'] is None:
+            r['beamSearch'] = {'captions': [], 
+                'alignments': [],
+                'hasAttn': False,
+                'hasGraph': False
+            }
+        else:
+            if 'captions' in x['beam_search']:
+                r['beamSearch']['captions'] = x['beam_search']['captions']
+            if 'alignments' in x['beam_search']:
+                # r['beamSearch']['alignments'] = x['beam_search']['alignments']
+                r['beamSearch']['hasAttn'] = True
+            else:
+                r['beamSearch']['hasAttn'] = False
+            if 'graph' in x['beam_search']:
+                r['beamSearch']['hasGraph'] = True
+            else:
+                r['beamSearch']['hasGraph'] = False
+
+        rs.append(r)
+    
     return json.dumps({
         'runId': run_id,
         'runnerId': runner_id,
         'datasetId': dataset_id,
-        'results': results
-        # 'captions': list(map(lambda x: {
-        #     'greedyCaption': [] if x['greedy'] is None 
-        #         else x['greedy']['caption'],
-        #     'beamSearchCaptions': [] if x['beam_search'] is None 
-        #         else x['beam_search']['captions']
-        # }, results))
+        'results': rs
     })

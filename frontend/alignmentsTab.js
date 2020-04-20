@@ -14,7 +14,7 @@ class AlignmentsTab extends React.Component {
         const capt = this.props.caption;
         const urls = this.props.urls;
 
-        if (urls.length !== capt.length) return null;
+        if (urls.length !== capt.length) return <div>No alignments present.</div>;
 
         const imgs = zip(urls, capt).map(x =>
             <ImageWithCaptionFrame src={x[0]} token={x[1]}/>);
