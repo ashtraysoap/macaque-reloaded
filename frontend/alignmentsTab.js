@@ -20,7 +20,7 @@ class AlignmentsTab extends React.Component {
             <ImageWithCaptionFrame src={x[0]} token={x[1]}/>);
 
         return (
-            <div>
+            <div className="background">
                 {imgs}
             </div>
         );

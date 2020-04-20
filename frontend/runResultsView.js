@@ -23,6 +23,8 @@ class RunResultsView extends React.Component {
         this.hasAttn = false;
         this.hasBS = this.props.results.beamSearch.captions.length > 0 ? true : false;
         this.hasGraph = this.props.results.beamSearch.hasGraph;
+        this.runId = this.props.runId;
+
 
         const cid = this.setInitialCapID();
         this.fetchAttentionURLs(cid);
@@ -34,7 +36,7 @@ class RunResultsView extends React.Component {
             showMetrics: false,
             captionId: cid,
             bsGraph: null,
-            urls: []
+            urls: [],
         };
 
         if (this.props.graph === undefined && this.hasGraph)
@@ -42,6 +44,11 @@ class RunResultsView extends React.Component {
     }
 
     render() {
+        if (this.runId !== this.props.runId) {
+            this.runId = this.props.runId;
+            this.fetchAttentionURLs(this.state.captionId);
+        }
+
         const caption = this.getSelectedCaption();
         const cid = this.state.captionId;
         
@@ -57,7 +64,7 @@ class RunResultsView extends React.Component {
                 onTokenClick={(tokId) => this.props.onCaptionClick(cid, tokId)}
                 captionId={cid}
                 greedy={true}
-                beamSize={this.props.results.beamSearch.length}
+                beamSize={this.props.results.beamSearch.captions.length}
                 onCaptionChange={(cid) => this.handleCaptionChange(cid)}
             />;
 
@@ -188,19 +195,6 @@ class RunResultsView extends React.Component {
 }
 
 RunResultsView.propTypes = {
-    // results: PropTypes.shape(
-    //     {
-    //         captions: PropTypes.shape({
-    //             greedyCaption: PropTypes.arrayOf(PropTypes.string),
-    //             beamSearchCaptions: PropTypes.arrayOf(
-    //                 PropTypes.arrayOf(PropTypes.string))
-    //         }),
-    //     }
-    // ).isRequired,
-    // greedyCaption: PropTypes.arrayOf(PropTypes.string),
-    // beamSearchCaptions: PropTypes.arrayOf(PropTypes.arrayOf(
-    //     PropTypes.arrayOf(PropTypes.string)
-    // )),
     results: PropTypes.object,
 
     instanceId: PropTypes.number.isRequired,
@@ -213,3 +207,18 @@ RunResultsView.propTypes = {
     metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
     graph: PropTypes.object
 };
+
+// results = {
+//     greedy: {
+//         caption: [],
+//         alignmnets: [],
+//         hasAttn: true
+//     },
+//     beamSearch: {
+//         captions: [[]],
+//         alignments: [[]],
+//         hasAttn: true,
+//         graph: null,
+//         hasGraph: false
+//     }
+// }

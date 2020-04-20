@@ -10,11 +10,12 @@ class HomeTab extends React.Component {
     constructor(props) {
         super(props);
 
+        console.log('home tab constr');
         if (this.props.results === null) {
             this.imgSrc = null;
         } else {
-            let r = this.getResultsForElement(res, 0);
-            this.imgSrc = `/load_image/${r.datasetId}/${0}`;
+            let r = this.getResultsForElement(this.props.results, 0);
+            this.imgSrc = `/load_image/${this.props.results.datasetId}/${0}`;
         }
 
         this.state = {
@@ -45,7 +46,6 @@ class HomeTab extends React.Component {
         fetch(`/single_img_caption/${this.state.selectedRunner}`, init)
         .then(res => res.json())
         .then(res => {
-            //let r = this.getResultsForElement(res, 0);
             this.imgSrc = `/load_image/${res.datasetId}/${0}`;
             this.setState({ 
                 imgSrc: `/load_image/${res.datasetId}/${0}`,
@@ -57,6 +57,7 @@ class HomeTab extends React.Component {
     }
 
     render() {
+        console.log(this.state.imgSrc);
 
         let runners = <div>No runners available.</div>;
         if (this.props.runners.length > 0) {
@@ -181,14 +182,6 @@ class HomeTab extends React.Component {
 
     getResultsForElement(results, elemId) {
         return results.results[elemId];
-        // return results.map(r => {
-        //     return {
-        //         runId: r.runId,
-        //         runnerId: r.runnerId,
-        //         datasetId: r.datasetId,
-        //         captions: r.captions[elemId],
-        //     }
-        // });
     }
 }
 

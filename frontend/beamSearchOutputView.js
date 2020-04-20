@@ -17,8 +17,15 @@ class BeamSearchOutputView extends React.Component {
 
     render() {
         return (
-            <div>
-                <svg id="BSGraph"></svg>
+            <div className="background">
+                {
+                    this.props.graph === null &&
+                    <div>Beam search output graph not detected.</div>
+                }
+                {
+                    this.props.graph !== null &&
+                    <svg id="BSGraph"></svg>
+                }
             </div>
         );
     }
