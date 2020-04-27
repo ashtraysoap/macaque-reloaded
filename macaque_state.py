@@ -119,9 +119,10 @@ class MacaqueState():
                 name = prepro_cfg['name']
                 if self.contains_prepro(name):
                     pass # todo
-                prepro = create_preprocessor(prepro_cfg)
-                if prepro is not None:
-                    self.add_preprocessor(prepro)
+                else:
+                    prepro = create_preprocessor(prepro_cfg)
+                    if prepro is not None:
+                        self.add_preprocessor(prepro)
 
             if 'encoder' in cfg:
                 e_cfg = cfg['encoder']
@@ -130,9 +131,10 @@ class MacaqueState():
                 name = e_cfg['name']
                 if self.contains_encoder(name):
                     pass # todo
-                encoder = create_feature_extractor(e_cfg, from_response=False)
-                if encoder is not None:
-                    self.add_feature_extractor(encoder)
+                else:
+                    encoder = create_feature_extractor(e_cfg, from_response=False)
+                    if encoder is not None:
+                        self.add_feature_extractor(encoder)
 
             if 'model' in cfg:
                 m_cfg = cfg['model']
@@ -141,9 +143,10 @@ class MacaqueState():
                 name = m_cfg['name']
                 if self.contains_model(name):
                     pass # todo
-                model = create_model_wrapper(m_cfg, from_response=False)
-                if model is not None:
-                    self.add_model(model)
+                else:
+                    model = create_model_wrapper(m_cfg, from_response=False)
+                    if model is not None:
+                        self.add_model(model)
 
             if 'runner' in cfg:
                 r_cfg = cfg['runner']
@@ -152,9 +155,10 @@ class MacaqueState():
                 name = r_cfg['name']
                 if self.contains_runner(name):
                     pass # todo
-                runner = create_runner(self, r_cfg)
-                if runner is not None:
-                    self.add_runner(runner)
+                else:
+                    runner = create_runner(self, r_cfg)
+                    if runner is not None:
+                        self.add_runner(runner)
 
     def contains_prepro(self, name):
         ps = self.preprocessors

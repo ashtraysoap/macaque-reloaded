@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 export { InformativeInput, InformativeLabel, TableRow, SidePanel, 
-    range, zip, round, basename, MultipleSelectionWithButton };
+    range, zip, enumerate, round, basename, MultipleSelectionWithButton };
 
 
 function range(n) {
@@ -16,6 +16,10 @@ function zip(x, y) {
         z.push([x[i], y[i]]);
     }
     return z;
+}
+
+function enumerate(list) {
+    return zip(range(list.length), list);
 }
 
 function round(n) {

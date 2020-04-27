@@ -45,6 +45,8 @@ class App extends React.Component {
 
         this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
 
+        this.homeTabResponse = this.homeTabResponse.bind(this);
+
         this.state = {
             datasets: [],
             preprocessors: [],
@@ -54,7 +56,8 @@ class App extends React.Component {
             metrics: [ "BLEU", "METEOR", "chrf3" ],
             results: [],
             selectedTab: "Home",
-            demoResults: null
+            demoResults: null,
+            homeTabResults: null
         };
 
         // fetch initial server-side Macaque state
@@ -131,6 +134,18 @@ class App extends React.Component {
         this.setState({ results: res });
     }
 
+    homeTabResponse(results) {
+        this.addResults(results);
+        let htr = this.state.homeTabResults;
+        
+        if (htr === null)
+            htr = {};
+        
+        const runnerId = results.runnerId;
+        htr[runnerId] = results;
+        this.setState({ homeTabResults: htr });
+    }
+
     render() {
         console.log('render in app / runners: ', this.state.runners);
         const s = this.state;
@@ -140,8 +155,10 @@ class App extends React.Component {
         if (id === "Home") {
             mainTab = <HomeTab
                 runners={this.state.runners}
-                results={this.state.demoResults}
-                onServerResponse={(res) => {this.addResults(res); this.setState({demoResults: res})}}
+                //results={this.state.demoResults}
+                // onServerResponse={(res) => {this.addResults(res); this.setState({demoResults: res})}}
+                results={this.state.homeTabResults}
+                onServerResponse={(res) => this.homeTabResponse(res)}
             />;
         } else if (id === "About") {
             mainTab = <AboutTab/>;

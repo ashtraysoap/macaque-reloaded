@@ -126,6 +126,38 @@ def single_img_caption(runner_id):
 
     return _jsonify_results(out, runner_id, ds_id, run_id)
 
+@APP.route('/single_image_upload', methods=['POST'])
+def single_image_upload():
+    # Access the user-sent image from the request object.
+    fname = request.files['input-file'].filename
+    request.files['input-file'].save(fname)
+
+    # Create a dataset to contain the image.
+    ds = Dataset(
+        name='dataset_' + str(int(random() * 1000000)),
+        prefix='./',
+        batch_size=1,
+        images=True)
+    ds.initialize(sources=[fname])
+    ds_id = STATE.add_dataset(ds)
+    return json.dumps({ 'datasetId': ds_id })
+
+@APP.route('/single_image_process/<int:runner_id>/<int:dataset_id>', methods=['GET'])
+def single_image_process(runner_id, dataset_id):
+    # Compute the results
+    runner = STATE.runners[runner_id]
+    dataset = STATE.datasets[dataset_id]
+    out = runner.run(dataset)
+    run_id = STATE.get_current_run_counter()
+
+    r = Result(runId=run_id,
+        runnerId=runner_id,
+        datasetId=dataset_id,
+        results=out)
+    STATE.add_results(r)
+
+    return _jsonify_results(out, runner_id, dataset_id, run_id)
+
 @APP.route('/add_dataset', methods=['POST'])
 def add_dataset():
     """Handle requests for adding a new dataset.
