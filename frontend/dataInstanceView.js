@@ -51,7 +51,7 @@ class DataInstanceView extends React.Component {
                 <RunToggler 
                     key={r.runId} 
                     runId={r.runId} 
-                    runnerName={this.props.runners.filter(ru => ru.id === r.runnerId)[0].name}
+                    runnerName={this.props.runners[r.runnerId].name}
                     onClick={() => {
                         // Clicking on this element selects the corresponding run; the original
                         // instance image is shown.
@@ -63,12 +63,14 @@ class DataInstanceView extends React.Component {
         // results from the selected run
         const selectedRes = (selRunId === null) ? null : results.filter(r => r.runId === selRunId)[0];
         const runResultsView = (selRunId === null) ? null : <RunResultsView 
-            results={selectedRes} 
+            results={selectedRes.results} 
             instanceId={instance.id}
+            runId={selRunId}
             onCaptionClick={this.onCaptionClick}
             fetchAttentionMap={this.fetchAttentionMap}
             fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
             metrics={this.props.metrics}
+            graph={null}
         />;
 
         const srcCap = instance.sourceCaption && this.state.showSrcCap ? 

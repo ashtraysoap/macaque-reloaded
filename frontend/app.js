@@ -155,8 +155,6 @@ class App extends React.Component {
         if (id === "Home") {
             mainTab = <HomeTab
                 runners={this.state.runners}
-                //results={this.state.demoResults}
-                // onServerResponse={(res) => {this.addResults(res); this.setState({demoResults: res})}}
                 results={this.state.homeTabResults}
                 onServerResponse={(res) => this.homeTabResponse(res)}
             />;

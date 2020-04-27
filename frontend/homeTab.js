@@ -36,29 +36,6 @@ class HomeTab extends React.Component {
         this.processImage = this.processImage.bind(this);
     }
 
-    // onImageSubmit() {
-    //     this.setState({ waiting: true });
-
-    //     // prepare the image blob for transfer
-    //     let formData = new FormData();
-    //     const file = document.getElementById("inFile").files[0];
-    //     formData.append('input-file', file);
-    //     const init = { method: 'POST', body: formData };
-
-    //     // send over the image and wait for results
-    //     fetch(`/single_img_caption/${this.state.selectedRunner}`, init)
-    //     .then(res => res.json())
-    //     .then(res => {
-    //         this.imgSrc = `/load_image/${res.datasetId}/${0}`;
-    //         this.setState({ 
-    //             imgSrc: `/load_image/${res.datasetId}/${0}`,
-    //             waiting: false
-    //         });
-    //         this.props.onServerResponse(res);
-    //     })
-    //     //.then(() => this.fetchBeamSearchGraph());
-    // }
-
     onImageSubmit() {
         let formData = new FormData();
         const file = document.getElementById("inFile").files[0];

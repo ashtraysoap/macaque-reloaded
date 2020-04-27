@@ -89,43 +89,6 @@ def initial_state():
         'runners': rs
     })
 
-@APP.route('/single_img_caption/<int:runner_id>', methods=['POST'])
-def single_img_caption(runner_id):
-    """Handle requests for captioning on a single image.
-
-    Returns:
-        A JSON-serialized dictionary.
-    """
-
-    # Access the user-sent image from the request object.
-    fname = request.files['input-file'].filename
-    request.files['input-file'].save(fname)
-
-    # Create a dataset to contain the image.
-    ds = Dataset(
-        name='dataset_' + str(int(random() * 1000000)),
-        prefix='./',
-        batch_size=1,
-        images=True)
-    ds.initialize(sources=[fname])
-    ds_id = STATE.add_dataset(ds)
-
-    # Compute the results
-    runner = STATE.runners[runner_id]
-    out = runner.run(ds)
-    run_id = STATE.get_current_run_counter()
-
-    r = Result(runId=run_id,
-        runnerId=runner_id,
-        datasetId=ds_id,
-        results=out)
-    STATE.add_results(r)
-
-    # remove the image & remove the dataset
-    #os.remove(fname)
-
-    return _jsonify_results(out, runner_id, ds_id, run_id)
-
 @APP.route('/single_image_upload', methods=['POST'])
 def single_image_upload():
     # Access the user-sent image from the request object.
@@ -472,7 +435,7 @@ def img_to_jpg_raw(img):
 def _jsonify_results(results, runner_id, dataset_id, run_id):
     rs = []
     for x in results:
-        r = { 'greedy': {}, 'beam_search': {}}
+        r = { 'greedy': {}, 'beamSearch': {}}
         if 'greedy' not in x or x['greedy'] is None:
             r['greedy'] = {'caption': [], 'alignments': [], 'hasAttn': False}
         else:

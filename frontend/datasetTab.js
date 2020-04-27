@@ -76,6 +76,7 @@ class DatasetTab extends React.Component {
         const p = this.props;
         const results = p.results;
         const idx = this.state.elemIdx;
+        console.log(results);
         const selectedResults = this.getResultsForElement(results, idx);
         
         const view = this.showingElementView ? <DataInstanceView 
@@ -124,7 +125,7 @@ class DatasetTab extends React.Component {
                 runId: r.runId,
                 runnerId: r.runnerId,
                 datasetId: r.datasetId,
-                captions: r.captions[elemId],
+                results: r.results[elemId],
                 scores: this.getScoresForElement(r.scores, elemId)
             }
         });

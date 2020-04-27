@@ -18,7 +18,7 @@ def create_dataset(json_config):
 
     ds = Dataset(name=json_config['name'],
                 prefix=json_config['prefix'],
-                batch_size=json_config['batchSize'])
+                batch_size=int(json_config['batchSize']))
     
     if json_config['sources'] != "":
         srcs = open(json_config['sources'], 'r', encoding='utf-8').readlines()

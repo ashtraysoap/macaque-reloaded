@@ -44,6 +44,10 @@ class RunResultsView extends React.Component {
     }
 
     render() {
+        console.log("instance id", this.props.instanceId);
+        console.log("run id", this.props.runId);
+        console.log("results", this.props.results);
+
         if (this.runId !== this.props.runId) {
             this.runId = this.props.runId;
             this.fetchAttentionURLs(this.state.captionId);
@@ -80,11 +84,11 @@ class RunResultsView extends React.Component {
                 displayAlignment={a => this.props.fetchAttentionMapForBSToken(a)}
             />;
 
-        let metrics = !this.state.showMetrics ? null :
-            <ElementScoreTable
-               scores={this.props.results.scores} 
-               metrics={this.props.metrics}
-            />;
+        // let metrics = !this.state.showMetrics ? null :
+        //     <ElementScoreTable
+        //        scores={this.props.results.scores} 
+        //        metrics={this.props.metrics}
+        //     />;
 
         return (
             <div>
@@ -109,7 +113,7 @@ class RunResultsView extends React.Component {
                     {bsView}
                 </div>
                 
-                {
+                {/* {
                     this.props.metrics.length > 0 && Object.keys(this.props.results.scores).length > 0 &&
                         <div id="metrics">
                             <span className="resultsSpan" onClick={() => switchState('showMetrics')}>
@@ -117,7 +121,7 @@ class RunResultsView extends React.Component {
                             </span>
                             {metrics}
                         </div>
-                }
+                } */}
             </div>
         );
     }
