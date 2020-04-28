@@ -19,9 +19,8 @@ class DataInstanceView extends React.Component {
         this.onCaptionClick = this.onCaptionClick.bind(this);
 
         this.imgSrc = `/load_image/${this.props.dataset}/${this.props.dataInstance.id}`;
-        const runId = (props.results.length === 0) ? null : this.props.results[0].runId;
+        this.runId = (props.results.length === 0) ? null : this.props.results[0].runId;
         this.state = { 
-            runId: runId, 
             imgSrc: this.imgSrc,
             tokenId: null,
             showSrcCap: true,
@@ -32,7 +31,10 @@ class DataInstanceView extends React.Component {
     render() {
         const instance = this.props.dataInstance;
         const results = this.props.results;
-        const selRunId = this.state.runId;
+
+        if (this.runId === null && results.length > 0) {
+            this.runId = results[0].runId;
+        }
 
         const switchState = b => {
             let s = this.state;
@@ -61,11 +63,11 @@ class DataInstanceView extends React.Component {
         }
 
         // results from the selected run
-        const selectedRes = (selRunId === null) ? null : results.filter(r => r.runId === selRunId)[0];
-        const runResultsView = (selRunId === null) ? null : <RunResultsView 
+        const selectedRes = (this.runId === null) ? null : results.filter(r => r.runId === this.runId)[0];
+        const runResultsView = (this.runId === null) ? null : <RunResultsView 
             results={selectedRes.results} 
             instanceId={instance.id}
-            runId={selRunId}
+            runId={this.runId}
             onCaptionClick={this.onCaptionClick}
             fetchAttentionMap={this.fetchAttentionMap}
             fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
@@ -172,8 +174,8 @@ class DataInstanceView extends React.Component {
         } else {
             // fetch the attention map corresponding to the word from the
             // caption the user clicked on
-            //this.fetchAttentionMap(this.state.runId, this.props.dataInstance.id, tokenId)
-            this.fetchAttentionMapForOriginal(this.state.runId, this.props.dataInstance.id, captionId, tokenId)
+            //this.fetchAttentionMap(this.runId, this.props.dataInstance.id, tokenId)
+            this.fetchAttentionMapForOriginal(this.runId, this.props.dataInstance.id, captionId, tokenId)
             .then(src => {
                 this.setState({ tokenId: tokenId, imgSrc: src });
             });

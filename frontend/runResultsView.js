@@ -44,10 +44,6 @@ class RunResultsView extends React.Component {
     }
 
     render() {
-        console.log("instance id", this.props.instanceId);
-        console.log("run id", this.props.runId);
-        console.log("results", this.props.results);
-
         if (this.runId !== this.props.runId) {
             this.runId = this.props.runId;
             this.fetchAttentionURLs(this.state.captionId);
