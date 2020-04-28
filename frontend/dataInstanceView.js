@@ -17,8 +17,9 @@ class DataInstanceView extends React.Component {
         this.fetchAttentionMapForOriginal = this.fetchAttentionMapForOriginal.bind(this);
         this.fetchAttentionMapForBSToken = this.fetchAttentionMapForBSToken.bind(this);
         this.onCaptionClick = this.onCaptionClick.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
 
-        this.imgSrc = `/load_image/${this.props.dataset}/${this.props.dataInstance.id}`;
+        //this.imgSrc = `/load_image/${this.props.dataset}/${this.props.dataInstance.id}`;
         this.runId = (props.results.length === 0) ? null : this.props.results[0].runId;
         this.state = { 
             imgSrc: this.imgSrc,
@@ -26,6 +27,10 @@ class DataInstanceView extends React.Component {
             showSrcCap: true,
             showRefs: true
         };
+    }
+
+    get imgSrc() {
+        return `/load_image/${this.props.dataset}/${this.props.dataInstance.id}`;
     }
 
     render() {
@@ -42,8 +47,8 @@ class DataInstanceView extends React.Component {
             this.setState(s);
         };
 
-        console.log(this.props.runners);
-        console.log(results);
+        console.log("runners", this.props.runners);
+        console.log("results", results);
         // Create a navigation bar button for each run.
         let runsNav;
         if (results.length === 0) {
@@ -85,8 +90,10 @@ class DataInstanceView extends React.Component {
 
         return (
             <div className="transparentLayer" onClick={() => this.props.onClick()}>
-                <div className="instanceView" onClick={(e) => e.stopPropagation()}>
-                    {basename(instance.source)}
+                <div className="instanceView" id="X" onClick={(e) => e.stopPropagation()} onKeyDown={e => this.onKeyDown(e)} tabIndex="0">
+                    
+                    { basename(instance.source) }
+                    
                     <div>
                         <img src={this.state.imgSrc} alt=""/>
                     </div>
@@ -116,6 +123,10 @@ class DataInstanceView extends React.Component {
                 </div>
             </div>
         );
+    }
+
+    componentDidMount() {
+        document.getElementById("X").focus();
     }
 
     fetchAttentionMap(runId, dataInstanceId, captionId, tokenId) {
@@ -181,6 +192,16 @@ class DataInstanceView extends React.Component {
             });
         }
     }
+
+    onKeyDown(event) {
+        const key = event.keyCode;
+        // left or right arrow pressed:
+        if (key == "37" || key == "38" || key == "39" || key == "40") {
+            const newIdx = this.props.onInstanceChange(key);
+            console.log("newIdx", newIdx);
+            this.setState({ imgSrc: `/load_image/${this.props.dataset}/${newIdx}` });
+        }
+    }
 }
 
 function RunToggler(props) {
@@ -217,7 +238,8 @@ DataInstanceView.propTypes = {
     dataset: PropTypes.number.isRequired,
     onClick: PropTypes.func.isRequired,
     runners: PropTypes.arrayOf(PropTypes.object).isRequired,
-    metrics: PropTypes.arrayOf(PropTypes.string).isRequired
+    metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
+    onInstanceChange: PropTypes.func.isRequired
 };
 
 RunToggler.propTypes = {

@@ -26,6 +26,7 @@ class DatasetTab extends React.Component {
         this.moveViewRight = this.moveViewRight.bind(this);
         this.getInstance = this.getInstance.bind(this);
         this.filterScoresForList = this.filterScoresForList.bind(this);
+        this.instanceChange = this.instanceChange.bind(this);
     }
 
     get showingElementView() {
@@ -86,6 +87,7 @@ class DatasetTab extends React.Component {
             onClick={this.closeView}
             runners={p.runners}
             metrics={p.metrics}
+            onInstanceChange={this.instanceChange}
             /> : null;
 
         const list = <DataEntriesList
@@ -147,6 +149,24 @@ class DatasetTab extends React.Component {
             }
         }
         return results;
+    }
+
+    instanceChange(keyCode) {
+        // user pressed either '<--' or '-->' : switch to next instance
+        const idx = this.state.elemIdx;
+        const count = this.props.dataset.elements.length;
+        
+        let newIdx;
+        if (keyCode == "37" || keyCode == "40") {
+            newIdx = idx === 0 ? (count - 1) : (idx - 1);
+        }
+
+        if (keyCode == "38" || keyCode == "39") {
+            newIdx = idx === count - 1 ? 0 : (idx + 1);
+        }
+
+        this.setState({ elemIdx: newIdx });
+        return newIdx;
     }
 
 }
