@@ -12,23 +12,6 @@ import { AddEncoderTab } from './addEncoderTab.js';
 import { AddModelTab } from './addModelTab.js';
 import { AddRunnerTab } from './addRunnerTab.js';
 
-/*
-
-results incoming from the server are objects of shape:
-{
-    runId: number,
-    runnerId: number,
-    datasetId: number,
-    captions: [
-        {
-            greedyCaption: [string],
-            beamSearchCaptions: [[string]]    
-        }
-    ]
-}
-
-*/
-
 
 class App extends React.Component {
     constructor(props) {
@@ -147,7 +130,6 @@ class App extends React.Component {
     }
 
     render() {
-        console.log('render in app / runners: ', this.state.runners);
         const s = this.state;
         const id = s.selectedTab;
         let mainTab = null;
