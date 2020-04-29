@@ -40,7 +40,8 @@ class App extends React.Component {
             results: [],
             selectedTab: "Home",
             demoResults: null,
-            homeTabResults: null
+            homeTabResults: null,
+            public: false
         };
 
         // fetch initial server-side Macaque state
@@ -182,6 +183,7 @@ class App extends React.Component {
                 <Header
                     onSelectedChange={this.handleSelectedTabChange}
                     selected={id}
+                    public={this.state.public}
                     />
                 {mainTab}
             </div>

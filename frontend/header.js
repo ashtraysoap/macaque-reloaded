@@ -16,6 +16,7 @@ function Header(props) {
             <Navigation
                 onSelectedChange={props.onSelectedChange}
                 selected={props.selected}
+                public={props.public}
             />
         </div>
     );
@@ -23,5 +24,6 @@ function Header(props) {
 
 Header.propTypes = {
     onSelectedChange: PropTypes.func.isRequired,
-    selected: PropTypes.string.isRequired
+    selected: PropTypes.string.isRequired,
+    public: PropTypes.bool.isRequired
 };

@@ -7,7 +7,10 @@ export { Navigation, NavElement };
 function Navigation(props) {
     const callback = props.onSelectedChange;
 
-    let navElems = ['About', 'Configure', 'Datasets'];
+    let navElems = ['About'];
+    if (!props.public)
+        navElems = navElems.concat(['Configure', 'Datasets']);
+
     navElems = navElems.map((e) => <NavElement 
         key={e}
         text={e}
@@ -29,7 +32,8 @@ function NavElement(props) {
 
 Navigation.propTypes = {
     onSelectedChange: PropTypes.func.isRequired,
-    selected: PropTypes.string.isRequired
+    selected: PropTypes.string.isRequired,
+    public: PropTypes.bool.isRequired
 };
 
 NavElement.propTypes = {
