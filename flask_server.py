@@ -43,7 +43,7 @@ STATE = None
 APP.config['state'] = STATE
 
 
-def start_server(macaque_state):
+def start_server(macaque_state, port, public):
     """Start the Flask server.
 
     Args:
@@ -56,12 +56,13 @@ def start_server(macaque_state):
     global STATE
     STATE = macaque_state
     APP.debug = False
+    host = '0.0.0.0' if public else '127.0.0.1'
     
     # APP.run() launches Flask's built-in HTTP server.
     # The function call is blocking - the server waits
     # for user requests and handles them until terminated
     # or until an error occurs.
-    APP.run()
+    APP.run(host=host, port=port)
 
 @APP.route('/', methods=['GET'])
 def init():
@@ -86,7 +87,8 @@ def initial_state():
         'preprocessors': ps,
         'encoders': es,
         'models': ms,
-        'runners': rs
+        'runners': rs,
+        'public': STATE.public
     })
 
 @APP.route('/single_image_upload', methods=['POST'])

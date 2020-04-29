@@ -20,7 +20,7 @@ class MacaqueState():
         run_results: A list of run results.
     """
 
-    def __init__(self):
+    def __init__(self, public=False):
         """Initialize MacaqueState with initial empty values."""
 
         self._datasets = []
@@ -29,6 +29,7 @@ class MacaqueState():
         self._models = []
         self._runners = []
         self._run_results = []
+        self.public = public
         
         # initialize models from configuration files
         self.create_from_configs()

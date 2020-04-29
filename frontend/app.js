@@ -46,12 +46,13 @@ class App extends React.Component {
         // fetch initial server-side Macaque state
         fetch('/initial_state').then(response => response.json())
         .then(result => {
-            console.log(result);
+            console.log(result.public);
             this.setState({
                 preprocessors: result.preprocessors,
                 encoders: result.encoders,
                 models: result.models,
-                runners: result.runners
+                runners: result.runners,
+                public: result.public
             });
         });
     }

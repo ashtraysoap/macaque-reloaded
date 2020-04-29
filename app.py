@@ -3,15 +3,22 @@
 """The application entrypoint.
 """
 
-from flask_server import start_server
+import fire
 
-from macaque_state import MacaqueState
-
-def main():
-    """The application entrypoint"""
+def main(port=5000, public=False):
+    """The application entrypoint
     
-    state = MacaqueState()
-    start_server(state)
+    Args:
+        port: The port number on which the application will listen.
+        public: Optional argument, if specified the application will
+            listen on all public IPs. Otherwise, it runs only locally.
+    """
+    
+    from flask_server import start_server
+    from macaque_state import MacaqueState
+
+    state = MacaqueState(public=public)
+    start_server(macaque_state=state, port=port, public=public)
 
 if __name__ == "__main__":
-    main()
+    fire.Fire(main)
