@@ -29,6 +29,20 @@ module.exports = {
             loader: "html-loader"
           }
         ]
+      },
+      {
+          test: /\.(png|svg|jpg|gif)$/,
+          loader: 'file-loader',
+          options: {
+              name: 'dist/[contenthash].[ext]'
+          }
+      },
+      {
+          test: /\.(woff|woff2|eot|ttf|otf)$/,
+          loader: 'file-loader',
+          options: {
+            name: 'dist/[contenthash].[ext]'
+          }
       }
     ]
   }

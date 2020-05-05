@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { RunResultsView } from './runResultsView.js';
-import { PendingTab } from './statusTabs.js';
 import { enumerate } from './utils.js';
 
 export { HomeTab };
@@ -11,11 +10,14 @@ class HomeTab extends React.Component {
     constructor(props) {
         super(props);
 
-        if (this.props.results === null) {
+        console.log("home tab constructor");
+        const pr = this.props.results;
+
+        if (pr === null) {
             this.imgSrc = null;
             this.results = null;
         } else {
-            this.results = this.props.results[this.state.selectedRunner]
+            this.results = pr[0]
             this.imgSrc = `/load_image/${this.results.datasetId}/${0}`;
         }
 
@@ -24,7 +26,7 @@ class HomeTab extends React.Component {
             tokenId: null,
             waiting: false,
             selectedRunner: 0,
-            imgDatasetId: null
+            imgDatasetId: pr === null ? null : pr[0].datasetId
         };
 
         this.getResultsForElement = this.getResultsForElement.bind(this);
@@ -57,6 +59,11 @@ class HomeTab extends React.Component {
     processImage() {
         this.setState({ waiting: true });
 
+        // let c = document.getElementById("homeTabBase");
+        // c.classList.add("homeTabBaseClicked");
+        // console.log("processing image");
+        // console.log(c);
+
         fetch(`/single_image_process/${this.state.selectedRunner}/${this.state.imgDatasetId}`)
         .then(res => res.json())
         .then(res => {
@@ -72,7 +79,7 @@ class HomeTab extends React.Component {
         if (this.props.runners.length === 0) {
             return (
                 <div className="homeTab">
-                    No runners available.
+                    No runners available. Add a runner to enable single image captioning.
                 </div>
             );
         }
@@ -85,8 +92,6 @@ class HomeTab extends React.Component {
             else
                 this.results = this.props.results[this.state.selectedRunner]
         }
-        console.log(this.results);
-
 
         let runners = <RunnerSelection 
             runners={this.props.runners.map(r => r.name)}
@@ -94,40 +99,53 @@ class HomeTab extends React.Component {
             onChange={e => this.setState({selectedRunner: e})}
         />;
 
+        let img = null;
+        if (this.state.imgDatasetId !== null)
+            img = <img src={this.state.imgSrc} className="homeTabImg" alt=""/>;
+
+        let processImgLabel = null;
+        if (this.state.imgDatasetId != null)
+            processImgLabel = <label className="customFileUpload" onClick={this.processImage}>Process image</label>;
+
+        let runnerSel = null;
+        if (this.state.imgDatasetId != null)
+            runnerSel = <label className="customFileUpload">Choose runner</label>;
+
+        const cn = this.props.results === null ? "homeTabBase" : "homeTabBase homeTabBaseClicked";
+
         return (
             <div className="homeTab">
 
                 {
                     this.props.runners.length > 0 &&
-                    <form method="post" encType="multipart/form-data">
-                    <label>Input image: </label>
-                    <input id="inFile" 
-                        type="file" 
-                        name="input-file" 
-                        accept=".jpg"
-                        onInput={this.onImageSubmit}
-                        />
-                    </form>
+                    <div id="homeTabBase" className={cn}>
+                        {img}
+                        <div>
+                            <form method="post" encType="multipart/form-data">
+                                <input id="inFile" 
+                                    type="file" 
+                                    name="input-file" 
+                                    accept=".jpg"
+                                    onInput={this.onImageSubmit}
+                                />
+                            </form>
+                            <label htmlFor="inFile" className="customFileUpload">Input image</label>
+                            {runnerSel}
+                            {processImgLabel}
+                        </div>
+                    </div>
+
                 }
 
-                {
-                    this.state.imgDatasetId !== null &&
-                    <img src={this.state.imgSrc} style={{ width: "30vw", height: "auto" }} alt=""/>
-                }
 
-                { runners }
+                {/* { runners } */}
 
-                {
-                    this.state.imgDatasetId !== null &&
-                    <button onClick={this.processImage}>Process image</button>
-                }
 
                 {
                     this.state.waiting &&
-                    <PendingTab text="Processing image."/>
+                    <div className="homeTabProcessing">Processing Image</div>
                 }
-
-                {
+     {/* {
                     this.results !== null &&
                     <div>
                         <RunResultsView
@@ -141,7 +159,8 @@ class HomeTab extends React.Component {
                             graph={this.state.bsGraph}
                         />
                     </div>
-                }
+                } */}
+           
             </div>
         );
     }

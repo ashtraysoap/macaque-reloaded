@@ -1,11 +1,46 @@
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Regular.ttf);
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Bold.ttf);
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Black.ttf);
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Medium.ttf);
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Light.ttf);
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Thin.ttf);
+    font-weight: 100;
+}
+
 * {
     margin: 0;
     padding: 0;
 }
 
 body {
-    font-family: sans-serif;
-    font-size: 14pt;
+    font-family: Roboto;
 }
 
 
@@ -48,31 +83,6 @@ body {
     line-height: 3;
 }
 
-.header {
-    /* background: linear-gradient(#e66465, #9198e5); */
-    background: linear-gradient(#eb5e55, #9198e5);
-    height: 10vh;
-    width: 100%;
-    box-shadow: 0px 5px 5px grey;
-    line-height: 10vh;
-    display: table;
-    position: sticky;
-    top: 0;
-}
-
-.header div {
-    display: table-cell;
-    text-align: center;
-}
-
-.homeTab {
-    width: 55vw;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 3vh;
-    line-height: 2.5;
-}
-
 .instanceView {
     background-color: white;
     display: inline-block;
@@ -92,15 +102,6 @@ body {
     display: table-cell;
 }
 
-.logo {
-    width: 20%;
-    cursor: pointer;
-}
-
-.logoSelected {
-    border-bottom: solid black 2px;
-}
-
 .mainTab {
     width: 55vw;
     margin-left: auto;
@@ -108,7 +109,6 @@ body {
     margin-top: 2vw;
 }
 
-/*  */
 
 .multiSel {
     line-height: 2;
@@ -205,23 +205,6 @@ body {
 
 /*  */
 
-.nav {
-    width: 80%;
-}
-
-.navElement {
-    padding-left: 3vw;
-    padding-right: 3vw;
-    cursor: pointer;
-}
-
-.navElementSel {
-    padding-left: 3vw;
-    padding-right: 3vw;
-    cursor: pointer;
-    border-bottom: solid black 2px;
-}
-
 .resultsSpan {
     border-bottom: solid 1px #ccc;
 }
@@ -298,4 +281,178 @@ body {
     fill: none;
     stroke: #ccc;
     stroke-width: 2px;
+}
+
+:root {
+    --c1: #EDF5E1;
+    --c2: #C5CBE3;
+}
+
+/* Navigation */
+
+.navigation {
+    top: 0;
+	left: 0;
+    position: fixed;
+    background-color: var(--c1);
+    background-repeat: no-repeat;
+    background-position: 20px 20px;
+    width: 64px;
+    height: 64px;
+    margin-top: 30px;
+    margin-left: 30px;
+    border: 2px solid var(--c2);
+    border-radius: 5px;
+    background-image: url("icons8-menu-24.png");
+    transition: all 0.4s ease;
+    transition-delay: 0.1s;
+}
+
+.navigation:hover {
+    background-color: white;
+
+    background-position: -24px 20px;
+    transition: all 0.4s ease;
+    transition-delay: 0s;
+
+    width: 180px;
+    height: 132px;
+	box-shadow: 5px 0px 8px #666;
+}
+
+.navigation>.selectedNav {
+    background-color: var(--c2);
+}
+
+.navigation div {
+    display: block;
+    height: 20px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+.navigation div:hover {
+    background-color: var(--c1);
+}
+
+.navigation>* {
+    text-align: center;
+
+    opacity: 0;
+    white-space: nowrap;
+	transition: opacity 0.2s ease;
+    transition-delay: 0s;
+}
+
+.navigation:hover>* {
+    opacity: 1.0;
+    transition: opacity 0.4s ease;
+    transition-delay: 0.2s;
+}
+
+.navigation > div:first-child {
+    margin-top: 8px;
+}
+
+/* 
+    Footer styling 
+*/
+
+#Footer {
+    bottom: 15px;
+    left: 30px;
+    position: fixed;
+}
+
+/* Misc */
+
+#Year {
+    bottom: 15px;
+    right: 30px;
+    position: fixed;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+a:focus {
+	outline:none;
+}
+
+/* Home Tab */
+
+.customFileUpload {
+    padding: 6px 12px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.customFileUpload:hover {
+    background-color: var(--c1);
+    cursor: pointer;
+}
+
+.customFileUpload:active {
+    background-color: var(--c2);
+    cursor: pointer;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.homeTabBase {
+    top: 80px;
+    left: 35vw;
+    position: fixed;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    width: 30vw;
+    z-index: -1;
+    transition: all 2.0s ease;
+}
+
+.homeTabBase > * {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.homeTabBaseClicked {
+    top: 100px;
+    left: 30px;
+}
+
+.homeTabImg {
+    width: 100%;
+    height: auto;
+    padding: 6px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+.homeTabProcessing {
+    position: fixed;
+    top: 120px;
+    left: 35vw;
+    width: 30vw;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 7px;
+    text-align: center;
+    color: white;
+    background-color: green;
+
+    opacity: 0;
+    transition: opacity 2.0s ease 0.5s;
 }

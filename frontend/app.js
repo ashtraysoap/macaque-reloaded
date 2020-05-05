@@ -7,6 +7,7 @@ import { ConfigTab } from './configTab.js';
 import { DatasetsTab } from './datasetsTab.js';
 import { Header } from './header.js';
 import { HomeTab } from './homeTab.js';
+import { Footer } from './footer.js';
 import { AddPreproTab } from './addPreproTab.js';
 import { AddEncoderTab } from './addEncoderTab.js';
 import { AddModelTab } from './addModelTab.js';
@@ -186,6 +187,7 @@ class App extends React.Component {
                     public={this.state.public}
                     />
                 {mainTab}
+                <Footer/>
             </div>
         );
     }
