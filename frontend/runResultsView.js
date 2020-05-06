@@ -6,8 +6,24 @@ import { BeamSearchOutputView } from './beamSearchOutputView.js';
 import { CaptionTab } from './captionTab.js';
 import { ElementScoreTable } from './scoreTable.js';
 
-export { RunResultsView };
+export { RunResultsView, HomeTabResultsView };
 
+function HomeTabResultsView(props) {
+    return (
+        <div className="homeTabResultsView">
+            <RunResultsView
+                results={props.results}
+                instanceId={props.instanceId}
+                runId={props.runId}
+                onCaptionClick={props.onCaptionClick}
+                fetchAttentionMap={props.fetchAttentionMap}
+                fetchAttentionMapForBSToken={props.fetchAttentionMapForBSToken}
+                metrics={props.metrics}
+                graph={props.graph}
+            />
+        </div>
+    );
+}
 
 class RunResultsView extends React.Component {
     constructor(props) {

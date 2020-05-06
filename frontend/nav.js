@@ -38,6 +38,6 @@ Navigation.propTypes = {
 
 NavElement.propTypes = {
     text: PropTypes.string.isRequired,
-    class: PropTypes.string.isRequired,
     handleClick: PropTypes.func.isRequired,
+    class: PropTypes.string,
 };

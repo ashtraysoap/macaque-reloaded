@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { RunResultsView } from './runResultsView.js';
+import { HomeTabResultsView } from './runResultsView.js';
 import { enumerate } from './utils.js';
 
 export { HomeTab };
@@ -25,7 +25,7 @@ class HomeTab extends React.Component {
             imgSrc: this.imgSrc,
             tokenId: null,
             waiting: false,
-            selectedRunner: 0,
+            selectedRunner: pr === null ? 0 : pr[0].runnerId,
             imgDatasetId: pr === null ? null : pr[0].datasetId
         };
 
@@ -58,11 +58,6 @@ class HomeTab extends React.Component {
 
     processImage() {
         this.setState({ waiting: true });
-
-        // let c = document.getElementById("homeTabBase");
-        // c.classList.add("homeTabBaseClicked");
-        // console.log("processing image");
-        // console.log(c);
 
         fetch(`/single_image_process/${this.state.selectedRunner}/${this.state.imgDatasetId}`)
         .then(res => res.json())
@@ -137,18 +132,15 @@ class HomeTab extends React.Component {
 
                 }
 
-
-                {/* { runners } */}
-
-
                 {
                     this.state.waiting &&
                     <div className="homeTabProcessing">Processing Image</div>
                 }
-     {/* {
+
+                {
                     this.results !== null &&
                     <div>
-                        <RunResultsView
+                        <HomeTabResultsView
                             results={this.results.results[0]}
                             instanceId={0}
                             runId={this.results.runId}
@@ -159,7 +151,7 @@ class HomeTab extends React.Component {
                             graph={this.state.bsGraph}
                         />
                     </div>
-                } */}
+                }
            
             </div>
         );
