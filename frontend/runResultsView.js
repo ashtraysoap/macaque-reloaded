@@ -4,6 +4,7 @@ import React from 'react';
 import { AlignmentsTab } from './alignmentsTab.js';
 import { BeamSearchOutputView } from './beamSearchOutputView.js';
 import { CaptionTab } from './captionTab.js';
+import { CaptionsTab } from './captionsTab.js';
 import { ElementScoreTable } from './scoreTable.js';
 
 export { RunResultsView, HomeTabResultsView };
@@ -74,14 +75,13 @@ class RunResultsView extends React.Component {
             this.setState(s);
         };
 
+        const r = this.props.results;
+
         let captionTab = !this.state.showCaption ? null :
-            <CaptionTab 
-                caption={caption}
-                onTokenClick={(tokId) => this.props.onCaptionClick(cid, tokId)}
-                captionId={cid}
-                greedy={true}
-                beamSize={this.props.results.beamSearch.captions.length}
-                onCaptionChange={(cid) => this.handleCaptionChange(cid)}
+            <CaptionsTab
+                greedyCaption={r.greedy.caption}
+                beamSearchCaptions={r.beamSearch.captions}
+                onTokenClick={(c, t) => this.props.onCaptionClick(c, t)}
             />;
 
         let attTab = !this.state.showAlignments ? null :
@@ -96,17 +96,11 @@ class RunResultsView extends React.Component {
                 displayAlignment={a => this.props.fetchAttentionMapForBSToken(a)}
             />;
 
-        // let metrics = !this.state.showMetrics ? null :
-        //     <ElementScoreTable
-        //        scores={this.props.results.scores} 
-        //        metrics={this.props.metrics}
-        //     />;
-
         return (
             <div>
                 <div>
                     <span className="resultsSpan" onClick={() => switchState('showCaption')}>
-                        Caption
+                        Captions
                     </span>
                     {captionTab}
                 </div>
@@ -124,16 +118,7 @@ class RunResultsView extends React.Component {
                     </span>
                     {bsView}
                 </div>
-                
-                {/* {
-                    this.props.metrics.length > 0 && Object.keys(this.props.results.scores).length > 0 &&
-                        <div id="metrics">
-                            <span className="resultsSpan" onClick={() => switchState('showMetrics')}>
-                                Metrics
-                            </span>
-                            {metrics}
-                        </div>
-                } */}
+
             </div>
         );
     }
