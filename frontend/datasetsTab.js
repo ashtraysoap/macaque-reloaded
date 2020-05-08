@@ -18,8 +18,10 @@ class DatasetsTab extends React.Component {
     }
 
     render() {
+        console.log(this.props.datasets);
         const p = this.props;
         const ds = this.state.selectedDataset;
+        const datasetId = this.props.datasets[ds].id;
         const r = this.state.selectedRunner;
         const dsNames = p.datasets.map(d => d.name);
 
@@ -53,7 +55,7 @@ class DatasetsTab extends React.Component {
                         dataset={p.datasets[ds]}
                         onResultsResponse={p.onResultsResponse}
                         runners={p.runners}
-                        results={p.results.filter(r => r.datasetId === ds)}
+                        results={p.results.filter(r => r.datasetId === datasetId)}
                     />
                 </div>
             </div>
@@ -62,7 +64,7 @@ class DatasetsTab extends React.Component {
     }
 
     runOnDataset() {
-        const d = this.state.selectedDataset;
+        const d = this.props.datasets[this.state.selectedDataset].id;
         const r = this.state.selectedRunner
         this.setState({ processing: true });
 
