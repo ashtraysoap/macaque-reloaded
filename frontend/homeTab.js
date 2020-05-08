@@ -89,16 +89,14 @@ class HomeTab extends React.Component {
         }
 
         let img = null;
-        if (this.state.imgDatasetId !== null)
-            img = <img src={this.state.imgSrc} className="homeTabImg" alt=""/>;
-
         let processImgLabel = null;
-        if (this.state.imgDatasetId != null)
-            processImgLabel = <label className="customFileUpload" onClick={this.processImage}>Process image</label>;
-
         let runnerSel = null;
-        if (this.state.imgDatasetId != null)
+
+        if (this.state.imgDatasetId !== null) {
+            img = <img src={this.state.imgSrc} className="homeTabImg" alt=""/>;
+            processImgLabel = <label className="customFileUpload" onClick={this.processImage}>Process image</label>;
             runnerSel = <label className="customFileUpload" onClick={this.showRunners}>Choose runner</label>;
+        }
 
         const cn = this.props.results === null ? "homeTabBase" : "homeTabBase homeTabBaseClicked";
 
