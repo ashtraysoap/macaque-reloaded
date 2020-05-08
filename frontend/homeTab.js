@@ -10,7 +10,6 @@ class HomeTab extends React.Component {
     constructor(props) {
         super(props);
 
-        console.log("home tab constructor");
         const pr = this.props.results;
 
         if (pr === null) {
@@ -26,7 +25,8 @@ class HomeTab extends React.Component {
             tokenId: null,
             waiting: false,
             selectedRunner: pr === null ? 0 : pr[0].runnerId,
-            imgDatasetId: pr === null ? null : pr[0].datasetId
+            imgDatasetId: pr === null ? null : pr[0].datasetId,
+            showRunners: false
         };
 
         this.getResultsForElement = this.getResultsForElement.bind(this);
@@ -36,6 +36,7 @@ class HomeTab extends React.Component {
         this.onCaptionClick = this.onCaptionClick.bind(this);
         this.onImageSubmit = this.onImageSubmit.bind(this);
         this.processImage = this.processImage.bind(this);
+        this.showRunners = this.showRunners.bind(this);
     }
 
     onImageSubmit() {
@@ -47,7 +48,6 @@ class HomeTab extends React.Component {
         fetch('/single_image_upload', init)
         .then(res => res.json())
         .then(res => {
-            console.log("uhm uhm", res.datasetId);
             this.imgSrc = `/load_image/${res.datasetId}/${0}`;
             this.setState({
                 imgSrc: `/load_image/${res.datasetId}/${0}`,
@@ -88,12 +88,6 @@ class HomeTab extends React.Component {
                 this.results = this.props.results[this.state.selectedRunner]
         }
 
-        let runners = <RunnerSelection 
-            runners={this.props.runners.map(r => r.name)}
-            selectedRunner={this.state.selectedRunner}
-            onChange={e => this.setState({selectedRunner: e})}
-        />;
-
         let img = null;
         if (this.state.imgDatasetId !== null)
             img = <img src={this.state.imgSrc} className="homeTabImg" alt=""/>;
@@ -104,11 +98,7 @@ class HomeTab extends React.Component {
 
         let runnerSel = null;
         if (this.state.imgDatasetId != null)
-            runnerSel = <label className="customFileUpload">Choose runner</label>;
-            // runnerSel = <div className="runnerMenu">
-            //         <label className="customFileUpload">Choose runner</label>
-            //         <div>Pes pes pes</div>
-            // </div>;
+            runnerSel = <label className="customFileUpload" onClick={this.showRunners}>Choose runner</label>;
 
         const cn = this.props.results === null ? "homeTabBase" : "homeTabBase homeTabBaseClicked";
 
@@ -133,7 +123,6 @@ class HomeTab extends React.Component {
                             {processImgLabel}
                         </div>
                     </div>
-
                 }
 
                 {
@@ -155,6 +144,15 @@ class HomeTab extends React.Component {
                             graph={this.state.bsGraph}
                         />
                     </div>
+                }
+
+                {
+                    this.state.showRunners &&
+                    <RunnersMenu
+                        runners={this.props.runners}
+                        select={(r) => this.setState({ selectedRunner: r})}
+                        selected={this.state.selectedRunner}
+                    />
                 }
            
             </div>
@@ -235,32 +233,25 @@ class HomeTab extends React.Component {
     getResultsForElement(results, elemId) {
         return results.results[elemId];
     }
+
+    showRunners() {
+        this.setState({ showRunners: true });
+    }
 }
 
-function RunnerSelection(props) {
-    const divStyle = {
-        display: 'inline-block',
-        margin: '3px'
-    };
+function RunnersMenu(props) {
+    let rs = enumerate(props.runners).map(r => <div key={r[1].name} style={{color: "red"}} onClick={() => props.select(r[0])}>
+        {r[1].name}
+    </div>);
 
-    const selStyle = {
-        display: 'inline-block',
-        margin: '3px',
-        backgroundColor: "pink"
-    };
-
-    const rs = enumerate(props.runners);
-    const rs_elems = rs.map(e => 
-        <div key={e[1].toString()} 
-            style={e[0] === props.selectedRunner ? selStyle : divStyle} 
-            onClick={() => {console.log(e[0], e[1]); props.onChange(e[0])}}>
-            {e[1]}
-        </div>
-    );
+    rs[props.selected].props.style.color = "blue";
+    console.log(rs[props.selected]);
 
     return (
         <div>
-            {rs_elems}
+            <div>
+                {rs}
+            </div>
         </div>
     );
 }
@@ -269,10 +260,4 @@ HomeTab.propTypes = {
     runners: PropTypes.arrayOf(PropTypes.object).isRequired,
     results: PropTypes.object,
     onServerResponse: PropTypes.func
-};
-
-RunnerSelection.propTypes = {
-    runners: PropTypes.arrayOf(PropTypes.string).isRequired,
-    selectedRunner: PropTypes.number.isRequired,
-    onChange: PropTypes.func.isRequired
 };

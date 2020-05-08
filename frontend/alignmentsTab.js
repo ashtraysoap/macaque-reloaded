@@ -45,7 +45,7 @@ class AlignmentsTab extends React.Component {
 
         return (
             <div>
-                {segents}
+                {segments}
             </div>
         );
     };
