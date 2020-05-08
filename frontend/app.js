@@ -25,8 +25,6 @@ class App extends React.Component {
         this.addRunner = this.addRunner.bind(this);
         this.addResults = this.addResults.bind(this);
         
-        this.addMetricScoresToResults = this.addMetricScoresToResults.bind(this);
-
         this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
 
         this.homeTabResponse = this.homeTabResponse.bind(this);
@@ -37,7 +35,6 @@ class App extends React.Component {
             encoders: [],
             models: [],
             runners: [],
-            metrics: [ "BLEU", "METEOR", "chrf3" ],
             results: [],
             selectedTab: "Home",
             demoResults: null,
@@ -105,21 +102,6 @@ class App extends React.Component {
         return this.state.results.length - 1;
     }
 
-    addMetricScoresToResults(scores) {
-        let res = this.state.results;
-        const metric = scores.metric;
-        for (let i = 0; i < res.length; i++) {
-            let runId = res[i].runId;
-            // if there are new scores for this run
-            if (scores[runId] !== -1) {
-                if (res[i].scores === undefined)
-                    res[i].scores = {};
-                res[i].scores[metric] = scores[runId];
-            }
-        }
-        this.setState({ results: res });
-    }
-
     homeTabResponse(results) {
         this.addResults(results);
         let htr = this.state.homeTabResults;
@@ -172,9 +154,7 @@ class App extends React.Component {
                 datasets={s.datasets}
                 results={s.results}
                 runners={s.runners}
-                metrics={s.metrics}
                 onResultsResponse={this.addResults}
-                onMetricScoresResponse={this.addMetricScoresToResults}
             />;
 
         }

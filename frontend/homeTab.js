@@ -105,6 +105,10 @@ class HomeTab extends React.Component {
         let runnerSel = null;
         if (this.state.imgDatasetId != null)
             runnerSel = <label className="customFileUpload">Choose runner</label>;
+            // runnerSel = <div className="runnerMenu">
+            //         <label className="customFileUpload">Choose runner</label>
+            //         <div>Pes pes pes</div>
+            // </div>;
 
         const cn = this.props.results === null ? "homeTabBase" : "homeTabBase homeTabBaseClicked";
 

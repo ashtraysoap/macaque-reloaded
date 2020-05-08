@@ -3,9 +3,7 @@ import React from 'react';
 
 import { AlignmentsTab } from './alignmentsTab.js';
 import { BeamSearchOutputView } from './beamSearchOutputView.js';
-import { CaptionTab } from './captionTab.js';
 import { CaptionsTab } from './captionsTab.js';
-import { ElementScoreTable } from './scoreTable.js';
 
 export { RunResultsView, HomeTabResultsView };
 
@@ -86,8 +84,10 @@ class RunResultsView extends React.Component {
 
         let attTab = !this.state.showAlignments ? null :
             <AlignmentsTab 
-                caption={caption}
-                urls={this.state.urls}
+                greedyCaption={r.greedy.caption}
+                beamSearchCaptions={r.beamSearch.captions}
+                runId={this.props.runId}
+                instanceId={this.props.instanceId}
             />;
 
         let bsView = !this.state.showBSOut ? null :

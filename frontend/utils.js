@@ -10,7 +10,6 @@ function range(n) {
 }
 
 function zip(x, y) {
-    //TODO: add checks
     let z = []
     for (let i = 0; i < x.length; i++) {
         z.push([x[i], y[i]]);
@@ -140,8 +139,7 @@ class SidePanel extends React.Component {
 
         return (
             <div className="sideTab">
-                <label>{p.label}</label>
-                <hr/>
+                <div className="addModelPartLabel">{p.label}</div>
                 {keys}
             </div>
         );

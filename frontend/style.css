@@ -34,6 +34,11 @@
     font-weight: 100;
 }
 
+:root {
+    --c1: #EDF5E1;
+    --c2: #C5CBE3;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -43,6 +48,31 @@ body {
     font-family: Roboto;
 }
 
+/* Styles for utils.js */
+
+.pendingTab {
+    background-color: orange;
+    border-style: 3px solid;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+.errorTab {
+    background-color: red;
+    border-style: 3px solid;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+.successTab {
+    background-color: green;
+    border-style: 3px solid;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+
+/* About Tab */
 
 .aboutTab {
     width: 55vw;
@@ -50,7 +80,6 @@ body {
     margin-right: auto;
     margin-top: 5vw;
     display: flex;
-    /* flex-direction: column; */
     align-items: center;
     justify-content: center;
 }
@@ -58,9 +87,11 @@ body {
 .addModelPartLabel {
     border-bottom: solid 1px #ccc;
     margin-bottom: 1vw;
+    line-height: 2;
 }
 
 .addSomethingTab {
+    width: 30vw;
     line-height: 2;
 }
 
@@ -72,6 +103,8 @@ body {
 .configTab > div {
     margin-bottom: 3vh;
 }
+
+/* DataEntriesList */
 
 .dataEntry {
     width: auto;
@@ -113,57 +146,13 @@ body {
     margin-top: 2vw;
 }
 
-
-.multiSel {
-    line-height: 2;
-}
-
-.multiSel  div {
-    color: grey;
-}
-
-.multiSel  div.selected {
-    color: black;
-}
-
-.multiSel > label {
-    color: grey;
-}
-
-.multiSel > label.selected {
-    color: black;
-}
-
-.pendingTab {
-    background-color: orange;
-    border-style: 3px solid;
-    border-radius: 5px;
-    padding-left: 10px;
-}
-
-.errorTab {
-    background-color: red;
-    border-style: 3px solid;
-    border-radius: 5px;
-    padding-left: 10px;
-}
-
-.successTab {
-    background-color: green;
-    border-style: 3px solid;
-    border-radius: 5px;
-    padding-left: 10px;
-}
-
 .sideTab {
-    float: left;
-    width: 12vw;
-    margin-left: 6vw;
-    margin-right: auto;
+    width: 15vw;
     line-height: 2;
+    margin-right: 5vw;
 }
 
-.sideTab > div {
+.sideTab div:not(:first-child) {
     color: grey;
 }
 
@@ -171,43 +160,33 @@ body {
     color: black;
 }
 
-.sideTab > div:hover {
+.sideTab div:not(:first-child):hover {
     cursor: pointer;
 }
 
-.centerTab {
-    width: 55vw;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 .configTab {
-    margin-top: 2vw;
-}
-
-.datasetCenter {
-    width: 55vw;
-    margin-left: auto;
+    width: 80vw;
+    margin-left: 20vw;
     margin-right: auto;
-}
-
-.datasetRight {
-    float: right;
-    width: 12vw;
-    margin-left: auto;
-    margin-right: 6vw;
-    line-height: 2;
-}
-
-.datasetRight > div > div {
-    margin-bottom: 2vw;
+    margin-top: 5vw;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
 .datasetsTab {
-    margin-top: 2vw;
+    width: 80vw;
+    margin-left: 20vw;
+    margin-right: auto;
+    margin-top: 5vw;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
-/*  */
+.datasetTab {
+    width: 40vw;
+}
 
 .resultsSpan {
     border-bottom: solid 1px #ccc;
@@ -249,9 +228,18 @@ body {
     text-align: center;
 }
 
-#BSGraph {
-    
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* Beam search visualizations */
@@ -285,11 +273,6 @@ body {
     fill: none;
     stroke: #ccc;
     stroke-width: 2px;
-}
-
-:root {
-    --c1: #EDF5E1;
-    --c2: #C5CBE3;
 }
 
 /* Navigation */
@@ -432,6 +415,15 @@ input[type="file"] {
     margin-bottom: 10px;
 }
 
+.homeTabBase > div {
+    display: flex;
+    flex-direction: row;
+}
+
+.homeTabBase > div > div {
+    display: inherit;
+}
+
 .homeTabBaseClicked {
     top: 100px;
     left: 30px;
@@ -459,6 +451,20 @@ input[type="file"] {
 
     opacity: 0;
     transition: opacity 2.0s ease 0.5s;
+}
+
+/* Runner Selection */
+
+.runnerMenu > div {
+    opacity: 0;
+}
+
+.runnerMenu:hover > div {
+    opacity: 1;
+}
+
+.runnerMenu:hover > label {
+    opacity: 0;
 }
 
 /* Results View */
