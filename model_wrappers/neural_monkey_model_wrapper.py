@@ -26,7 +26,7 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         alignments_series -> WordAlignmentRunner output_series
         bs_graph_series -> BeamSearchRunner output_series
         """
-
+        
         super(NeuralMonkeyModelWrapper, self).__init__(name, runs_on_features)
 
         if not os.path.isfile(config_path):

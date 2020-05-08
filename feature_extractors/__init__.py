@@ -38,7 +38,7 @@ def create_feature_extractor(extractor_config, from_response=True):
             slim_config = extractor_config['tfSlim']
         else:
              slim_config = extractor_config
-        net_type = slim_config['netType']
+        net_type = slim_config['network']
         model_ckpt = slim_config['checkpoint']
         feature_map = slim_config['featureMap']
         extractor = NeuralMonkeyFeatureExtractor(net=net_type,
