@@ -150,6 +150,7 @@ class HomeTab extends React.Component {
                         runners={this.props.runners}
                         select={(r) => this.setState({ selectedRunner: r})}
                         selected={this.state.selectedRunner}
+                        hide={() => this.setState({ showRunners: false})}
                     />
                 }
            
@@ -238,16 +239,14 @@ class HomeTab extends React.Component {
 }
 
 function RunnersMenu(props) {
-    let rs = enumerate(props.runners).map(r => <div key={r[1].name} style={{color: "red"}} onClick={() => props.select(r[0])}>
+    let rs = enumerate(props.runners).map(r => 
+    <div key={r[1].name} onClick={() => props.select(r[0])}>
         {r[1].name}
     </div>);
 
-    rs[props.selected].props.style.color = "blue";
-    console.log(rs[props.selected]);
-
     return (
-        <div>
-            <div>
+        <div onClick={props.hide} className="runnersMenuBack">
+            <div className="runnersMenu">
                 {rs}
             </div>
         </div>

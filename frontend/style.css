@@ -530,3 +530,50 @@ input[type="file"] {
 .tokens div:hover {
     color: orchid;
 }
+
+/* Runners Selection */
+
+.runnersMenuBack {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(128, 128, 128, 0.274);
+}
+
+.runnersMenu {
+    background-color: white;
+    width: 20vw;
+    margin-top: 20vw;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--c2);
+    border-radius: 5px;
+}
+
+.runnersMenu > div {
+    cursor: pointer;
+    display: block;
+    height: 20px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    width: 100%;
+    text-align: center;
+}
+
+.runnersMenu > div:hover {
+    background-color: var(--c1);
+}
+
+.runnersMenu > div:active {
+    background-color: var(--c2);
+}
+
+/* .runnersMenu > div#selected {
+    background-color: var(--c2);
+} */
