@@ -441,17 +441,15 @@ def _jsonify_results(results, runner_id, dataset_id, run_id):
         if 'greedy' not in x or x['greedy'] is None:
             r['greedy'] = {'caption': [], 'alignments': [], 'hasAttn': False}
         else:
-            if 'caption' in x['greedy']:
+            if 'caption' in x['greedy'] and x['greedy']['caption'] is not None:
                 r['greedy']['caption'] = x['greedy']['caption']
-            if 'alignments' in x['greedy']:
-                # r['greedy']['alignments'] = x['greedy']['alignments']
+            if 'alignments' in x['greedy'] and x['greedy']['alignments'] is not None:
                 r['greedy']['hasAttn'] = True
             else:
                 r['greedy']['hasAttn'] = False
         
         if 'beam_search' not in x or x['beam_search'] is None:
             r['beamSearch'] = {'captions': [], 
-                'alignments': [],
                 'hasAttn': False,
                 'hasGraph': False
             }
@@ -459,7 +457,6 @@ def _jsonify_results(results, runner_id, dataset_id, run_id):
             if 'captions' in x['beam_search']:
                 r['beamSearch']['captions'] = x['beam_search']['captions']
             if 'alignments' in x['beam_search']:
-                # r['beamSearch']['alignments'] = x['beam_search']['alignments']
                 r['beamSearch']['hasAttn'] = True
             else:
                 r['beamSearch']['hasAttn'] = False

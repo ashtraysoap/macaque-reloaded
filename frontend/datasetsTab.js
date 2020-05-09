@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { DatasetTab } from './datasetTab.js';
 import { SidePanel, range } from './utils.js';
 import { enumerate } from './utils.js';
+import { RunnersMenu } from './homeTab.js';
 
 export { DatasetsTab };
 
@@ -12,11 +13,12 @@ class DatasetsTab extends React.Component {
         super(props);
         this.state = {
             selectedDataset: 0,
-            selectedRunner: 0
+            selectedRunner: 0,
+            showRunners: false
         };
 
         this.runOnDataset = this.runOnDataset.bind(this);
-        this.buttonClick = this.buttonClick.bind(this);
+        // this.buttonClick = this.buttonClick.bind(this);
     }
 
     render() {
@@ -45,8 +47,10 @@ class DatasetsTab extends React.Component {
                     />
 
                     <div style={{marginTop: "7vh"}}>
-                        <label className="customFileUpload" onClick={this.buttonClick}>Process dataset</label>
-                        <RunnersMenu runners={p.runners} onClick={(r) => this.runOnDataset(r)}/>
+                        {/* <label className="customFileUpload" onClick={this.buttonClick}>Choose runner</label> */}
+                        <label className="customFileUpload" onClick={() => this.setState({ showRunners: true })}>Choose runner</label>
+                        <label className="customFileUpload" onClick={this.runOnDataset}>Process dataset</label>
+                        {/* <RunnersMenu runners={p.runners} onClick={(r) => this.runOnDataset(r)}/> */}
                     </div>
                 </div>
 
@@ -58,14 +62,24 @@ class DatasetsTab extends React.Component {
                         results={p.results.filter(r => r.datasetId === this.props.datasets[ds].id)}
                     />
                 </div>
+
+                {
+                    this.state.showRunners &&
+                    <RunnersMenu
+                        runners={this.props.runners}
+                        selected={this.state.selectedRunner}
+                        select={(r) => this.setState({ selectedRunner: r })}
+                        hide={() => this.setState({ showRunners: false })}
+                    />
+                }
             </div>
         )
 
     }
 
-    runOnDataset(r) {
+    runOnDataset() {
         const d = this.props.datasets[this.state.selectedDataset].id;
-        // const r = this.state.selectedRunner
+        const r = this.state.selectedRunner
         this.setState({ processing: true });
 
         fetch(`/run_on_dataset/${d}/${r}`)
@@ -80,25 +94,25 @@ class DatasetsTab extends React.Component {
             this.setState({ processing: false });
         });
     }
-
-    buttonClick() {
-        let d = document.getElementById("runnersMenu");
-        d.style.display = d.style.display === "none" ? "block" : "none";
-        console.log(d);
-    }
 }
+//     buttonClick() {
+//         let d = document.getElementById("runnersMenu");
+//         d.style.display = d.style.display === "none" ? "block" : "none";
+//         console.log(d);
+//     }
+// }
 
-function RunnersMenu(props) {
-    const rs = enumerate(props.runners).map(r => <div onClick={() => props.onClick(r[0])}>
-        {r[1].name}
-    </div>);
+// function RunnersMenu(props) {
+//     const rs = enumerate(props.runners).map(r => <div onClick={() => props.onClick(r[0])}>
+//         {r[1].name}
+//     </div>);
     
-    return (
-        <div id="runnersMenu" style={{display: "none"}}>
-            {rs}
-        </div>
-    );
-}
+//     return (
+//         <div id="runnersMenu" style={{display: "none"}}>
+//             {rs}
+//         </div>
+//     );
+// }
 
 DatasetsTab.propTypes = {
     datasets: PropTypes.arrayOf(PropTypes.object).isRequired,

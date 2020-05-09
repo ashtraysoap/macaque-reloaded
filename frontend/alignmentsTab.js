@@ -15,32 +15,32 @@ class AlignmentsTab extends React.Component {
         const p = this.props;
         const bsc = p.beamSearchCaptions;
 
-        console.log(p);
-
-        let segments = [];
-        segments.push(<div>greedy</div>);
-        segments.push(<AlignmentSegment
-            caption={p.greedyCaption}
-            fetchAttentionURL={(t) => this.fetchAttentionMap(0, t)}
-            key={"0"}
-        />);
-
-        if (bsc === null || bsc.length === 0) {
-            return (
-                <div>
-                    {segments}
-                </div>
-            );
+        if (!p.hasAttnGreedy && !p.hasAttnBeamSearch) {
+            return (<div>
+                No attention alignments present.
+            </div>);
         }
 
-        for (let i = 0; i < p.beamSearchCaptions.length; i++) {
-            const j = i;
-            segments.push(<div>{"beam " + (j + 1)}</div>);
+        let segments = [];
+        if (p.hasAttnGreedy) {
+            segments.push(<div>greedy</div>);
             segments.push(<AlignmentSegment
-                caption={bsc[j]}
-                fetchAttentionURL={(t) => this.fetchAttentionMap(j + 1, t)}
-                key={(j + 1).toString()}
+                caption={p.greedyCaption}
+                fetchAttentionURL={(t) => this.fetchAttentionMap(0, t)}
+                key={"0"}
             />);
+        }
+
+        if (p.hasAttnBeamSearch) {
+            for (let i = 0; i < p.beamSearchCaptions.length; i++) {
+                const j = i;
+                segments.push(<div>{"beam " + (j + 1)}</div>);
+                segments.push(<AlignmentSegment
+                    caption={bsc[j]}
+                    fetchAttentionURL={(t) => this.fetchAttentionMap(j + 1, t)}
+                    key={(j + 1).toString()}
+                />);
+            }
         }
 
         return (
@@ -115,7 +115,9 @@ AlignmentsTab.propTypes = {
     greedyCaption: PropTypes.arrayOf(PropTypes.string),
     beamSearchCaptions: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
     runId: PropTypes.number,
-    instanceId: PropTypes.number    
+    instanceId: PropTypes.number,
+    hasAttnGreedy: PropTypes.bool,
+    hasAttnBeamSearch: PropTypes.bool    
 };
 
 AlignmentSegment.propTypes = {

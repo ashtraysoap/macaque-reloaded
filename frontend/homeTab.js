@@ -4,7 +4,7 @@ import React from 'react';
 import { HomeTabResultsView } from './runResultsView.js';
 import { enumerate } from './utils.js';
 
-export { HomeTab };
+export { HomeTab, RunnersMenu };
 
 class HomeTab extends React.Component {
     constructor(props) {
@@ -16,7 +16,7 @@ class HomeTab extends React.Component {
             this.imgSrc = null;
             this.results = null;
         } else {
-            this.results = pr[0]
+            this.results = Object.values(pr)[0];
             this.imgSrc = `/load_image/${this.results.datasetId}/${0}`;
         }
 
@@ -24,8 +24,8 @@ class HomeTab extends React.Component {
             imgSrc: this.imgSrc,
             tokenId: null,
             waiting: false,
-            selectedRunner: pr === null ? 0 : pr[0].runnerId,
-            imgDatasetId: pr === null ? null : pr[0].datasetId,
+            selectedRunner: pr === null ? 0 : Object.values(pr)[0].runnerId,
+            imgDatasetId: pr === null ? null : Object.values(pr)[0].datasetId,
             showRunners: false
         };
 
@@ -240,7 +240,7 @@ class HomeTab extends React.Component {
 
 function RunnersMenu(props) {
     let rs = enumerate(props.runners).map(r => 
-    <div key={r[1].name} onClick={() => props.select(r[0])}>
+    <div key={r[1].name} onClick={() => props.select(r[0])} id={props.selected === r[0] ? "selected" : ""}>
         {r[1].name}
     </div>);
 
@@ -258,3 +258,10 @@ HomeTab.propTypes = {
     results: PropTypes.object,
     onServerResponse: PropTypes.func
 };
+
+RunnersMenu.propTypes = {
+    runners: PropTypes.arrayOf(PropTypes.object).isRequired,
+    hide: PropTypes.func.isRequired,
+    select: PropTypes.func.isRequired,
+    selected: PropTypes.number
+}

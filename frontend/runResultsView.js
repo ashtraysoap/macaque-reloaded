@@ -52,6 +52,7 @@ class RunResultsView extends React.Component {
         };
 
         const r = this.props.results;
+        console.log(r);
 
         let captionTab = !this.state.showCaption ? null :
             <CaptionsTab
@@ -66,6 +67,8 @@ class RunResultsView extends React.Component {
                 beamSearchCaptions={r.beamSearch.captions}
                 runId={this.props.runId}
                 instanceId={this.props.instanceId}
+                hasAttnGreedy={this.props.results.greedy.hasAttn}
+                hasAttnBeamSearch={this.props.results.beamSearch.hasAttn}
             />;
 
         let bsView = !this.state.showBSOut ? null :
@@ -126,14 +129,11 @@ RunResultsView.propTypes = {
 // results = {
 //     greedy: {
 //         caption: [],
-//         alignmnets: [],
 //         hasAttn: true
 //     },
 //     beamSearch: {
 //         captions: [[]],
-//         alignments: [[]],
 //         hasAttn: true,
-//         graph: null,
 //         hasGraph: false
 //     }
 // }

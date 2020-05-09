@@ -76,7 +76,6 @@ class DataInstanceView extends React.Component {
             onCaptionClick={this.onCaptionClick}
             fetchAttentionMap={this.fetchAttentionMap}
             fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
-            metrics={this.props.metrics}
             graph={null}
         />;
 
@@ -238,7 +237,6 @@ DataInstanceView.propTypes = {
     dataset: PropTypes.number.isRequired,
     onClick: PropTypes.func.isRequired,
     runners: PropTypes.arrayOf(PropTypes.object).isRequired,
-    metrics: PropTypes.arrayOf(PropTypes.string).isRequired,
     onInstanceChange: PropTypes.func.isRequired
 };
 
