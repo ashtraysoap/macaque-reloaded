@@ -33,13 +33,20 @@ class CaptionsTab extends React.Component {
     getGreedyBar(caption) {
         const cb = this.props.onTokenClick;
         let tokens = enumerate(caption);
-        tokens = tokens.map(t => <div onClick={() => cb(0, t[0])} key={t[1]}>{t[1]}</div>);
+        let className = "tokens";
+
+        if (this.props.hasAttnGreedy) {
+            tokens = tokens.map(t => <div onClick={() => cb(0, t[0])} key={t[1]}>{t[1]}</div>);
+            className += " blueOnHoover";
+        } else {
+            tokens = tokens.map(t => <div key={t[1]}>{t[1]}</div>);
+        }
 
         return (
             <div className="captionRow">
 
                 <div className="typeGreedy"><div>greedy</div></div>
-                <div className="tokens">
+                <div className={className}>
                     {tokens}
                 </div>
 
@@ -50,6 +57,7 @@ class CaptionsTab extends React.Component {
     getBeamsBar(beams) {
         const cb = this.props.onTokenClick;
         let rows = [];
+        let className = "tokens";
 
         if (beams.length === 0) {
             return null;
@@ -57,11 +65,17 @@ class CaptionsTab extends React.Component {
 
         for (let i = 0; i < beams.length; i++) {
             const j = i;
-            const c = enumerate(beams[i]);
-            const tokens = c.map(t => <div onClick={() => cb(j + 1, t[0])} key={t[1]}>{t[1]}</div>);
+            let tokens = enumerate(beams[i]);
+
+            if (this.props.hasAttnBeamSearch) {
+                tokens = tokens.map(t => <div onClick={() => cb(j + 1, t[0])} key={t[1]}>{t[1]}</div>);
+                className += " blueOnHover";
+            } else
+                tokens = tokens.map(t => <div key={t[1]}>{t[1]}</div>);
+
             const row = <div className="captionRow">
                 <div className="typeBeam"><div>{"beam " + (j + 1)}</div></div>
-                <div className="tokens">
+                <div className={className}>
                     {tokens}
                 </div>
             </div>;
@@ -77,4 +91,6 @@ CaptionsTab.propTypes = {
     greedyCaption: PropTypes.arrayOf(PropTypes.string),
     beamSearchCaptions: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
     onTokenClick: PropTypes.func.isRequired,
+    hasAttnGreedy: PropTypes.bool,
+    hasAttnBeamSearch: PropTypes.bool
 };

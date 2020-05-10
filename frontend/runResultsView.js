@@ -59,6 +59,8 @@ class RunResultsView extends React.Component {
                 greedyCaption={r.greedy.caption}
                 beamSearchCaptions={r.beamSearch.captions}
                 onTokenClick={(c, t) => this.props.onCaptionClick(c, t)}
+                hasAttnGreedy={this.props.results.greedy.hasAttn}
+                hasAttnBeamSearch={this.props.results.beamSearch.hasAttn}
             />;
 
         let attTab = !this.state.showAlignments ? null :

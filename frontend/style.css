@@ -547,11 +547,13 @@ input[type="file"] {
 
 .tokens div {
     margin-right: 10px;
+}
+
+.blueOnHover div {
     cursor: pointer;
 }
 
-.tokens div:hover {
-    /* color: orchid; */
+.blueOnHover div:hover {
     color: var(--c4);
 }
 

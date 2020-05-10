@@ -109,7 +109,7 @@ class AlignmentSegment extends React.Component {
                 { label }
                 {
                     this.state.show && 
-                    <div className="background">
+                    <div>
                         {imgs}
                     </div>
                 }
