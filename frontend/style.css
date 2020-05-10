@@ -37,6 +37,8 @@
 :root {
     --c1: #EDF5E1;
     --c2: #C5CBE3;
+    --c3: #9198e534;
+    --c4: rgb(0, 68, 255)
 }
 
 * {
@@ -96,7 +98,7 @@ body {
 }
 
 .background {
-    background-color: #9198e534;
+    background-color: var(--c3);
     line-height: 2.5;
 }
 
@@ -113,7 +115,7 @@ body {
 }
 
 .dataEntry:hover {
-    background-color: #9198e580;
+    background-color: var(--c3);
 }
 
 .dataList {
@@ -200,7 +202,7 @@ body {
 
 .runToggle {
     display: inline;
-    border: solid #9198e534;
+    border: solid var(--c3);
     border-radius: 4px;
     margin: 10px;
 }
@@ -210,7 +212,7 @@ body {
 }
 
 .runToggle > span ~ span {
-    border-left: solid #9198e534;
+    border-left: solid var(--c3);
 }
 
 .sidePanel {
@@ -512,6 +514,11 @@ input[type="file"] {
 
 .captionRow {
     display: block;
+    line-height: 2;
+
+    width: 100%;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
 }
 
 .captionRow div {
@@ -521,28 +528,46 @@ input[type="file"] {
 }
 
 .tokens {
-    width: 30vw;
-    border-bottom: 2px solid orchid;
+    width: 60%;
 }
 
 .typeBeam {
-    width: 15vw;
-    border-bottom: 2px solid palegreen;
+    width: 20%;
+    padding-left: 20px;
+    font-style: italic;
+    color: rgb(194, 60, 60);
 }
 
 .typeGreedy {
-    width: 15vw;
-    border-bottom: 2px solid palegreen;
+    width: 20%;
+    padding-left: 20px;
+    font-style: italic;
+    color: green;
 }
 
 .tokens div {
-    margin-right: 5px;
+    margin-right: 10px;
     cursor: pointer;
 }
 
 .tokens div:hover {
-    color: orchid;
+    /* color: orchid; */
+    color: var(--c4);
 }
+
+.captionRow:hover {
+    border-radius: 15px 15px 15px 15px;
+    background-color: var(--c3);
+    /* border: 1px solid var(--c3); */
+    border-bottom: none;
+    margin-bottom: 11px;
+}
+
+.captionRow:last-child {
+    margin-bottom: 0px;
+    border-bottom: none;
+}
+
 
 /* Runners Selection */
 
@@ -601,5 +626,5 @@ input[type="file"] {
 }
 
 .attnLabel:hover {
-    color: rgb(0, 68, 255);
+    color: var(--c4);
 }
