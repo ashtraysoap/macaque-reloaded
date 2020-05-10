@@ -23,22 +23,22 @@ class AlignmentsTab extends React.Component {
 
         let segments = [];
         if (p.hasAttnGreedy) {
-            segments.push(<div>greedy</div>);
             segments.push(<AlignmentSegment
                 caption={p.greedyCaption}
                 fetchAttentionURL={(t) => this.fetchAttentionMap(0, t)}
                 key={"0"}
+                label="greedy"
             />);
         }
 
         if (p.hasAttnBeamSearch) {
             for (let i = 0; i < p.beamSearchCaptions.length; i++) {
                 const j = i;
-                segments.push(<div>{"beam " + (j + 1)}</div>);
                 segments.push(<AlignmentSegment
                     caption={bsc[j]}
                     fetchAttentionURL={(t) => this.fetchAttentionMap(j + 1, t)}
                     key={(j + 1).toString()}
+                    label={"beam " + (j + 1)}
                 />);
             }
         }
@@ -70,7 +70,8 @@ class AlignmentSegment extends React.Component {
         const len = this.props.caption.length;
 
         this.state = {
-            urls: Array(len)
+            urls: Array(len),
+            show: true
         }
 
         for (let i = 0; i < len; i++) {
@@ -90,12 +91,26 @@ class AlignmentSegment extends React.Component {
     }
 
     render() {
-        const imgs = zip(this.state.urls, this.props.caption).map(x =>
+        const p = this.props;
+        const s = this.state;
+        
+        const imgs = zip(s.urls, p.caption).map(x =>
             <ImageWithCaptionFrame src={x[0]} token={x[1]}/>);
 
+        const label = p.label !== null ? 
+            <div className="attnLabel" onClick={() => this.setState({ show: !s.show })}>
+                {p.label}
+            </div> : null;
+
         return (
-            <div className="background">
-                {imgs}
+            <div>
+                { label }
+                {
+                    this.state.show && 
+                    <div className="background">
+                        {imgs}
+                    </div>
+                }
             </div>
         );
     }
@@ -122,5 +137,6 @@ AlignmentsTab.propTypes = {
 
 AlignmentSegment.propTypes = {
     caption: PropTypes.arrayOf(PropTypes.string),
-    fetchAttentionURL: PropTypes.func
+    fetchAttentionURL: PropTypes.func,
+    label: PropTypes.string
 }

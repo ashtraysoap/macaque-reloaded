@@ -79,24 +79,24 @@ class RunResultsView extends React.Component {
 
         return (
             <div>
-                <div>
-                    <span className="resultsSpan" onClick={() => switchState('showCaption')}>
+                <div id="captions">
+                    <div className="resultsSpan" onClick={() => switchState('showCaption')}>
                         Captions
-                    </span>
+                    </div>
                     {captionTab}
                 </div>
 
                 <div id="alignments">
-                    <span className="resultsSpan" onClick={() => switchState('showAlignments')}>
+                    <div className="resultsSpan" onClick={() => switchState('showAlignments')}>
                         Alignments
-                    </span>
+                    </div>
                     {attTab}
                 </div>
                 
                 <div id="beamSearch">
-                    <span className="resultsSpan" onClick={() => switchState('showBSOut')}>
+                    <div className="resultsSpan" onClick={() => switchState('showBSOut')}>
                         Beam Search Output Graph
-                    </span>
+                    </div>
                     {bsView}
                 </div>
 

@@ -189,7 +189,13 @@ body {
 }
 
 .resultsSpan {
-    border-bottom: solid 1px #ccc;
+    font-size: 120%;
+    cursor: pointer;
+    padding-bottom: 10px;
+}
+
+.resultsSpan:hover {
+    color: rgb(0, 68, 255);
 }
 
 .runToggle {
@@ -488,6 +494,13 @@ input[type="file"] {
     overflow: auto;
 }
 
+#captions, #alignments, #beamSearch {
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 2vh;
+    padding-bottom: 5px;
+    line-height: 1.5;
+}
+
 /* Captions Bar */
 
 .captionsBar {
@@ -577,4 +590,16 @@ input[type="file"] {
 
 .runnersMenu > div#selected {
     background-color: var(--c2);
+}
+
+/* Alignments Tab */
+
+.attnLabel {
+    cursor: pointer;
+    width: 100%;
+    border-bottom: 2px solid #ccc;
+}
+
+.attnLabel:hover {
+    color: rgb(0, 68, 255);
 }
