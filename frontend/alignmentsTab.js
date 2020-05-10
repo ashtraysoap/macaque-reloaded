@@ -44,7 +44,7 @@ class AlignmentsTab extends React.Component {
         }
 
         return (
-            <div>
+            <div className="attn">
                 {segments}
             </div>
         );
@@ -97,8 +97,10 @@ class AlignmentSegment extends React.Component {
         const imgs = zip(s.urls, p.caption).map(x =>
             <ImageWithCaptionFrame src={x[0]} token={x[1]}/>);
 
+        const className = this.state.show ? "attnLabelShowing" : "attnLabelHidden"
+
         const label = p.label !== null ? 
-            <div className="attnLabel" onClick={() => this.setState({ show: !s.show })}>
+            <div className={className} onClick={() => this.setState({ show: !s.show })}>
                 {p.label}
             </div> : null;
 
