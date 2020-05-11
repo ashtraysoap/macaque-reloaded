@@ -23,6 +23,7 @@ class CaptionsTab extends React.Component {
 
     render() {
         const p = this.props;
+        console.log(p);
 
         const greedy = p.greedyCaption === null ? null : this.getGreedyBar(p.greedyCaption);
         const beams = p.beamSearchCaptions === null ? null : this.getBeamsBar(p.beamSearchCaptions); 
@@ -40,17 +41,18 @@ class CaptionsTab extends React.Component {
     getGreedyBar(caption) {
         const cb = this.onTokenClick;
         let tokens = enumerate(caption);
+        console.log(tokens);
         let className = "tokens";
 
         if (this.props.hasAttnGreedy) {
             tokens = tokens.map(t => 
-                <div onClick={() => cb(0, t[0])} className={this.getTokenClass(0, t[0])} key={t[1]}>
+                <div onClick={() => cb(0, t[0])} className={this.getTokenClass(0, t[0])}>
                     {t[1]}
                 </div>);
 
             className += " blueOnHoover";
         } else {
-            tokens = tokens.map(t => <div key={t[1]}>{t[1]}</div>);
+            tokens = tokens.map(t => <div>{t[1]}</div>);
         }
 
         return (
@@ -80,13 +82,13 @@ class CaptionsTab extends React.Component {
 
             if (this.props.hasAttnBeamSearch) {
                 tokens = tokens.map(t => 
-                    <div onClick={() => cb(j + 1, t[0])} className={this.getTokenClass(j + 1, t[0])} key={t[1]}>
+                    <div onClick={() => cb(j + 1, t[0])} className={this.getTokenClass(j + 1, t[0])}>
                         {t[1]}
                     </div>);
 
                 className += " blueOnHover";
             } else
-                tokens = tokens.map(t => <div key={t[1]}>{t[1]}</div>);
+                tokens = tokens.map(t => <div>{t[1]}</div>);
 
             const row = <div className="captionRow">
                 <div className="typeBeam"><div>{"beam " + (j + 1)}</div></div>

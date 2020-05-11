@@ -19,12 +19,29 @@ class DatasetTab extends React.Component {
 
         this.showView = this.showView.bind(this);
         this.closeView = this.closeView.bind(this);
-        this.getInstance = this.getInstance.bind(this);
         this.instanceChange = this.instanceChange.bind(this);
     }
 
     get showingElementView() {
         return (this.state.elemIdx === null) ? false : true;
+    }
+
+    get currentInstance() {
+        return this.props.dataset.elements[this.state.elemIdx];
+    }
+
+    get currentResults() {
+        const results = this.props.results;
+        const idx = this.state.elemIdx;
+
+        return results.map(r => {
+            return {
+                runId: r.runId,
+                runnerId: r.runnerId,
+                datasetId: r.datasetId,
+                results: r.results[idx],
+            }
+        });
     }
 
     showView(idx) {
@@ -35,25 +52,16 @@ class DatasetTab extends React.Component {
         this.setState({ elemIdx: null });
     }
 
-    getInstance() {
-        let x = this.props.dataset.elements[this.state.elemIdx];
-        return x;
-    }
-
     render() {
         const p = this.props;
-        const results = p.results;
-        const idx = this.state.elemIdx;
-        console.log(results);
-        const selectedResults = this.getResultsForElement(results, idx);
-        
+
         const view = this.showingElementView ? <DataInstanceView 
-            dataInstance={this.getInstance()} 
-            dataset={p.dataset.id}
-            results={selectedResults}
-            onClick={this.closeView}
-            runners={p.runners}
-            onInstanceChange={this.instanceChange}
+                dataInstance={this.currentInstance} 
+                dataset={p.dataset.id}
+                results={this.currentResults}
+                onClick={this.closeView}
+                runners={p.runners}
+                onInstanceChange={this.instanceChange}
             /> : null;
 
         const list = <DataEntriesList
@@ -68,17 +76,6 @@ class DatasetTab extends React.Component {
                     {view}
             </div>
         );
-    }
-
-    getResultsForElement(results, elemId) {
-        return results.map(r => {
-            return {
-                runId: r.runId,
-                runnerId: r.runnerId,
-                datasetId: r.datasetId,
-                results: r.results[elemId],
-            }
-        });
     }
 
     instanceChange(keyCode) {

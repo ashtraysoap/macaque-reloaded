@@ -26,7 +26,6 @@ class AlignmentsTab extends React.Component {
             segments.push(<AlignmentSegment
                 caption={p.greedyCaption}
                 fetchAttentionURL={(t) => this.fetchAttentionMap(0, t)}
-                key={"0"}
                 label="greedy"
             />);
         }
@@ -37,7 +36,6 @@ class AlignmentsTab extends React.Component {
                 segments.push(<AlignmentSegment
                     caption={bsc[j]}
                     fetchAttentionURL={(t) => this.fetchAttentionMap(j + 1, t)}
-                    key={(j + 1).toString()}
                     label={"beam " + (j + 1)}
                 />);
             }
@@ -82,6 +80,9 @@ class AlignmentSegment extends React.Component {
         const s = this.state;
 
         const len = p.caption.length;
+
+        if (len !== s.urls.length)
+            this.setState({ urls: Array(len ), hasURLs: false });
         
         if (s.show && !s.hasURLs) {
             for (let i = 0; i < len; i++) {

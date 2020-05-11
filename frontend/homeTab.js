@@ -32,7 +32,6 @@ class HomeTab extends React.Component {
         this.getResultsForElement = this.getResultsForElement.bind(this);
         this.fetchAttentionMap = this.fetchAttentionMap.bind(this);
         this.fetchAttentionMapForBSToken = this.fetchAttentionMapForBSToken.bind(this);
-        this.fetchBeamSearchGraph = this.fetchBeamSearchGraph.bind(this);
         this.onCaptionClick = this.onCaptionClick.bind(this);
         this.onImageSubmit = this.onImageSubmit.bind(this);
         this.processImage = this.processImage.bind(this);
@@ -139,7 +138,6 @@ class HomeTab extends React.Component {
                             fetchAttentionMap={this.fetchAttentionMap}
                             fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
                             metrics={[]}
-                            graph={this.state.bsGraph}
                         />
                     </div>
                 }
@@ -204,14 +202,6 @@ class HomeTab extends React.Component {
             })
             .then(url => this.setState({ imgSrc: url, tokenId: null}));
         }
-    }
-
-    fetchBeamSearchGraph() {
-        return fetch(`/load_bs_graph/${this.results.runId}/${0}`)
-        .then(res => res.json())
-        .then(res => {
-            this.setState({ bsGraph: res });
-        });
     }
 
     onCaptionClick(captionId, tokenId) {
