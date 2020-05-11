@@ -10,8 +10,15 @@ class CaptionsTab extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            captionId: null,
+            tokenId: null
+        };
+
         this.getGreedyBar = this.getGreedyBar.bind(this);
         this.getBeamsBar = this.getBeamsBar.bind(this);
+        this.onTokenClick = this.onTokenClick.bind(this);
+        this.getTokenClass = this.getTokenClass.bind(this);
     }
 
     render() {
@@ -31,12 +38,16 @@ class CaptionsTab extends React.Component {
     }
 
     getGreedyBar(caption) {
-        const cb = this.props.onTokenClick;
+        const cb = this.onTokenClick;
         let tokens = enumerate(caption);
         let className = "tokens";
 
         if (this.props.hasAttnGreedy) {
-            tokens = tokens.map(t => <div onClick={() => cb(0, t[0])} key={t[1]}>{t[1]}</div>);
+            tokens = tokens.map(t => 
+                <div onClick={() => cb(0, t[0])} className={this.getTokenClass(0, t[0])} key={t[1]}>
+                    {t[1]}
+                </div>);
+
             className += " blueOnHoover";
         } else {
             tokens = tokens.map(t => <div key={t[1]}>{t[1]}</div>);
@@ -55,7 +66,7 @@ class CaptionsTab extends React.Component {
     }
 
     getBeamsBar(beams) {
-        const cb = this.props.onTokenClick;
+        const cb = this.onTokenClick;
         let rows = [];
         let className = "tokens";
 
@@ -68,7 +79,11 @@ class CaptionsTab extends React.Component {
             let tokens = enumerate(beams[i]);
 
             if (this.props.hasAttnBeamSearch) {
-                tokens = tokens.map(t => <div onClick={() => cb(j + 1, t[0])} key={t[1]}>{t[1]}</div>);
+                tokens = tokens.map(t => 
+                    <div onClick={() => cb(j + 1, t[0])} className={this.getTokenClass(j + 1, t[0])} key={t[1]}>
+                        {t[1]}
+                    </div>);
+
                 className += " blueOnHover";
             } else
                 tokens = tokens.map(t => <div key={t[1]}>{t[1]}</div>);
@@ -83,6 +98,26 @@ class CaptionsTab extends React.Component {
         }
 
         return rows;
+    }
+
+    onTokenClick(cid, tid) {
+        const s = this.state;
+
+        if (cid === s.captionId && tid === s.tokenId)
+            this.setState({ captionId: null, tokenId: null });
+        else
+            this.setState({ captionId: cid, tokenId: tid });
+
+        this.props.onTokenClick(cid, tid);
+    }
+
+    getTokenClass(cid, tid) {
+        const s = this.state;
+        if (cid === s.captionId && tid === s.tokenId) {
+            return "selectedToken";
+        }
+
+        return "";
     }
 
 }

@@ -531,6 +531,10 @@ input[type="file"] {
     width: 60%;
 }
 
+.tokens .selectedToken {
+    color: var(--c4);
+}
+
 .typeBeam {
     width: 20%;
     padding-left: 20px;
