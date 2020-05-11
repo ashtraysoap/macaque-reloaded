@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 export { InformativeInput, InformativeLabel, TableRow, SidePanel, 
-    range, zip, enumerate, round, basename, MultipleSelectionWithButton };
+    range, zip, enumerate, round, basename, wait, MultipleSelectionWithButton };
 
 
 function range(n) {
@@ -28,6 +28,14 @@ function round(n) {
 function basename(fp) {
     return fp.replace(/^.*[\\\/]/, '');
 }
+
+function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
 
 class InformativeInput extends React.Component {
     constructor(props) {

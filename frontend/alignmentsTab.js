@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { zip } from './utils.js';
+import { zip, wait } from './utils.js';
 
 export { AlignmentsTab };
 
@@ -71,28 +71,36 @@ class AlignmentSegment extends React.Component {
 
         this.state = {
             urls: Array(len),
-            show: true
+            show: false,
+            hasURLs: false
         }
 
-        for (let i = 0; i < len; i++) {
-            const j = i;
-            this.props.fetchAttentionURL(j)
-            .then(url => {
-
-                console.log();
-                console.log(j);
-                console.log(url);
-
-                let s = this.state;
-                s.urls[j] = url;
-                this.setState(s)
-            });
-        }
     }
 
     render() {
         const p = this.props;
         const s = this.state;
+
+        const len = p.caption.length;
+        
+        if (s.show && !s.hasURLs) {
+            for (let i = 0; i < len; i++) {
+                wait(20);
+                const j = i;
+                this.props.fetchAttentionURL(j)
+                .then(url => {
+    
+                    console.log();
+                    console.log(j);
+                    console.log(url);
+    
+                    let s = this.state;
+                    s.urls[j] = url;
+                    this.setState(s);
+                });
+            }
+            this.setState({ hasURLs: true });
+        }
         
         const imgs = zip(s.urls, p.caption).map(x =>
             <ImageWithCaptionFrame src={x[0]} token={x[1]}/>);
