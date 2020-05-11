@@ -139,7 +139,6 @@ class DataInstanceView extends React.Component {
         // left or right arrow pressed:
         if (key == "37" || key == "38" || key == "39" || key == "40") {
             const newIdx = this.props.onInstanceChange(key);
-            console.log("newIdx", newIdx);
             this.setState({ imgSrc: `/load_image/${this.props.dataset}/${newIdx}` });
         }
     }

@@ -89,12 +89,7 @@ class AlignmentSegment extends React.Component {
                 wait(20);
                 const j = i;
                 this.props.fetchAttentionURL(j)
-                .then(url => {
-    
-                    console.log();
-                    console.log(j);
-                    console.log(url);
-    
+                .then(url => {    
                     let s = this.state;
                     s.urls[j] = url;
                     this.setState(s);

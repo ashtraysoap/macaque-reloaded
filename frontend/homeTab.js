@@ -69,7 +69,6 @@ class HomeTab extends React.Component {
     }
 
     render() {
-        console.log(this.results);
         if (this.props.runners.length === 0) {
             return (
                 <div className="homeTab">
@@ -137,7 +136,6 @@ class HomeTab extends React.Component {
                             onCaptionClick={this.onCaptionClick}
                             fetchAttentionMap={this.fetchAttentionMap}
                             fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
-                            metrics={[]}
                         />
                     </div>
                 }

@@ -17,7 +17,6 @@ function HomeTabResultsView(props) {
                 onCaptionClick={props.onCaptionClick}
                 fetchAttentionMap={props.fetchAttentionMap}
                 fetchAttentionMapForBSToken={props.fetchAttentionMapForBSToken}
-                graph={props.graph}
             />
         </div>
     );
@@ -27,7 +26,7 @@ class RunResultsView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.fetchBeamSearchGraph = this.fetchBeamSearchGraph.bind(this);
+        // this.fetchBeamSearchGraph = this.fetchBeamSearchGraph.bind(this);
         
         this.hasAttn = false;
         this.hasBS = this.props.results.beamSearch.captions.length > 0 ? true : false;
@@ -37,13 +36,8 @@ class RunResultsView extends React.Component {
             showAlignments: false,
             showCaption: true,
             showBSOut: false,
-            bsGraph: null,
         };
 
-        if (this.props.graph === undefined && this.hasGraph)
-            this.fetchBeamSearchGraph();
-        if (this.props.graph === null && this.hasGraph)
-            this.fetchBeamSearchGraph();
     }
 
     get bsGraph() {
@@ -81,7 +75,6 @@ class RunResultsView extends React.Component {
 
         let bsView = !this.state.showBSOut ? null :
             <BeamSearchOutputView 
-                // graph={this.state.bsGraph}
                 graphPromise={this.bsGraph}
                 displayAlignment={a => this.props.fetchAttentionMapForBSToken(a)}
             />;
@@ -113,13 +106,13 @@ class RunResultsView extends React.Component {
         );
     }
 
-    fetchBeamSearchGraph() {
-        return fetch(`/load_bs_graph/${this.props.runId}/${this.props.instanceId}`)
-        .then(res => res.json())
-        .then(res => {
-            this.setState({ bsGraph: res });
-        });
-    }
+    // fetchBeamSearchGraph() {
+    //     return fetch(`/load_bs_graph/${this.props.runId}/${this.props.instanceId}`)
+    //     .then(res => res.json())
+    //     .then(res => {
+    //         this.setState({ bsGraph: res });
+    //     });
+    // }
 }
 
 RunResultsView.propTypes = {

@@ -23,8 +23,6 @@ class CaptionsTab extends React.Component {
 
     render() {
         const p = this.props;
-        console.log(p);
-
         const greedy = p.greedyCaption === null ? null : this.getGreedyBar(p.greedyCaption);
         const beams = p.beamSearchCaptions === null ? null : this.getBeamsBar(p.beamSearchCaptions); 
 
@@ -41,7 +39,6 @@ class CaptionsTab extends React.Component {
     getGreedyBar(caption) {
         const cb = this.onTokenClick;
         let tokens = enumerate(caption);
-        console.log(tokens);
         let className = "tokens";
 
         if (this.props.hasAttnGreedy) {

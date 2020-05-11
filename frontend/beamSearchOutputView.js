@@ -20,7 +20,6 @@ class BeamSearchOutputView extends React.Component {
         };
 
         this.props.graphPromise.then(g => {
-            console.log("promise fulfilled");
             this.setState({ graphLoaded: true, graph: g });
         });
     }
