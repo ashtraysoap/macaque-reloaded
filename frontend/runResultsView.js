@@ -25,8 +25,6 @@ function HomeTabResultsView(props) {
 class RunResultsView extends React.Component {
     constructor(props) {
         super(props);
-
-        // this.fetchBeamSearchGraph = this.fetchBeamSearchGraph.bind(this);
         
         this.hasAttn = false;
         this.hasBS = this.props.results.beamSearch.captions.length > 0 ? true : false;
@@ -105,14 +103,6 @@ class RunResultsView extends React.Component {
             </div>
         );
     }
-
-    // fetchBeamSearchGraph() {
-    //     return fetch(`/load_bs_graph/${this.props.runId}/${this.props.instanceId}`)
-    //     .then(res => res.json())
-    //     .then(res => {
-    //         this.setState({ bsGraph: res });
-    //     });
-    // }
 }
 
 RunResultsView.propTypes = {
