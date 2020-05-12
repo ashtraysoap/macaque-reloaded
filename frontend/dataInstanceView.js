@@ -58,21 +58,26 @@ class DataInstanceView extends React.Component {
         if (results === null || results === undefined || results.length === 0) {
             return (
                 <div className="transparentLayer" onClick={() => this.props.onClick()}>
+
                     <div className="instanceViewNoResults" id="X" onClick={(e) => e.stopPropagation()} onKeyDown={e => this.onKeyDown(e)} tabIndex="0">
-                        <div className="filename">
-                            { basename(instance.source) }
-                        </div>
-                        <div>
-                            <img src={this.state.imgSrc} alt=""/>
-                        </div>
-                        <SourceCaption caption={this.sourceCaption}/>
+                        
+                            <div className="filename">
+                                { basename(instance.source) }
+                            </div>
+                            <div>
+                                <img src={this.state.imgSrc} alt=""/>
+                            </div>
+                            <SourceCaption caption={this.sourceCaption}/>
+                        
                     </div>
+
                 </div>
             )
         }
 
         return (
             <div className="transparentLayer" onClick={() => this.props.onClick()}>
+
                 <div className="instanceView" id="X" onClick={(e) => e.stopPropagation()} onKeyDown={e => this.onKeyDown(e)} tabIndex="0">
                     
                     <div className="instanceInfo">
@@ -95,6 +100,7 @@ class DataInstanceView extends React.Component {
                     </div>
 
                 </div>
+
             </div>
         );
     }

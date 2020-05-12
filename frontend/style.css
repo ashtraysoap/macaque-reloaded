@@ -660,14 +660,27 @@ input[type="file"] {
 
 .instanceViewNoResults {
     background-color: white;
-    display: inline-block;
-    border: solid 4px black;
+    border: solid 2px #ccc;
     border-radius: 15px;
     line-height: 3;
-    width: 40vw;
+    width: 50vw;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
     margin-left: auto;
     margin-right: auto;
-    overflow: auto;
+    margin-top: 3vh;
+}
+
+.instanceViewNoResults div:first-child {
+    margin-top: 2vh;
+}
+
+.instanceViewNoResults .sourceCaption {
+    width: auto;
+    text-align: center;
 }
 
 .instanceView {
@@ -679,6 +692,7 @@ input[type="file"] {
     height: 90vh;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 3vh;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -697,7 +711,7 @@ input[type="file"] {
     margin-bottom: 2vh;
 }
 
-.instanceInfo img {
+.transparentLayer img {
     width: 95%;
     height: auto;
     padding: 6px;
