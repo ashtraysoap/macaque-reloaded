@@ -665,7 +665,7 @@ input[type="file"] {
     position: absolute;
     top: 0;
     left: 0;
-    text-align: center;
+    /* text-align: center; */
 }
 
 /* .instanceView {
@@ -692,23 +692,30 @@ input[type="file"] {
 
 .instanceView {
     background-color: white;
-    border: solid 4px black;
+    border: solid 2px #ccc;
     border-radius: 15px;
     line-height: 3;
-    width: 80vw;
+    width: 85vw;
+    height: 90vh;
     margin-left: auto;
     margin-right: auto;
     display: flex;
     flex-direction: row;
+    justify-content: space-evenly;
 }
 
 .instanceInfo {
-    width: 30vw;
+    width: 30%;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
 
-    border-right: 2px solid #ccc;
+}
+
+.instanceViewResults {
+    width: 60%;
+    overflow: auto;
+    margin-top: 2vh;
 }

@@ -28,13 +28,13 @@ class BeamSearchOutputView extends React.Component {
 
         if (this.state.graphPromise === null)
             return (
-                <div className="background">
+                <div>
                     <div>Beam search output graph not detected.</div>
                 </div>
             );
 
         return (
-            <div className="background">
+            <div>
                     <svg id="BSGraph"></svg>
             </div>
         );

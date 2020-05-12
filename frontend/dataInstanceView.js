@@ -73,7 +73,7 @@ class DataInstanceView extends React.Component {
                             <img src={this.state.imgSrc} className="homeTabImg" alt=""/>
                         </div>
                     </div>
-                    <div>
+                    <div className="instanceViewResults">
                         <RunResultsView 
                             results={this.selectedResults.results} 
                             instanceId={instance.id}
@@ -81,7 +81,7 @@ class DataInstanceView extends React.Component {
                             onCaptionClick={this.onCaptionClick}
                             fetchAttentionMap={this.fetchAttentionMap}
                             fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
-                        />;
+                        />
                     </div>
                 </div>
             </div>
@@ -148,8 +148,7 @@ class DataInstanceView extends React.Component {
         } else {
             // fetch the attention map corresponding to the word from the
             // caption the user clicked on
-            //this.fetchAttentionMap(this.runId, this.props.dataInstance.id, tokenId)
-            this.fetchAttentionMapForOriginal(this.runId, this.props.dataInstance.id, captionId, tokenId)
+            this.fetchAttentionMapForOriginal(this.selectedRunId, this.props.dataInstance.id, captionId, tokenId)
             .then(src => {
                 this.setState({ tokenId: tokenId, imgSrc: src });
             });
