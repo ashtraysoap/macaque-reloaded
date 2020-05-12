@@ -16,7 +16,8 @@ class BeamSearchOutputView extends React.Component {
         this.handleNodeClick = this.handleNodeClick.bind(this);
 
         this.state = {
-            graphLoaded: false
+            graphLoaded: false,
+            selectedNodeId: null
         };
 
         this.props.graphPromise.then(g => {
@@ -100,7 +101,7 @@ class BeamSearchOutputView extends React.Component {
 
         link.enter().insert("path", "g")
             .attr("class", "link")
-            .attr("d", diagonal);
+            .attr("d", diagonal);        
     }
 
     componentDidUpdate(prevProps) {
@@ -110,8 +111,10 @@ class BeamSearchOutputView extends React.Component {
             });
         }
 
-        if (this.state.graphLoaded && this.state.graph !== null)
+        if (this.state.graphLoaded && this.state.graph !== null) {
+            console.log("building graph");
             this.buildGraph(this.state.graph);
+        }
     }
 
     componentDidMount() {
@@ -120,18 +123,19 @@ class BeamSearchOutputView extends React.Component {
     }
 
     handleNodeClick(node) {
-        if (!node.displayed) {
+        if (node.id !== this.state.selectedNodeId) {
             if (node.alignment === null || node.alignment === undefined) {
                 // No alignment present, will display original image.
                 this.props.displayAlignment(null);
+                this.setState({ selectedNodeId: null });
             } else {
                 this.props.displayAlignment(node.alignment);
-                node.displayed = true;
+                this.setState({ selectedNodeId: node.id });
             }
         } else {
             // Already displaying node's alignment; display the original image.
-            node.displayed = false;
             this.props.displayAlignment(null);
+            this.setState({ selectedNodeId: null });
         }
     }
 }
