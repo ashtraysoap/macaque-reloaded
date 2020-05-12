@@ -44,21 +44,28 @@ class DataInstanceView extends React.Component {
         return r[0].runId;
     }
 
+    get sourceCaption() {
+        const srcCap = this.props.dataInstance.sourceCaption;
+        if (srcCap === undefined || srcCap === null)
+            return null;
+        return srcCap;
+    }
+
     render() {
         const instance = this.props.dataInstance;
         const results = this.props.results;
 
-        console.log(results);
         if (results === null || results === undefined || results.length === 0) {
             return (
                 <div className="transparentLayer" onClick={() => this.props.onClick()}>
                     <div className="instanceViewNoResults" id="X" onClick={(e) => e.stopPropagation()} onKeyDown={e => this.onKeyDown(e)} tabIndex="0">
-                        <div className="staticLabel">
+                        <div className="filename">
                             { basename(instance.source) }
                         </div>
                         <div>
-                            <img src={this.state.imgSrc} className="homeTabImg" alt=""/>
+                            <img src={this.state.imgSrc} alt=""/>
                         </div>
+                        <SourceCaption caption={this.sourceCaption}/>
                     </div>
                 </div>
             )
@@ -67,12 +74,15 @@ class DataInstanceView extends React.Component {
         return (
             <div className="transparentLayer" onClick={() => this.props.onClick()}>
                 <div className="instanceView" id="X" onClick={(e) => e.stopPropagation()} onKeyDown={e => this.onKeyDown(e)} tabIndex="0">
+                    
                     <div className="instanceInfo">
-                        { basename(instance.source) }
+                        <div className="filename">{ basename(instance.source) }</div>
                         <div>
-                            <img src={this.state.imgSrc} className="homeTabImg" alt=""/>
+                            <img src={this.state.imgSrc} alt=""/>
                         </div>
+                        <SourceCaption caption={this.sourceCaption}/>
                     </div>
+
                     <div className="instanceViewResults">
                         <RunResultsView 
                             results={this.selectedResults.results} 
@@ -83,6 +93,7 @@ class DataInstanceView extends React.Component {
                             fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
                         />
                     </div>
+
                 </div>
             </div>
         );
@@ -371,6 +382,32 @@ class DataInstanceView extends React.Component {
 //         </div>
 //     );
 // }
+
+class SourceCaption extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            show: true
+        };
+    }
+
+    render() {
+        const c = this.props.caption;
+        const cb = () => this.setState({ show: !this.state.show });
+
+        if (c === null) return null;
+
+        return (
+            <div className="sourceCaption">
+                <div onClick={cb} className="sourceCaptionLabel">Source Caption</div>
+                {
+                    this.state.show && <div className="sourceCaptionText">{c.join(' ')}</div>
+                }
+            </div>
+        );
+    }
+}
 
 
 DataInstanceView.propTypes = {

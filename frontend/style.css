@@ -648,16 +648,6 @@ input[type="file"] {
 
 /* Data Instance View */
 
-.staticLabel {
-    padding: 6px 12px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    cursor: pointer;
-
-    margin-left: 4px;
-    margin-right: 4px;
-}
-
 .transparentLayer {
     width: 100vw;
     height: 100vh;
@@ -668,17 +658,6 @@ input[type="file"] {
     /* text-align: center; */
 }
 
-/* .instanceView {
-    background-color: white;
-    display: inline-block;
-    border: solid 4px black;
-    border-radius: 15px;
-    line-height: 3;
-    width: 90vw;
-    margin-left: auto;
-    margin-right: auto;
-} */
-
 .instanceViewNoResults {
     background-color: white;
     display: inline-block;
@@ -688,6 +667,7 @@ input[type="file"] {
     width: 40vw;
     margin-left: auto;
     margin-right: auto;
+    overflow: auto;
 }
 
 .instanceView {
@@ -706,16 +686,66 @@ input[type="file"] {
 
 .instanceInfo {
     width: 30%;
-
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    margin-top: 2vh;
+    overflow: auto;
+}
 
+.instanceInfo div {
+    margin-bottom: 2vh;
+}
+
+.instanceInfo img {
+    width: 95%;
+    height: auto;
+    padding: 6px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
 }
 
 .instanceViewResults {
     width: 60%;
     overflow: auto;
     margin-top: 2vh;
+}
+
+.sourceCaption {
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 2vh;
+    padding-bottom: 5px;
+    line-height: 1.5;
+    width: 100%;
+}
+
+.sourceCaptionLabel {
+    font-size: 120%;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.sourceCaptionLabel:hover {
+    color: var(--c4);
+}
+
+.sourceCaptionText {
+    line-height: 2;
+}
+
+.filename {
+    line-height: 2;
+    font-size: 120%;
+    font-style: italic;
+
+    background-color: var(--c3);
+    border-radius: 15px;
+    border: 2px solid var(--c2);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 15px;
+    width: max-content;
+    margin-bottom: 4vh;
+
 }
