@@ -5,6 +5,7 @@ import { AboutTab } from './aboutTab.js';
 import { AddDatasetTab } from './addDatasetTab.js';
 import { ConfigTab } from './configTab.js';
 import { DatasetsTab } from './datasetsTab.js';
+import { ModelsTab } from './modelTab.js';
 import { Header } from './header.js';
 import { HomeTab } from './homeTab.js';
 import { Footer } from './footer.js';
@@ -45,7 +46,6 @@ class App extends React.Component {
         // fetch initial server-side Macaque state
         fetch('/initial_state').then(response => response.json())
         .then(result => {
-            console.log(result.public);
             this.setState({
                 preprocessors: result.preprocessors,
                 encoders: result.encoders,
@@ -157,6 +157,10 @@ class App extends React.Component {
                 onResultsResponse={this.addResults}
             />;
 
+        } else if (id === "Models") {
+            mainTab = <ModelsTab
+                models={this.state.runners.filter(r => r.about !== undefined)}
+            />;
         }
 
         return (
