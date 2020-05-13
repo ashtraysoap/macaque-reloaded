@@ -80,7 +80,7 @@ class AddDatasetTab extends React.Component {
                 name={"reference #".concat(idx.toString())}
                 value={r}
                 optional={true}
-                error={s.errorLog.refs[idx]}
+                error={s.errorLog.refs === undefined ? undefined : s.errorLog.refs[idx]}
                 hint="A path to a file with reference captions. Each line should contain
                     one caption. The association between captions and input elements is
                     made based on line numbering."
