@@ -59,12 +59,12 @@ class InformativeInput extends React.Component {
                 </div>
                 {
                     this.state.clicked &&
-                        <div>
+                        <div className="hint">
                             {this.props.hint}
                         </div>
                 }
                 {   this.props.error &&
-                        <div>
+                        <div className="error">
                             {this.props.error}
                         </div>
                 }
