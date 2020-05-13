@@ -37,7 +37,7 @@ class DatasetsTab extends React.Component {
 
         return (
             <div className="datasetsTab">
-                <div>
+                <div className="datasetSidePanel">
                     <SidePanel
                         label="Datasets"
                         keys={range(dsNames.length)}
@@ -54,7 +54,7 @@ class DatasetsTab extends React.Component {
                         selectedKey={this.state.selectedRunner}
                     />
 
-                    <div style={{marginTop: "4vh"}}>
+                    <div style={{marginRight: "3vw"}}>
                         {/* <label className="customFileUpload" onClick={this.buttonClick}>Choose runner</label> */}
                         {/* <label className="customFileUpload" onClick={() => this.setState({ showRunners: true })}>Choose runner</label> */}
                         <label className="customFileUpload" onClick={this.runOnDataset}>Process dataset</label>
