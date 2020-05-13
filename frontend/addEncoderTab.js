@@ -25,13 +25,14 @@ class AddEncoderTab extends React.Component {
             },
             tfSlim: {
                 network: "VGG16",
-                checkpoint: "",
+                ckptPath: "",
                 featureMap: ""
             },
             errorLog: {}
         };
         this.addEncoder = this.addEncoder.bind(this);
         this.handleKerasChange = this.handleKerasChange.bind(this);
+        console.log(this.handleKerasChange);
     }
 
     addEncoder() {
@@ -69,7 +70,7 @@ class AddEncoderTab extends React.Component {
         } else if (this.state.status === "error") {
             statusTab = <ErrorTab text="Error."/>
         }
-
+        console.log(this.handleKerasChange);
 
         if (type === 'plugin') {
             innerForm = <InformativeInput name="plugin path" 
@@ -87,15 +88,15 @@ class AddEncoderTab extends React.Component {
                 handleChange={this.handleKerasChange}
                 errorLog={this.state.errorLog.keras}
             />;
-        } else if (type === 'neuralmonkey') {
+        } else if (type === 'tfSlim') {
             innerForm = <NeuralMonkeyEncoder 
                 network={this.state.tfSlim.network}
-                checkpoint={this.state.tfSlim.checkpoint}
+                checkpoint={this.state.tfSlim.ckptPath}
                 featureMap={this.state.tfSlim.featureMap}
                 handleNetChange={(e) => {this.setState({ tfSlim: { network: e.target.value }});}}
-                handleCheckpointChange={(e) => {this.setState({ tfSlim: { checkpoint: e.target.value }});}}
-                handleFeatureMapChange={(e) => {this.setState({ tfSlim: { featureMap: e.target.value }});}}
-                errorLog={this.state.errorLog.neuralmonkey}
+                handleCheckpointChange={(e) => { this.setState({ tfSlim: { ckptPath: e.target.value }}); }}
+                handleFeatureMapChange={(e) => { this.setState({ tfSlim: { ckptPath: e.target.value }}); }}
+                errorLog={this.state.errorLog.tfSlim}
             />;
         }
 
@@ -116,7 +117,7 @@ class AddEncoderTab extends React.Component {
                             onChange={(e) => { this.setState({ type: e.target.value}); }} >
                             <option value='plugin'>plugin</option>
                             <option value='keras'>Keras</option>
-                            <option value='neuralmonkey' >Neural Monkey / TensorFlow Slim</option>
+                            <option value='tfSlim' >Neural Monkey / TensorFlow Slim</option>
                         </select>
                     </InformativeLabel>
                         
@@ -152,6 +153,7 @@ class KerasEncoder extends React.Component {
     }
 
     render() {
+        console.log(this.props.handleChange);
         const nets = this.networks.map((e) => <option key={e}>{e}</option>);
         const el = this.props.errorLog === undefined ? {} : this.props.errorLog;
         return (
@@ -166,7 +168,7 @@ class KerasEncoder extends React.Component {
                 <InformativeInput
                     name="layer"
                     value={this.props.layerSpec}
-                    onChange={e => this.props.handleChange("layerSpec", e.target.value)}
+                    handleChange={e => this.props.handleChange("layerSpec", e.target.value)}
                     hint="An identifier of the layer whose output is extracted as features."
                     optional={false}
                     error={el.layer}
@@ -179,7 +181,7 @@ class KerasEncoder extends React.Component {
                     hint="A path to the model's weights. If not provided, Keras' default is used.
                     Note, that if the weight checkpoint is not found at Keras' default location
                     it is downloaded automatically to this location."
-                    onChange={e => this.props.handleChange("ckptPath", e.target.value)}
+                    handleChange={e => this.props.handleChange("ckptPath", e.target.value)}
                     error={el.ckptPath}
                 />
             </div>
@@ -239,7 +241,7 @@ class NeuralMonkeyEncoder extends React.Component {
                 <InformativeInput 
                     name="checkpoint path" 
                     value={this.props.checkpoint}
-                    onChange={this.props.handleCheckpointChange}
+                    handleChange={this.props.handleCheckpointChange}
                     hint="The path to the model's serialized weights." 
                     optional={false}
                     error={el.ckptPath}

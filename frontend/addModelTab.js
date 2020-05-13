@@ -139,7 +139,7 @@ function NeuralMonkeyModel(props) {
             <InformativeInput
                 name="configuration file"
                 value={props.cfg}
-                onChange={e => props.handleChange("config", e.target.value)}
+                handleChange={e => props.handleChange("config", e.target.value)}
                 optional={false}
                 hint="The path to the Neural Monkey configuration file."
                 error={el.configPath}
@@ -148,7 +148,7 @@ function NeuralMonkeyModel(props) {
             <InformativeInput
                 name="variables file"
                 value={props.vars}
-                onChange={e => props.handleChange("vars", e.target.value)}
+                handleChange={e => props.handleChange("vars", e.target.value)}
                 optional={false}
                 hint="The path to the experiment's variables."
                 error={el.varsPath}
@@ -157,7 +157,7 @@ function NeuralMonkeyModel(props) {
             <InformativeInput
                 name="data series"
                 value={props.dataSeries}
-                onChange={e => props.handleChange("dataSeries", e.target.value)}
+                handleChange={e => props.handleChange("dataSeries", e.target.value)}
                 optional={false}
                 hint="The name of the data series under which inputs are fed."
                 error={el.dataSeries}
@@ -166,7 +166,7 @@ function NeuralMonkeyModel(props) {
             <InformativeInput
                 name="source caption series"
                 value={props.srcCaptionSeries}
-                onChange={e => props.handleChange("srcCaptionSeries", e.target.value)}
+                handleChange={e => props.handleChange("srcCaptionSeries", e.target.value)}
                 optional={true}
                 hint="The name of the source captions data series."
                 error={el.srcCapSeries}
@@ -175,7 +175,7 @@ function NeuralMonkeyModel(props) {
             <InformativeInput
                 name="greedy caption series"
                 value={props.greedySeries}
-                onChange={e => props.handleChange("greedySeries", e.target.value)}
+                handleChange={e => props.handleChange("greedySeries", e.target.value)}
                 optional={true}
                 hint="The name of the greedy captions data series."
                 error={el.greedySeries}
@@ -184,7 +184,7 @@ function NeuralMonkeyModel(props) {
             <InformativeInput
                 name="greedy alignment series"
                 value={props.attnSeries}
-                onChange={e => props.handleChange("attnSeries", e.target.value)}
+                handleChange={e => props.handleChange("attnSeries", e.target.value)}
                 optional={true}
                 hint="The name of the greedy attention alignments data series."
                 error={el.attnSeries}
@@ -193,7 +193,7 @@ function NeuralMonkeyModel(props) {
             <InformativeInput
                 name="beam search output series"
                 value={props.bsSeries}
-                onChange={e => props.handleChange("bsSeries", e.target.value)}
+                handleChange={e => props.handleChange("bsSeries", e.target.value)}
                 optional={true}
                 hint="The name of the beam search output data series."
                 error={el.bsSeries}

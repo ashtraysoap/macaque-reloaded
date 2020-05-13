@@ -334,7 +334,6 @@ def load_attention_map_for_bs_token():
             prepro=prepro)
     return img_to_jpg_raw(img)
 
-
 @APP.route('/load_bs_graph/<int:run>/<int:instance>', methods=['GET'])
 def load_bs_graph(run, instance):
     res = STATE.run_results[run]

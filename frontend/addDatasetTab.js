@@ -17,8 +17,7 @@ class AddDatasetTab extends React.Component {
             sources: "./tests/data/flickr8k_sample_imgs.txt",
             srcCaps: "",
             references: [],
-            srcCaptions: "",
-            batchSize: 32,
+            batchSize: "32",
             errorLog: {},
         }
         this.handleChange = this.handleChange.bind(this);
@@ -80,7 +79,7 @@ class AddDatasetTab extends React.Component {
                 name={"reference #".concat(idx.toString())}
                 value={r}
                 optional={true}
-                error={s.errorLog.refs === undefined ? undefined : s.errorLog.refs[idx]}
+                error={s.errorLog.refs === undefined ? undefined : s.errorLog.refs[idx.toString()]}
                 hint="A path to a file with reference captions. Each line should contain
                     one caption. The association between captions and input elements is
                     made based on line numbering."
@@ -147,9 +146,9 @@ class AddDatasetTab extends React.Component {
                             to be used. Each line should contain one caption."
                         handleChange={(e) => this.handleChange("srcCaps", e.target.value)}
                     />
-                    {refs}
-                    <button onClick={this.addReference}>Add reference</button>
-                    <br/>
+                    {/* {refs} */}
+                    {/* <button onClick={this.addReference}>Add reference</button> */}
+                    {/* <br/> */}
                     <button onClick={this.handleDatasetSubmit}>Add dataset</button>
 
                     {statusTab}
