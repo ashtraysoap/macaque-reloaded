@@ -139,7 +139,7 @@ function NeuralMonkeyModel(props) {
             <InformativeInput
                 name="configuration file"
                 value={props.cfg}
-                handleChange={e => props.handleChange("config", e.target.value)}
+                handleChange={e => props.handleChange("configPath", e.target.value)}
                 optional={false}
                 hint="The path to the Neural Monkey configuration file."
                 error={el.configPath}
@@ -148,7 +148,7 @@ function NeuralMonkeyModel(props) {
             <InformativeInput
                 name="variables file"
                 value={props.vars}
-                handleChange={e => props.handleChange("vars", e.target.value)}
+                handleChange={e => props.handleChange("varsPath", e.target.value)}
                 optional={false}
                 hint="The path to the experiment's variables."
                 error={el.varsPath}

@@ -137,6 +137,23 @@ def validate_model_cfg(cfg, state):
             log['plugin']['pluginPath'] = "The file does not exist."
 
     # NeuralMonkey model
+    if cfg['type'] == 'neuralmonkey':
+        # handle configuration file
+        if cfg['neuralmonkey']['configPath'] == "":
+            log['neuralmonkey'] = {}
+            log['neuralmonkey']['configPath'] = "The configuration file has to be specified."
+        if cfg['neuralmonkey']['configPath'] != "" and not os.path.isfile(cfg['neuralmonkey']['configPath']):
+            log['neuralmonkey'] = {}
+            log['neuralmonkey']['configPath'] = "The file does not exist."
+        # handle variables file
+        if cfg['neuralmonkey']['varsPath'] == "":
+            if 'neuralmonkey' not in log:
+                log['neuralmonkey'] = {}
+            log['neuralmonkey']['varsPath'] = "The configuration file has to be specified."
+        if cfg['neuralmonkey']['varsPath'] != "" and not os.path.isfile(cfg['neuralmonkey']['varsPath']):
+            if 'neuralmonkey' not in log:
+                log['neuralmonkey'] = {}
+            log['neuralmonkey']['varsPath'] = "The file does not exist."
 
     return log
 
