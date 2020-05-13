@@ -47,7 +47,7 @@ class CaptionsTab extends React.Component {
                     {t[1]}
                 </div>);
 
-            className += " blueOnHoover";
+            className += " blueOnHover";
         } else {
             tokens = tokens.map(t => <div>{t[1]}</div>);
         }

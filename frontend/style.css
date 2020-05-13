@@ -89,6 +89,7 @@ body {
     border-bottom: solid 1px #ccc;
     margin-bottom: 1vw;
     line-height: 2;
+    font-size: 120%;
 }
 
 .addSomethingTab {
@@ -111,14 +112,25 @@ body {
     width: auto;
     border-bottom: solid 1px #ccc;
     padding-left: 1vw;
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    cursor: pointer;
+
 }
 
 .dataEntry:hover {
     background-color: var(--c3);
+    border-bottom: none;
+    padding-bottom: 5px;
+    border-radius: 15px;
 }
 
 .dataList {
     line-height: 3;
+    padding-left: 2vw;
+    border-left: 1px solid #ccc;
+    overflow: auto;
 }
 
 .listHeader {
@@ -139,7 +151,8 @@ body {
 .sideTab {
     width: 15vw;
     line-height: 2;
-    margin-right: 5vw;
+    margin-right: 2vw;
+    margin-bottom: 3vh;
 }
 
 .sideTab div:not(:first-child) {
@@ -176,6 +189,12 @@ body {
 
 .datasetTab {
     width: 40vw;
+}
+
+.datasetTabLabel {
+    margin-bottom: 10px;
+    font-size: 150%;
+    padding-left: 2vw;
 }
 
 .resultsSpan {

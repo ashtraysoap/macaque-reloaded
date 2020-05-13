@@ -46,9 +46,17 @@ class DatasetsTab extends React.Component {
                         selectedKey={ds}
                     />
 
-                    <div style={{marginTop: "7vh"}}>
+                    <SidePanel
+                        label="Runners"
+                        keys={range(p.runners.length)}
+                        values={p.runners.map(r => r.name)}
+                        callback={(key) => {this.setState({ selectedRunner: key })}}
+                        selectedKey={this.state.selectedRunner}
+                    />
+
+                    <div style={{marginTop: "4vh"}}>
                         {/* <label className="customFileUpload" onClick={this.buttonClick}>Choose runner</label> */}
-                        <label className="customFileUpload" onClick={() => this.setState({ showRunners: true })}>Choose runner</label>
+                        {/* <label className="customFileUpload" onClick={() => this.setState({ showRunners: true })}>Choose runner</label> */}
                         <label className="customFileUpload" onClick={this.runOnDataset}>Process dataset</label>
                         {/* <RunnersMenu runners={p.runners} onClick={(r) => this.runOnDataset(r)}/> */}
                     </div>
@@ -62,7 +70,7 @@ class DatasetsTab extends React.Component {
                         results={p.results.filter(r => r.datasetId === this.props.datasets[ds].id)}
                     />
                 </div>
-
+{/* 
                 {
                     this.state.showRunners &&
                     <RunnersMenu
@@ -71,7 +79,7 @@ class DatasetsTab extends React.Component {
                         select={(r) => this.setState({ selectedRunner: r })}
                         hide={() => this.setState({ showRunners: false })}
                     />
-                }
+                } */}
             </div>
         )
 

@@ -71,7 +71,7 @@ class DatasetTab extends React.Component {
 
         return (
             <div className="datasetTab">
-                    <div className="addModelPartLabel">Entries</div>
+                    <div className="datasetTabLabel">{p.dataset.name}</div>
                     {list}
                     {view}
             </div>
