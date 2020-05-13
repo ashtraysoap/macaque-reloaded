@@ -8,8 +8,10 @@ function Navigation(props) {
     const callback = props.onSelectedChange;
 
     let navElems = ['Home', 'About'];
-    if (!props.public)
-        navElems = navElems.concat(['Configure', 'Datasets', 'Models']);
+    // if (!props.public)
+    //     navElems = navElems.concat(['Configure', 'Datasets']);
+    navElems = navElems.concat(['Configure', 'Datasets']);
+    navElems.push('Models');
 
     navElems = navElems.map((e) => <NavElement 
         key={e}

@@ -127,7 +127,7 @@ class App extends React.Component {
             />;
         } else if (id === "About") {
             mainTab = <AboutTab/>;
-        } else if (id === "Configure") {
+        } else if (id === "Configure" && !s.public) {
             mainTab = <ConfigTab
                 dataset={<AddDatasetTab
                     onServerResponse={this.addDataset}
@@ -148,7 +148,13 @@ class App extends React.Component {
                     addRunner={this.addRunner}
                 />}
             />
-        } else if (id === "Datasets") {
+        } else if (s.public && (id === "Configure" || id === "Datasets" )) {
+
+            mainTab = <div className="incompatibleTab">
+                <p>This feature is currently incompatible with running online.</p>
+            </div>;
+        
+        } else if (id === "Datasets" && !s.public) {
 
             mainTab = <DatasetsTab
                 datasets={s.datasets}
