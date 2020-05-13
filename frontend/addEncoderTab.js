@@ -32,7 +32,6 @@ class AddEncoderTab extends React.Component {
         };
         this.addEncoder = this.addEncoder.bind(this);
         this.handleKerasChange = this.handleKerasChange.bind(this);
-        console.log(this.handleKerasChange);
     }
 
     addEncoder() {
@@ -70,7 +69,6 @@ class AddEncoderTab extends React.Component {
         } else if (this.state.status === "error") {
             statusTab = <ErrorTab text="Error."/>
         }
-        console.log(this.handleKerasChange);
 
         if (type === 'plugin') {
             innerForm = <InformativeInput name="plugin path" 
@@ -153,7 +151,6 @@ class KerasEncoder extends React.Component {
     }
 
     render() {
-        console.log(this.props.handleChange);
         const nets = this.networks.map((e) => <option key={e}>{e}</option>);
         const el = this.props.errorLog === undefined ? {} : this.props.errorLog;
         return (

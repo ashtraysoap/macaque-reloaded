@@ -86,7 +86,6 @@ def validate_encoder_cfg(cfg, state):
     encoders = map(lambda x: x.name, state.feature_extractors)
     log = {}
 
-    print(cfg)
     # handle name
     if cfg['name'] in encoders:
         log['name'] = "An encoder with this name already exists."
