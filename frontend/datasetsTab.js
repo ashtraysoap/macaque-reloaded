@@ -57,7 +57,7 @@ class DatasetsTab extends React.Component {
 
                     {
                         this.state.processing &&
-                        <div className="processingTab">Processing dataset.</div>
+                        <div className="pendingTab">Processing dataset.</div>
                     }
                 </div>
 

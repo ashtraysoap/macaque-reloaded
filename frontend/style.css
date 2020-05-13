@@ -57,9 +57,17 @@ body {
     padding-left: 5px;
 }
 
-.informative:hover {
+/* .informative:hover {
     background-color: var(--c3);
     border-radius: 10px;
+} */
+
+/* .informative:hover {
+    border-bottom: 1px solid #ccc;
+} */
+
+.informative:hover label {
+    color: var(--c4);
 }
 
 .informative label {
@@ -69,24 +77,32 @@ body {
 }
 
 .pendingTab {
-    background-color: orange;
-    border-style: 3px solid;
-    border-radius: 5px;
-    padding-left: 10px;
+    border: 2px solid orange;
+    background-color: rgba(255, 238, 0, 0.705);
+    padding: 8vh 3vw 8vh 3vw;
+    margin-top: 5vh;
+    text-align: center;
+    border-radius: 18px
 }
 
 .errorTab {
-    background-color: red;
-    border-style: 3px solid;
-    border-radius: 5px;
-    padding-left: 10px;
+    background-color: rgba(255, 0, 0, 0.712);
+    border: 2px solid rgb(200, 5, 5);
+    border-radius: 18px;
+
+    padding: 8vh 3vw 8vh 3vw;
+    margin-top: 5vh;
+    text-align: center;
 }
 
 .successTab {
-    background-color: green;
-    border-style: 3px solid;
-    border-radius: 5px;
-    padding-left: 10px;
+    background-color: rgba(31, 199, 1, 0.712);
+    border: 2px solid rgb(18, 129, 3);
+    border-radius: 18px;
+
+    padding: 8vh 3vw 8vh 3vw;
+    margin-top: 5vh;
+    text-align: center;
 }
 
 /* About Tab */
@@ -121,6 +137,12 @@ body {
 .addSomethingTab input, .addSomethingTab select {
     margin-left: 10px;
 }
+
+.addSomethingTab button {
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+
 
 .background {
     background-color: var(--c3);
