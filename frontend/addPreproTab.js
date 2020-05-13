@@ -66,11 +66,13 @@ class AddPreproTab extends React.Component {
                 <InformativeInput name="target width" value={this.state.targetWidth} 
                     optional={false}
                     hint="The target width of images after preprocessing."
+                    error={this.state.errorLog.width}
                     handleChange={(e) => { this.setState({ targetWidth: e.target.value }); }}
                 />
                 <InformativeInput name="target height" value={this.state.targetHeight} 
                     optional={false}
                     hint="The target height of images after preprocessing."
+                    error={this.state.errorLog.height}
                     handleChange={(e) => { this.setState({ targetHeight: e.target.value }); }}
                 />
                 <InformativeLabel

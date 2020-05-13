@@ -60,6 +60,7 @@ class AddEncoderTab extends React.Component {
         const type = this.state.type;
         let innerForm = null;
         let statusTab = null;
+        const el = this.state.errorLog;
 
         if (this.state.status === "waiting") {
             statusTab = <PendingTab text="Processing."/>;
@@ -75,7 +76,7 @@ class AddEncoderTab extends React.Component {
                 value={this.state.plugin.path}
                 optional={false}
                 hint="The path to the plugin source."
-                error={this.state.errorLog.path}
+                error={el.plugin === undefined ? undefined : el.plugin.pluginPath}
                 handleChange={(e) => { this.setState({ plugin: { path: e.target.value }}); }}
             />
         } else if (type === 'keras') {
@@ -84,6 +85,7 @@ class AddEncoderTab extends React.Component {
                 layerSpec={this.state.keras.layerSpec}
                 ckptPath={this.state.keras.ckptPath}
                 handleChange={this.handleKerasChange}
+                errorLog={this.state.errorLog.keras}
             />;
         } else if (type === 'neuralmonkey') {
             innerForm = <NeuralMonkeyEncoder 
@@ -93,6 +95,7 @@ class AddEncoderTab extends React.Component {
                 handleNetChange={(e) => {this.setState({ tfSlim: { network: e.target.value }});}}
                 handleCheckpointChange={(e) => {this.setState({ tfSlim: { checkpoint: e.target.value }});}}
                 handleFeatureMapChange={(e) => {this.setState({ tfSlim: { featureMap: e.target.value }});}}
+                errorLog={this.state.errorLog.neuralmonkey}
             />;
         }
 
@@ -150,6 +153,7 @@ class KerasEncoder extends React.Component {
 
     render() {
         const nets = this.networks.map((e) => <option key={e}>{e}</option>);
+        const el = this.props.errorLog === undefined ? {} : this.props.errorLog;
         return (
             <div>
                 <InformativeLabel name="network" hint="The type of network." optional={false}>
@@ -165,14 +169,18 @@ class KerasEncoder extends React.Component {
                     onChange={e => this.props.handleChange("layerSpec", e.target.value)}
                     hint="An identifier of the layer whose output is extracted as features."
                     optional={false}
+                    error={el.layer}
                 />
 
                 <InformativeInput
                     name="checkpoint path"
                     value={this.props.ckptPath}
                     optional={true}
-                    hint="A path to the model's weights. If not provided, Keras' default is used."
+                    hint="A path to the model's weights. If not provided, Keras' default is used.
+                    Note, that if the weight checkpoint is not found at Keras' default location
+                    it is downloaded automatically to this location."
                     onChange={e => this.props.handleChange("ckptPath", e.target.value)}
+                    error={el.ckptPath}
                 />
             </div>
         )
@@ -215,6 +223,7 @@ class NeuralMonkeyEncoder extends React.Component {
         const nets = this.networks.map(e => <option key={e.id}>{e.id}</option>);
         const maps = this.networks.filter(e => e.id === this.props.network)[0].maps
             .map(e => <option key={e}>{e}</option>);
+        const el = this.props.errorLog === undefined ? {} : this.props.errorLog;
 
         return (
             <div>
@@ -231,8 +240,9 @@ class NeuralMonkeyEncoder extends React.Component {
                     name="checkpoint path" 
                     value={this.props.checkpoint}
                     onChange={this.props.handleCheckpointChange}
-                    hint="The path to the model's weights." 
+                    hint="The path to the model's serialized weights." 
                     optional={false}
+                    error={el.ckptPath}
                 />
 
                 <InformativeLabel name="feature map" 
@@ -258,7 +268,8 @@ AddEncoderTab.propTypes = {
 
 KerasEncoder.propTypes = {
     network: PropTypes.string.isRequired,
-    handleChange: PropTypes.func.isRequired
+    handleChange: PropTypes.func.isRequired,
+    errorLog: PropTypes.object
 };
 
 NeuralMonkeyEncoder.propTypes = {
@@ -267,6 +278,7 @@ NeuralMonkeyEncoder.propTypes = {
     featureMap: PropTypes.string.isRequired,
     handleNetChange: PropTypes.func.isRequired,
     handleCheckpointChange: PropTypes.func.isRequired,
-    handleFeatureMapChange: PropTypes.func.isRequired
+    handleFeatureMapChange: PropTypes.func.isRequired,
+    errorLog: PropTypes.object
 };
 

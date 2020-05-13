@@ -95,11 +95,11 @@ class InformativeLabel extends React.Component {
                 }
                 {
                     this.state.clicked &&
-                        <div>{this.props.hint}</div>
+                        <div className="hint">{this.props.hint}</div>
                 }
                 {
                     this.props.error &&
-                        <div>{this.props.error}</div>
+                        <div className="error">{this.props.error}</div>
                 }
             </div>
         )
