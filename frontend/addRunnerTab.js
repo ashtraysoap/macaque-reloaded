@@ -88,7 +88,7 @@ class AddRunnerTab extends React.Component {
                 <div className="addModelPartLabel">Runner</div>
                 
                 <InformativeInput
-                    name="text"
+                    name="name"
                     value={s.name}
                     optional={false}
                     handleChange={e => this.setState({ name: e.target.value })}

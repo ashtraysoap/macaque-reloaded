@@ -11,7 +11,8 @@ class DatasetsTab extends React.Component {
         super(props);
         this.state = {
             selectedDataset: 0,
-            selectedRunner: 0
+            selectedRunner: 0,
+            processing: false
         };
 
         this.runOnDataset = this.runOnDataset.bind(this);
@@ -50,9 +51,14 @@ class DatasetsTab extends React.Component {
                         selectedKey={this.state.selectedRunner}
                     />
 
-                    <div style={{marginRight: "3vw"}}>
+                    <div>
                         <label className="customFileUpload" onClick={this.runOnDataset}>Process dataset</label>
                     </div>
+
+                    {
+                        this.state.processing &&
+                        <div className="processingTab">Processing dataset.</div>
+                    }
                 </div>
 
                 <div>
@@ -77,7 +83,6 @@ class DatasetsTab extends React.Component {
         fetch(`/run_on_dataset/${d}/${r}`)
         .then(res => res.json())
         .then(response => {
-            console.log('Success:', JSON.stringify(response));
             this.setState({ processing: false });
             this.props.onResultsResponse(response);
         })

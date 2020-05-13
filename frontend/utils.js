@@ -53,8 +53,10 @@ class InformativeInput extends React.Component {
 
         return (
             <div>
-                <label onClick={this.onLabelClick} >{labelText}</label>
-                <input type="text" value={this.props.value} onChange={this.props.handleChange} />
+                <div className="informative">
+                    <label onClick={this.onLabelClick} >{labelText}</label>
+                    <input type="text" value={this.props.value} onChange={this.props.handleChange} />
+                </div>
                 {
                     this.state.clicked &&
                         <div>
@@ -86,7 +88,7 @@ class InformativeLabel extends React.Component {
         const labelText = this.props.optional ? <i>{this.props.name}</i> : this.props.name;
 
         return (
-            <div>
+            <div className="informative">
                 <label onClick={this.onLabelClick} >{labelText}</label>
                 {
                     this.props.children
