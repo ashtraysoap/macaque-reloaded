@@ -3,6 +3,14 @@ import React from 'react';
 export { PendingTab, SuccessTab, ErrorTab };
 
 
+/**
+ * Function components for simple iformative
+ * messages for the user.
+ * 
+ * Component Props:
+ *      text: String. The message to be displayed.
+ */
+
 function PendingTab(props) {
     return (
         <div className="processingTab">

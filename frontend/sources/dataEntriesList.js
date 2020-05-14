@@ -4,38 +4,34 @@ import PropTypes from 'prop-types';
 export { DataEntriesList };
 
 
-class DataEntriesList extends React.Component {
-    constructor(props) {
-        super(props);
+/**
+ * Component for listing dataset entries.
+ * 
+ * Component Props:
+ *      entries: Array. An array of dataset elements.
+ *      handleEntryClick: Function. Handles user clicks on the
+ *              list entries.
+ */
+function DataEntriesList(props) {
+    let elems = props.entries.map(e => { return { name: e.source, id: e.id } });
+    elems = elems.forEach(e => { e.name = e.name.replace(/^.*[\\\/]/, '') });
+    elems = elems.map(e => <div 
+        className="dataEntry"
+        onClick={() => props.handleEntryClick(e.id)} 
+        key={e.id}>
+        {e.name}
+    </div>);
 
-        this.state = {
-            elements: [],
-            runId: 0,
-        };
-        this.state.elements = this.props.entries.map(e => { return { name: e.source, id: e.id } });
-        this.state.elements.forEach(e => { e.name = e.name.replace(/^.*[\\\/]/, '') });
-
-    }
-
-    render() {
-        const elems = this.state.elements.map(e => <div 
-            className="dataEntry"
-            onClick={() => this.props.handleEntryClick(e.id)} 
-            key={e.id}>
-            {e.name}
-        </div>);
-
-        return (
-            <div>
-                <div className="dataList">
-                    {elems}
-                </div>
+    return (
+        <div>
+            <div className="dataList">
+                {elems}
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 DataEntriesList.propTypes = {
-    entries: PropTypes.object.isRequired,
+    entries: PropTypes.array.isRequired,
     handleEntryClick: PropTypes.func
 };

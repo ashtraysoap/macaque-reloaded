@@ -1,34 +1,30 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export { Navigation, NavElement };
+export { Navigation };
 
 
+/**
+ * Function component displaying application navigation.
+ * 
+ * Component Props:
+ *      onSelectedChange: Function. Handles clicking on navigation elements.
+ *      selected: String. The currently selected tab.
+ *      public: Boolean. Whether the application is running on a public IP
+ *              address.
+ */
 function Navigation(props) {
-    const callback = props.onSelectedChange;
+    const cb = props.onSelectedChange;
+    let navElems = ['Home', 'About', 'Configure', 'Datasets', 'Models'];
 
-    let navElems = ['Home', 'About'];
-    // if (!props.public)
-    //     navElems = navElems.concat(['Configure', 'Datasets']);
-    navElems = navElems.concat(['Configure', 'Datasets']);
-    navElems.push('Models');
-
-    navElems = navElems.map((e) => <NavElement 
-        key={e}
-        text={e}
-        class={props.selected === e ? "selectedNav" : null}
-        handleClick={callback}
-    />);
+    navElems = navElems.map((e) => 
+        <div className={props.selected === e ? "selectedNav" : null}
+            handleClick={() => cb(e)}>
+            {e}
+        </div>);
 
     return (
         <div className="navigation">{navElems}</div>
-    );
-}
-
-function NavElement(props) {
-    return (
-        <div className={props.class}
-        onClick={ () => props.handleClick(props.text) }>{props.text}</div>
     );
 }
 
@@ -36,10 +32,4 @@ Navigation.propTypes = {
     onSelectedChange: PropTypes.func.isRequired,
     selected: PropTypes.string.isRequired,
     public: PropTypes.bool.isRequired
-};
-
-NavElement.propTypes = {
-    text: PropTypes.string.isRequired,
-    handleClick: PropTypes.func.isRequired,
-    class: PropTypes.string,
 };

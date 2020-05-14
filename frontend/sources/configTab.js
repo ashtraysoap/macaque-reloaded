@@ -6,6 +6,22 @@ import { SidePanel } from './utils.js';
 export { ConfigTab };
 
 
+/**
+ * Component responsiblo for providing the configuration interface
+ * which serves for the user to create his own models, preprocessors,
+ * etc.
+ * 
+ * Component State:
+ *      selected: String. Identifies which input form is currently
+ *              selected.
+ * 
+ * Component Props:
+ *      prepro: Component. The component for adding a preprocessor.
+ *      encoder: Component. The component for adding an encoder.
+ *      model: Component. The component for adding a model.
+ *      runner: Component. The component for adding a runner.
+ *      dataset: Component. The component for adding a dataset.
+ */
 class ConfigTab extends React.Component {
     constructor(props) {
         super(props);

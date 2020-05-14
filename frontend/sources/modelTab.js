@@ -1,8 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 
 export { ModelsTab };
 
 
+/**
+ * Function component displaying provided information about
+ * currently active runners.
+ * 
+ * Component Props:
+ *      models: Array. An array of runners.
+ */
 function ModelsTab(props) {
     const ms = props.models;
 
@@ -33,3 +42,7 @@ function ModelsTab(props) {
         </div>
     );
 }
+
+ModelsTab.propTypes = {
+    models: PropTypes.array.isRequired
+};

@@ -3,7 +3,10 @@ import React from 'react';
 export { Footer };
 
 
-function Footer(props) {
+/**
+ * Component displaying application footer.
+ */
+function Footer() {
     return (
         <div>
             <div id="Footer">

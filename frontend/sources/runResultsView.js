@@ -7,6 +7,13 @@ import { CaptionsTab } from './captionsTab.js';
 
 export { RunResultsView, HomeTabResultsView };
 
+
+/**
+ * Component wrapper for results displayed in the HomeTab
+ * 
+ * Component Props:
+ *      See RunResultsView.
+ */
 function HomeTabResultsView(props) {
     return (
         <div className="homeTabResultsView">
@@ -22,6 +29,24 @@ function HomeTabResultsView(props) {
     );
 }
 
+
+/**
+ * Component for displaying run results for a single dataset instance.
+ * 
+ * Component State:
+ *      showAlignments: Boolean. Whether to show or hide attention alignments.
+ *      showCaption: Boolean. Whether to show captions.
+ *      showBSOut: Boolean. Whether to show the beam search graph.
+ * 
+ * Component Props:
+ *      results: Object. An object containing the results for the instance.
+ *      instanceId: Number. The ID of the instance in the dataset.
+ *      runId: Number. The ID of the run.
+ *      onCaptionClick: Function. Handles user clicks on caption tokens.
+ *      fetchAttentionMap: Function. Fetches attention maps for caption tokens.
+ *      fetchAttentionMapForBSToken: Function. Fetches attention maps for 
+ *              beam search output graph tokens.
+ */
 class RunResultsView extends React.Component {
     constructor(props) {
         super(props);

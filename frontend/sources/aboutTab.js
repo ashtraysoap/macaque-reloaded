@@ -3,6 +3,9 @@ import React from 'react';
 export { AboutTab };
 
 
+/**
+ * Functional component displaying general information about the application.
+ */
 function AboutTab() {
     return (
         <div className="aboutTab">

@@ -5,6 +5,28 @@ import { enumerate } from './utils.js';
 
 export { CaptionsTab };
 
+
+/**
+ * This component displays the greedy and beam search captions.
+ *
+ * Component State:
+ *      captionId: Number. The identifier of the currently selected caption.
+ *              Greedy captions have captionId 0, beam search caption #i has
+ *              id i+1. If no caption is selected, its value is null.
+ *      tokenId: Number. The identifier of the selected token in the selected
+ *              caption. Null, if not selected.
+ * 
+ * Component Props:
+ *      greedyCaption: Array. The array of string tokens representing the greedy
+ *              caption.
+ *      beamSearchCaption: Array. An array of beam search captions. Each caption
+ *              is an Array of string tokens.
+ *      onTokenClick: Function. Handles the user clicking on a caption token.
+ *      hasAttnGreedy: Boolean. Whether the caption has associated attention
+ *              alignments.
+ *      hasAttnBeamSearch: Boolean. Whether the beam search captions have
+ *              associated attention alignments.
+ */
 class CaptionsTab extends React.Component {
     
     constructor(props) {
@@ -115,10 +137,8 @@ class CaptionsTab extends React.Component {
         if (cid === s.captionId && tid === s.tokenId) {
             return "selectedToken";
         }
-
         return "";
     }
-
 }
 
 CaptionsTab.propTypes = {

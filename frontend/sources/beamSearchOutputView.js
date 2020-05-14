@@ -5,6 +5,22 @@ import * as d3 from 'd3';
 export { BeamSearchOutputView };
 
 
+/**
+ * This component is used to display the tree of beam search
+ * hypotheses.
+ * 
+ * Component State:
+ *      graphLoaded: Boolean. Whether the beam search graph has been loaded.
+ *      selectedNodeId: Number. The identifier of the currently selected graph node.
+ *              Selection/unselection happens when the user clicks on the graph node.
+ *              Clicking on the node triggers displaying the token's attention alignment
+ *              if it is present.
+ *      graph: Object. The beam search graph representation.
+ * 
+ * Component Props:
+ *      graphPromise: Promise. The promise resolves into the beam search graph.
+ *      displayAlignment: Function. Displays the alignment of the selected token.
+ */
 class BeamSearchOutputView extends React.Component {
     constructor(props) {
         super(props);
@@ -15,7 +31,8 @@ class BeamSearchOutputView extends React.Component {
 
         this.state = {
             graphLoaded: false,
-            selectedNodeId: null
+            selectedNodeId: null,
+            graph: null
         };
 
         this.props.graphPromise.then(g => {

@@ -7,6 +7,24 @@ import { enumerate } from './utils.js';
 export { HomeTab, RunnersMenu };
 
 
+/**
+ * Component displaying the home tab.
+ * 
+ * Component State:
+ *      imgSrc: String. A string URL to the input image.
+ *      tokenId: Number. Identifier of the selected token.
+ *      waiting: Boolean. Whether the component is currently expecting
+ *              a response from the server.
+ *      selectedRunner: Number. Identifier of the selected runner.
+ *      imgDatasetId: Number. Identifier of the single image dataset.
+ *      showRunners: Boolean. Whether to show the runners menu.
+ * 
+ * Components Props:
+ *      runners: Array. An array of runner objects.
+ *      results: Object. The server returned results after processing
+ *              the image.
+ *      onServerResponse: Function. Handles response from server.
+ */
 class HomeTab extends React.Component {
     constructor(props) {
         super(props);
@@ -227,6 +245,17 @@ class HomeTab extends React.Component {
     }
 }
 
+
+/**
+ * Functional component displaying a menu of the runners.
+ * 
+ * Component Props:
+ *      runners: Array. An array of the runner objects.
+ *      hide: Function. Hides the menu upon the user clicking
+ *              anywhere besides the menu.
+ *      select: Function. Selects a runner on click.
+ *      selected: Number. Id of the currently selected runner.
+ */
 function RunnersMenu(props) {
     let rs = enumerate(props.runners).map(r => 
     <div key={r[1].name} onClick={() => props.select(r[0])} id={props.selected === r[0] ? "selected" : ""}>
