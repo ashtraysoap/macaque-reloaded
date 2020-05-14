@@ -1,12 +1,6 @@
 from collections import namedtuple
 import os
 
-import numpy as np
-import tensorflow as tf
-from neuralmonkey.dataset import Dataset
-from neuralmonkey.encoders.imagenet_encoder import ImageNet
-from neuralmonkey.readers.image_reader import single_image_for_imagenet
-
 from data import Dataset as MacaqueDataset
 from .feature_extractor import FeatureExtractor
 
@@ -50,6 +44,12 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
             conv_map: The string identifier of the convolutional
                 map which should be extracted as features.
         """
+
+        import numpy as np
+        import tensorflow as tf
+        from neuralmonkey.dataset import Dataset
+        from neuralmonkey.encoders.imagenet_encoder import ImageNet
+        from neuralmonkey.readers.image_reader import single_image_for_imagenet
 
         super(NeuralMonkeyFeatureExtractor, self).__init__(name)
 

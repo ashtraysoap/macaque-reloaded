@@ -41,8 +41,8 @@ class ConfigTab extends React.Component {
                     callback={(key) => this.setState({selected: key})}
                     selectedKey={sel}
                 />
-                <div className="centerTab">
-                {main}
+                <div>
+                    {main}
                 </div>
             </div>
         );

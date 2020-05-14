@@ -5,7 +5,7 @@ export { PendingTab, SuccessTab, ErrorTab };
 
 function PendingTab(props) {
     return (
-        <div className="pendingTab">
+        <div className="processingTab">
             {props.text}
         </div>
     );

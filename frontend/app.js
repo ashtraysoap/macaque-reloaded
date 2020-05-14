@@ -5,8 +5,10 @@ import { AboutTab } from './aboutTab.js';
 import { AddDatasetTab } from './addDatasetTab.js';
 import { ConfigTab } from './configTab.js';
 import { DatasetsTab } from './datasetsTab.js';
+import { ModelsTab } from './modelTab.js';
 import { Header } from './header.js';
 import { HomeTab } from './homeTab.js';
+import { Footer } from './footer.js';
 import { AddPreproTab } from './addPreproTab.js';
 import { AddEncoderTab } from './addEncoderTab.js';
 import { AddModelTab } from './addModelTab.js';
@@ -24,8 +26,6 @@ class App extends React.Component {
         this.addRunner = this.addRunner.bind(this);
         this.addResults = this.addResults.bind(this);
         
-        this.addMetricScoresToResults = this.addMetricScoresToResults.bind(this);
-
         this.handleSelectedTabChange = this.handleSelectedTabChange.bind(this);
 
         this.homeTabResponse = this.homeTabResponse.bind(this);
@@ -36,7 +36,6 @@ class App extends React.Component {
             encoders: [],
             models: [],
             runners: [],
-            metrics: [ "BLEU", "METEOR", "chrf3" ],
             results: [],
             selectedTab: "Home",
             demoResults: null,
@@ -47,7 +46,6 @@ class App extends React.Component {
         // fetch initial server-side Macaque state
         fetch('/initial_state').then(response => response.json())
         .then(result => {
-            console.log(result.public);
             this.setState({
                 preprocessors: result.preprocessors,
                 encoders: result.encoders,
@@ -104,21 +102,6 @@ class App extends React.Component {
         return this.state.results.length - 1;
     }
 
-    addMetricScoresToResults(scores) {
-        let res = this.state.results;
-        const metric = scores.metric;
-        for (let i = 0; i < res.length; i++) {
-            let runId = res[i].runId;
-            // if there are new scores for this run
-            if (scores[runId] !== -1) {
-                if (res[i].scores === undefined)
-                    res[i].scores = {};
-                res[i].scores[metric] = scores[runId];
-            }
-        }
-        this.setState({ results: res });
-    }
-
     homeTabResponse(results) {
         this.addResults(results);
         let htr = this.state.homeTabResults;
@@ -144,7 +127,7 @@ class App extends React.Component {
             />;
         } else if (id === "About") {
             mainTab = <AboutTab/>;
-        } else if (id === "Configure") {
+        } else if (id === "Configure" && !s.public) {
             mainTab = <ConfigTab
                 dataset={<AddDatasetTab
                     onServerResponse={this.addDataset}
@@ -165,17 +148,25 @@ class App extends React.Component {
                     addRunner={this.addRunner}
                 />}
             />
-        } else if (id === "Datasets") {
+        } else if (s.public && (id === "Configure" || id === "Datasets" )) {
+
+            mainTab = <div className="incompatibleTab">
+                <p>This feature is currently incompatible with running online.</p>
+            </div>;
+        
+        } else if (id === "Datasets" && !s.public) {
 
             mainTab = <DatasetsTab
                 datasets={s.datasets}
                 results={s.results}
                 runners={s.runners}
-                metrics={s.metrics}
                 onResultsResponse={this.addResults}
-                onMetricScoresResponse={this.addMetricScoresToResults}
             />;
 
+        } else if (id === "Models") {
+            mainTab = <ModelsTab
+                models={this.state.runners.filter(r => r.about !== undefined)}
+            />;
         }
 
         return (
@@ -186,6 +177,7 @@ class App extends React.Component {
                     public={this.state.public}
                     />
                 {mainTab}
+                <Footer/>
             </div>
         );
     }

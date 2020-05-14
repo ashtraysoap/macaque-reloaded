@@ -55,6 +55,7 @@ class AddModelTab extends React.Component {
 
     render() {
         const type = this.state.type;
+        const el = this.state.errorLog;
         let innerForm = null;
 
         if (type === 'plugin') {
@@ -62,6 +63,7 @@ class AddModelTab extends React.Component {
                 value={this.state.plugin.path}
                 optional={false}
                 hint="The path to the plugin source."
+                error={el.plugin === undefined ? undefined : el.plugin.pluginPath}
                 handleChange={(e) => { this.setState({ plugin: { path: e.target.value }}); }}
             />
         } else if (type === 'neuralmonkey') {
@@ -74,6 +76,7 @@ class AddModelTab extends React.Component {
                 attnSeries={this.state.neuralmonkey.attnSeries}
                 bsSeries={this.state.neuralmonkey.bsSeries}
                 handleChange={this.NMvalueChange}
+                errorLog={this.state.errorLog.neuralmonkey}
             />;
         }
 
@@ -97,7 +100,7 @@ class AddModelTab extends React.Component {
                         handleChange={(e) => { this.setState({ name: e.target.value }); }}
                     />
 
-                    <InformativeLabel name="runs on" optional={false}>
+                    <InformativeLabel name="runs on" optional={false} hint="Whether the model expects images or features as input.">
                         <select value={this.state.input}
                             onChange={(e) => { this.setState({ input: e.target.value }); }}>
                             <option value='features' >features</option>
@@ -129,70 +132,71 @@ class AddModelTab extends React.Component {
 }
 
 function NeuralMonkeyModel(props) {
+    const el = props.errorLog === undefined ? {} : props.errorLog;
     return (
         <div>
 
             <InformativeInput
                 name="configuration file"
                 value={props.cfg}
-                onChange={e => props.handleChange("config", e.target.value)}
+                handleChange={e => props.handleChange("configPath", e.target.value)}
                 optional={false}
                 hint="The path to the Neural Monkey configuration file."
-                error={undefined}
+                error={el.configPath}
             />
 
             <InformativeInput
                 name="variables file"
                 value={props.vars}
-                onChange={e => props.handleChange("vars", e.target.value)}
+                handleChange={e => props.handleChange("varsPath", e.target.value)}
                 optional={false}
                 hint="The path to the experiment's variables."
-                error={undefined}
+                error={el.varsPath}
             />
 
             <InformativeInput
                 name="data series"
                 value={props.dataSeries}
-                onChange={e => props.handleChange("dataSeries", e.target.value)}
+                handleChange={e => props.handleChange("dataSeries", e.target.value)}
                 optional={false}
                 hint="The name of the data series under which inputs are fed."
-                error={undefined}
+                error={el.dataSeries}
             />
 
             <InformativeInput
                 name="source caption series"
                 value={props.srcCaptionSeries}
-                onChange={e => props.handleChange("srcCaptionSeries", e.target.value)}
+                handleChange={e => props.handleChange("srcCaptionSeries", e.target.value)}
                 optional={true}
                 hint="The name of the source captions data series."
-                error={undefined}
+                error={el.srcCapSeries}
             />
 
             <InformativeInput
                 name="greedy caption series"
                 value={props.greedySeries}
-                onChange={e => props.handleChange("greedySeries", e.target.value)}
+                handleChange={e => props.handleChange("greedySeries", e.target.value)}
                 optional={true}
                 hint="The name of the greedy captions data series."
-                error={undefined}
+                error={el.greedySeries}
             />
 
             <InformativeInput
                 name="greedy alignment series"
                 value={props.attnSeries}
-                onChange={e => props.handleChange("attnSeries", e.target.value)}
+                handleChange={e => props.handleChange("attnSeries", e.target.value)}
                 optional={true}
                 hint="The name of the greedy attention alignments data series."
-                error={undefined}
+                error={el.attnSeries}
             />
 
             <InformativeInput
                 name="beam search output series"
                 value={props.bsSeries}
-                onChange={e => props.handleChange("bsSeries", e.target.value)}
+                handleChange={e => props.handleChange("bsSeries", e.target.value)}
                 optional={true}
                 hint="The name of the beam search output data series."
-                error={undefined}
+                error={el.bsSeries}
             />
         </div>
     );
@@ -211,5 +215,6 @@ NeuralMonkeyModel.propTypes = {
     greedySeries: PropTypes.string.isRequired,
     attnSeries: PropTypes.string.isRequired,
     bsSeries: PropTypes.string.isRequired,
-    handleChange: PropTypes.func.isRequired
+    handleChange: PropTypes.func.isRequired,
+    errorLog: PropTypes.object
 };

@@ -2,7 +2,6 @@ import random
 
 import numpy as np
 
-from neuralmonkey.readers.image_reader import single_image_for_imagenet
 
 class ModelWrapper:
     def run(self, xs):

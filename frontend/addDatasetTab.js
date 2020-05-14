@@ -17,8 +17,7 @@ class AddDatasetTab extends React.Component {
             sources: "./tests/data/flickr8k_sample_imgs.txt",
             srcCaps: "",
             references: [],
-            srcCaptions: "",
-            batchSize: 32,
+            batchSize: "32",
             errorLog: {},
         }
         this.handleChange = this.handleChange.bind(this);
@@ -80,9 +79,10 @@ class AddDatasetTab extends React.Component {
                 name={"reference #".concat(idx.toString())}
                 value={r}
                 optional={true}
+                error={s.errorLog.refs === undefined ? undefined : s.errorLog.refs[idx.toString()]}
                 hint="A path to a file with reference captions. Each line should contain
                     one caption. The association between captions and input elements is
-                    made based on line numbers."
+                    made based on line numbering."
                 handleChange={(e) => this.handleReferenceChange(e.target.value, idx)}
                 key={idx.toString()}
             />
@@ -94,7 +94,7 @@ class AddDatasetTab extends React.Component {
         } else if (s.status === "ok") {
             statusTab = <SuccessTab text="Dataset successfully created."/>;
         } else if (s.status === "error") {
-            statusTab = <ErrorTab text="Error"/>
+            statusTab = <ErrorTab text="Error. Unable to create dataset."/>
         }
 
         return (
@@ -106,7 +106,7 @@ class AddDatasetTab extends React.Component {
                         value={s.name}
                         optional={false}
                         error={s.errorLog.name}
-                        hint="A name for the dataset."
+                        hint="A unique name for the dataset."
                         handleChange={(e) => this.handleChange("name", e.target.value)}
                     />
                     <InformativeInput
@@ -114,7 +114,9 @@ class AddDatasetTab extends React.Component {
                         value={s.prefix}
                         optional={false}
                         error={s.errorLog.prefix}
-                        hint="The path to the directory containing dataset element files."
+                        hint="The path to the directory containing dataset element files.
+                        If `sources` is not provided, all files of suitable format in the directory 
+                        are used."
                         handleChange={(e) => this.handleChange("prefix", e.target.value)}
                     />
                     <InformativeInput
@@ -122,7 +124,7 @@ class AddDatasetTab extends React.Component {
                         value={s.batchSize}
                         optional={false}
                         error={s.errorLog.batchSize}
-                        hint="The batch size."
+                        hint="The batch size. Dataset elements are fed to the model in sets of this size."
                         handleChange={(e) => this.handleChange("batchSize", e.target.value)}
                     />
                     <InformativeInput
@@ -130,7 +132,7 @@ class AddDatasetTab extends React.Component {
                         value={s.sources}
                         optional={true}
                         error={s.errorLog.sources}
-                        hint="The path to a file containing a list of dataset elements
+                        hint="Optional. The path to a file containing a list of dataset elements
                             to be used. Each line should contain one element given as its
                             corresponding filename."
                         handleChange={(e) => this.handleChange("sources", e.target.value)}
@@ -140,13 +142,13 @@ class AddDatasetTab extends React.Component {
                         value={s.srcCaps}
                         optional={true}
                         error={s.errorLog.srcCaps}
-                        hint="The path to a file containing source captions for the dataset
+                        hint="Optional. The path to a file containing source captions for the dataset
                             to be used. Each line should contain one caption."
                         handleChange={(e) => this.handleChange("srcCaps", e.target.value)}
                     />
-                    {refs}
-                    <button onClick={this.addReference}>Add reference</button>
-                    <br/>
+                    {/* {refs} */}
+                    {/* <button onClick={this.addReference}>Add reference</button> */}
+                    {/* <br/> */}
                     <button onClick={this.handleDatasetSubmit}>Add dataset</button>
 
                     {statusTab}

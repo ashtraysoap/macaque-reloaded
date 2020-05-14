@@ -19,13 +19,13 @@ class AddEncoderTab extends React.Component {
                 path: ""
             },
             keras: {
-                netType: "VGG16",
+                network: "VGG16",
                 layerSpec: "block5_conv3",
                 ckptPath: ""
             },
             tfSlim: {
-                netType: "VGG16",
-                checkpoint: "",
+                network: "VGG16",
+                ckptPath: "",
                 featureMap: ""
             },
             errorLog: {}
@@ -60,6 +60,7 @@ class AddEncoderTab extends React.Component {
         const type = this.state.type;
         let innerForm = null;
         let statusTab = null;
+        const el = this.state.errorLog;
 
         if (this.state.status === "waiting") {
             statusTab = <PendingTab text="Processing."/>;
@@ -69,30 +70,31 @@ class AddEncoderTab extends React.Component {
             statusTab = <ErrorTab text="Error."/>
         }
 
-
         if (type === 'plugin') {
             innerForm = <InformativeInput name="plugin path" 
                 value={this.state.plugin.path}
                 optional={false}
                 hint="The path to the plugin source."
-                error={this.state.errorLog.path}
+                error={el.plugin === undefined ? undefined : el.plugin.pluginPath}
                 handleChange={(e) => { this.setState({ plugin: { path: e.target.value }}); }}
             />
         } else if (type === 'keras') {
             innerForm = <KerasEncoder
-                netType={this.state.keras.netType}
+                network={this.state.keras.network}
                 layerSpec={this.state.keras.layerSpec}
                 ckptPath={this.state.keras.ckptPath}
                 handleChange={this.handleKerasChange}
+                errorLog={this.state.errorLog.keras}
             />;
-        } else if (type === 'neuralmonkey') {
+        } else if (type === 'tfSlim') {
             innerForm = <NeuralMonkeyEncoder 
-                netType={this.state.tfSlim.netType}
-                checkpoint={this.state.tfSlim.checkpoint}
+                network={this.state.tfSlim.network}
+                checkpoint={this.state.tfSlim.ckptPath}
                 featureMap={this.state.tfSlim.featureMap}
-                handleNetChange={(e) => {this.setState({ tfSlim: { netType: e.target.value }});}}
-                handleCheckpointChange={(e) => {this.setState({ tfSlim: { checkpoint: e.target.value }});}}
-                handleFeatureMapChange={(e) => {this.setState({ tfSlim: { featureMap: e.target.value }});}}
+                handleNetChange={(e) => {this.setState({ tfSlim: { network: e.target.value }});}}
+                handleCheckpointChange={(e) => { this.setState({ tfSlim: { ckptPath: e.target.value }}); }}
+                handleFeatureMapChange={(e) => { this.setState({ tfSlim: { ckptPath: e.target.value }}); }}
+                errorLog={this.state.errorLog.tfSlim}
             />;
         }
 
@@ -113,7 +115,7 @@ class AddEncoderTab extends React.Component {
                             onChange={(e) => { this.setState({ type: e.target.value}); }} >
                             <option value='plugin'>plugin</option>
                             <option value='keras'>Keras</option>
-                            <option value='neuralmonkey' >Neural Monkey / TensorFlow Slim</option>
+                            <option value='tfSlim' >Neural Monkey / TensorFlow Slim</option>
                         </select>
                     </InformativeLabel>
                         
@@ -150,11 +152,12 @@ class KerasEncoder extends React.Component {
 
     render() {
         const nets = this.networks.map((e) => <option key={e}>{e}</option>);
+        const el = this.props.errorLog === undefined ? {} : this.props.errorLog;
         return (
             <div>
                 <InformativeLabel name="network" hint="The type of network." optional={false}>
-                    <select value={this.props.netType} 
-                        onChange={e => this.props.handleChange("netType", e.target.value)}>
+                    <select value={this.props.network} 
+                        onChange={e => this.props.handleChange("network", e.target.value)}>
                         {nets}
                     </select>
                 </InformativeLabel>
@@ -162,17 +165,21 @@ class KerasEncoder extends React.Component {
                 <InformativeInput
                     name="layer"
                     value={this.props.layerSpec}
-                    onChange={e => this.props.handleChange("layerSpec", e.target.value)}
+                    handleChange={e => this.props.handleChange("layerSpec", e.target.value)}
                     hint="An identifier of the layer whose output is extracted as features."
                     optional={false}
+                    error={el.layer}
                 />
 
                 <InformativeInput
                     name="checkpoint path"
                     value={this.props.ckptPath}
                     optional={true}
-                    hint="A path to the model's weights. If not provided, Keras' default is used."
-                    onChange={e => this.props.handleChange("ckptPath", e.target.value)}
+                    hint="A path to the model's weights. If not provided, Keras' default is used.
+                    Note, that if the weight checkpoint is not found at Keras' default location
+                    it is downloaded automatically to this location."
+                    handleChange={e => this.props.handleChange("ckptPath", e.target.value)}
+                    error={el.ckptPath}
                 />
             </div>
         )
@@ -213,15 +220,16 @@ class NeuralMonkeyEncoder extends React.Component {
 
     render() {
         const nets = this.networks.map(e => <option key={e.id}>{e.id}</option>);
-        const maps = this.networks.filter(e => e.id === this.props.netType)[0].maps
+        const maps = this.networks.filter(e => e.id === this.props.network)[0].maps
             .map(e => <option key={e}>{e}</option>);
+        const el = this.props.errorLog === undefined ? {} : this.props.errorLog;
 
         return (
             <div>
                 <InformativeLabel name="network" hint="The type of network." optional={false}>
                     <select 
                         name="net" 
-                        value={this.props.netType} 
+                        value={this.props.network} 
                         onChange={this.props.handleNetChange} >
                         {nets}
                     </select>
@@ -230,9 +238,10 @@ class NeuralMonkeyEncoder extends React.Component {
                 <InformativeInput 
                     name="checkpoint path" 
                     value={this.props.checkpoint}
-                    onChange={this.props.handleCheckpointChange}
-                    hint="The path to the model's weights." 
+                    handleChange={this.props.handleCheckpointChange}
+                    hint="The path to the model's serialized weights." 
                     optional={false}
+                    error={el.ckptPath}
                 />
 
                 <InformativeLabel name="feature map" 
@@ -257,16 +266,18 @@ AddEncoderTab.propTypes = {
 };
 
 KerasEncoder.propTypes = {
-    netType: PropTypes.string.isRequired,
-    handleChange: PropTypes.func.isRequired
+    network: PropTypes.string.isRequired,
+    handleChange: PropTypes.func.isRequired,
+    errorLog: PropTypes.object
 };
 
 NeuralMonkeyEncoder.propTypes = {
-    netType: PropTypes.string.isRequired,
+    network: PropTypes.string.isRequired,
     checkpoint: PropTypes.string.isRequired,
     featureMap: PropTypes.string.isRequired,
     handleNetChange: PropTypes.func.isRequired,
     handleCheckpointChange: PropTypes.func.isRequired,
-    handleFeatureMapChange: PropTypes.func.isRequired
+    handleFeatureMapChange: PropTypes.func.isRequired,
+    errorLog: PropTypes.object
 };
 

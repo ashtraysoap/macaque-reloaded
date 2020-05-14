@@ -26,7 +26,7 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         alignments_series -> WordAlignmentRunner output_series
         bs_graph_series -> BeamSearchRunner output_series
         """
-
+        
         super(NeuralMonkeyModelWrapper, self).__init__(name, runs_on_features)
 
         if not os.path.isfile(config_path):
@@ -76,10 +76,12 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
             captions = output_series[self._caption_series]
         else:
             captions = [None] * n_elems
+
         if self._alignments_series:
             alignments = output_series[self._alignments_series]
         else:
             alignments = [None] * n_elems
+
         if self._bs_graph_series:
             bs_out = output_series[self._bs_graph_series]
             graphs = []
@@ -103,18 +105,29 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         
         results = []
         for c, a, bs_g, bs_c, bs_a in zip(captions, alignments, graphs, bs_caps, bs_attns):
-            results.append({
-                'greedy': {
-                    'caption': c,
-                    'alignments': a
-                },
-                'beam_search': {
-                    'captions': bs_c,
-                    'alignments': bs_a,
-                    'graph': bs_g
-                }
-            })
-
+            r = {}
+            for x in [(c, 'caption'), (a, 'alignment')]:
+                if x[0] is not None:
+                    if 'greedy' not in r:
+                        r['greedy'] = {}
+                    r['greedy'][x[1]] = x[0]
+            for x in [(bs_g, 'graph'), (bs_c, 'captions'), (bs_a, 'alignments')]:
+                if x[0] is not None:
+                    if 'beam_search' not in r:
+                        r['beam_search'] = {}
+                    r['beam_search'][x[1]] = x[0]
+            results.append(r)
+            # results.append({
+            #     'greedy': {
+            #         'caption': c,
+            #         'alignments': a
+            #     },
+            #     'beam_search': {
+            #         'captions': bs_c,
+            #         'alignments': bs_a,
+            #         'graph': bs_g
+            #     }
+            # })
         return results
 
 def _transform_alignments(alignments):

@@ -1,21 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { RunResultsView } from './runResultsView.js';
-import { PendingTab } from './statusTabs.js';
+import { HomeTabResultsView } from './runResultsView.js';
 import { enumerate } from './utils.js';
 
-export { HomeTab };
+export { HomeTab, RunnersMenu };
 
 class HomeTab extends React.Component {
     constructor(props) {
         super(props);
 
-        if (this.props.results === null) {
+        const pr = this.props.results;
+
+        if (pr === null) {
             this.imgSrc = null;
             this.results = null;
         } else {
-            this.results = this.props.results[this.state.selectedRunner]
+            this.results = Object.values(pr)[0];
             this.imgSrc = `/load_image/${this.results.datasetId}/${0}`;
         }
 
@@ -23,17 +24,18 @@ class HomeTab extends React.Component {
             imgSrc: this.imgSrc,
             tokenId: null,
             waiting: false,
-            selectedRunner: 0,
-            imgDatasetId: null
+            selectedRunner: pr === null ? 0 : Object.values(pr)[0].runnerId,
+            imgDatasetId: pr === null ? null : Object.values(pr)[0].datasetId,
+            showRunners: false
         };
 
         this.getResultsForElement = this.getResultsForElement.bind(this);
         this.fetchAttentionMap = this.fetchAttentionMap.bind(this);
         this.fetchAttentionMapForBSToken = this.fetchAttentionMapForBSToken.bind(this);
-        this.fetchBeamSearchGraph = this.fetchBeamSearchGraph.bind(this);
         this.onCaptionClick = this.onCaptionClick.bind(this);
         this.onImageSubmit = this.onImageSubmit.bind(this);
         this.processImage = this.processImage.bind(this);
+        this.showRunners = this.showRunners.bind(this);
     }
 
     onImageSubmit() {
@@ -45,7 +47,6 @@ class HomeTab extends React.Component {
         fetch('/single_image_upload', init)
         .then(res => res.json())
         .then(res => {
-            console.log("uhm uhm", res.datasetId);
             this.imgSrc = `/load_image/${res.datasetId}/${0}`;
             this.setState({
                 imgSrc: `/load_image/${res.datasetId}/${0}`,
@@ -68,11 +69,10 @@ class HomeTab extends React.Component {
     }
 
     render() {
-        console.log(this.results);
         if (this.props.runners.length === 0) {
             return (
                 <div className="homeTab">
-                    No runners available.
+                    No runners available. Add a runner to enable single image captioning.
                 </div>
             );
         }
@@ -85,63 +85,71 @@ class HomeTab extends React.Component {
             else
                 this.results = this.props.results[this.state.selectedRunner]
         }
-        console.log(this.results);
 
+        let img = null;
+        let processImgLabel = null;
+        let runnerSel = null;
 
-        let runners = <RunnerSelection 
-            runners={this.props.runners.map(r => r.name)}
-            selectedRunner={this.state.selectedRunner}
-            onChange={e => this.setState({selectedRunner: e})}
-        />;
+        if (this.state.imgDatasetId !== null) {
+            img = <img src={this.state.imgSrc} className="homeTabImg" alt=""/>;
+            processImgLabel = <label className="customFileUpload" onClick={this.processImage}>Process image</label>;
+            runnerSel = <label className="customFileUpload" onClick={this.showRunners}>Choose runner</label>;
+        }
+
+        const cn = this.props.results === null ? "homeTabBase" : "homeTabBase homeTabBaseClicked";
 
         return (
             <div className="homeTab">
 
                 {
                     this.props.runners.length > 0 &&
-                    <form method="post" encType="multipart/form-data">
-                    <label>Input image: </label>
-                    <input id="inFile" 
-                        type="file" 
-                        name="input-file" 
-                        accept=".jpg"
-                        onInput={this.onImageSubmit}
-                        />
-                    </form>
-                }
-
-                {
-                    this.state.imgDatasetId !== null &&
-                    <img src={this.state.imgSrc} style={{ width: "30vw", height: "auto" }} alt=""/>
-                }
-
-                { runners }
-
-                {
-                    this.state.imgDatasetId !== null &&
-                    <button onClick={this.processImage}>Process image</button>
+                    <div id="homeTabBase" className={cn}>
+                        {img}
+                        <div>
+                            <form method="post" encType="multipart/form-data">
+                                <input id="inFile" 
+                                    type="file" 
+                                    name="input-file" 
+                                    accept=".jpg"
+                                    onInput={this.onImageSubmit}
+                                />
+                            </form>
+                            <label htmlFor="inFile" className="customFileUpload">Input image</label>
+                            {runnerSel}
+                            {processImgLabel}
+                        </div>
+                    </div>
                 }
 
                 {
                     this.state.waiting &&
-                    <PendingTab text="Processing image."/>
+                    <div className="homeTabProcessing">Processing Image</div>
                 }
 
                 {
                     this.results !== null &&
                     <div>
-                        <RunResultsView
+                        <HomeTabResultsView
                             results={this.results.results[0]}
                             instanceId={0}
                             runId={this.results.runId}
                             onCaptionClick={this.onCaptionClick}
                             fetchAttentionMap={this.fetchAttentionMap}
                             fetchAttentionMapForBSToken={this.fetchAttentionMapForBSToken}
-                            metrics={[]}
-                            graph={this.state.bsGraph}
                         />
                     </div>
                 }
+
+                {
+                    this.state.showRunners &&
+                    <RunnersMenu
+                        runners={this.props.runners}
+                        select={(r) => this.setState({ selectedRunner: r})}
+                        selected={this.state.selectedRunner}
+                        hide={() => this.setState({ showRunners: false})}
+                    />
+                }
+           
             </div>
         );
     }
@@ -194,14 +202,6 @@ class HomeTab extends React.Component {
         }
     }
 
-    fetchBeamSearchGraph() {
-        return fetch(`/load_bs_graph/${this.results.runId}/${0}`)
-        .then(res => res.json())
-        .then(res => {
-            this.setState({ bsGraph: res });
-        });
-    }
-
     onCaptionClick(captionId, tokenId) {
         if (tokenId === this.state.tokenId) {
             // user clicked on the currently selected caption token => display
@@ -220,32 +220,23 @@ class HomeTab extends React.Component {
     getResultsForElement(results, elemId) {
         return results.results[elemId];
     }
+
+    showRunners() {
+        this.setState({ showRunners: true });
+    }
 }
 
-function RunnerSelection(props) {
-    const divStyle = {
-        display: 'inline-block',
-        margin: '3px'
-    };
-
-    const selStyle = {
-        display: 'inline-block',
-        margin: '3px',
-        backgroundColor: "pink"
-    };
-
-    const rs = enumerate(props.runners);
-    const rs_elems = rs.map(e => 
-        <div key={e[1].toString()} 
-            style={e[0] === props.selectedRunner ? selStyle : divStyle} 
-            onClick={() => {console.log(e[0], e[1]); props.onChange(e[0])}}>
-            {e[1]}
-        </div>
-    );
+function RunnersMenu(props) {
+    let rs = enumerate(props.runners).map(r => 
+    <div key={r[1].name} onClick={() => props.select(r[0])} id={props.selected === r[0] ? "selected" : ""}>
+        {r[1].name}
+    </div>);
 
     return (
-        <div>
-            {rs_elems}
+        <div onClick={props.hide} className="runnersMenuBack">
+            <div className="runnersMenu">
+                {rs}
+            </div>
         </div>
     );
 }
@@ -256,8 +247,9 @@ HomeTab.propTypes = {
     onServerResponse: PropTypes.func
 };
 
-RunnerSelection.propTypes = {
-    runners: PropTypes.arrayOf(PropTypes.string).isRequired,
-    selectedRunner: PropTypes.number.isRequired,
-    onChange: PropTypes.func.isRequired
-};
+RunnersMenu.propTypes = {
+    runners: PropTypes.arrayOf(PropTypes.object).isRequired,
+    hide: PropTypes.func.isRequired,
+    select: PropTypes.func.isRequired,
+    selected: PropTypes.number
+}

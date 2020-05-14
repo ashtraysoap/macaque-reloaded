@@ -11,7 +11,7 @@ class FeatureExtractorId(Enum):
     """Class enumerating supported feature extractor types."""
 
     Keras = "keras"
-    Slim = "tf-slim"
+    Slim = "tfSlim"
     Plugin = "plugin"
     Null = "none"
 
@@ -38,8 +38,8 @@ def create_feature_extractor(extractor_config, from_response=True):
             slim_config = extractor_config['tfSlim']
         else:
              slim_config = extractor_config
-        net_type = slim_config['netType']
-        model_ckpt = slim_config['checkpoint']
+        net_type = slim_config['network']
+        model_ckpt = slim_config['ckptPath']
         feature_map = slim_config['featureMap']
         extractor = NeuralMonkeyFeatureExtractor(net=net_type,
                     slim_models=SLIM_PATH,
@@ -54,8 +54,8 @@ def create_feature_extractor(extractor_config, from_response=True):
             keras_config = extractor_config
         net_type = keras_config['network']
         layer_spec = keras_config['layerSpec']
-        if 'checkpoint' in keras_config:
-            ckpt_path = keras_config['checkpoint']
+        if 'ckptPath' in keras_config:
+            ckpt_path = keras_config['ckptPath']
         else:
             ckpt_path = ""
         extractor = KerasFeatureExtractor(net_id=net_type,

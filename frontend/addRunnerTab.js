@@ -88,17 +88,17 @@ class AddRunnerTab extends React.Component {
                 <div className="addModelPartLabel">Runner</div>
                 
                 <InformativeInput
-                    name="text"
+                    name="name"
                     value={s.name}
                     optional={false}
                     handleChange={e => this.setState({ name: e.target.value })}
-                    hint="The name of the runner."
+                    hint="The unique name of the runner."
                     error={s.errorLog.name}
                 />
 
                 <InformativeLabel
                     name="preprocessor"
-                    hint=""
+                    hint="The preprocessor to be used with this runner."
                     optional={false}>
                     <select value={s.prepro === null ? "none" : ps[s.prepro]} onChange={setPrepro}>
                         <option value='none'>none</option>
@@ -107,7 +107,7 @@ class AddRunnerTab extends React.Component {
                 </InformativeLabel>
 
                 <InformativeLabel name="encoder"
-                    hint=""
+                    hint="The encoder to be used with this runner."
                     optional={false}>
                     <select value={s.encoder === null ? "none" : es[s.encoder]} onChange={setEncoder}>
                         <option value='none'>none</option>
@@ -117,7 +117,7 @@ class AddRunnerTab extends React.Component {
 
                 <InformativeLabel
                     name="model"
-                    hint=""
+                    hint="The model to be used with this runner."
                     optional={false}>
                     <select value={s.model === null ? "none" : ms[s.model]} onChange={setModel}>
                         <option value='none'>none</option>

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 export { InformativeInput, InformativeLabel, TableRow, SidePanel, 
-    range, zip, enumerate, round, basename, MultipleSelectionWithButton };
+    range, zip, enumerate, round, basename, wait, MultipleSelectionWithButton };
 
 
 function range(n) {
@@ -10,7 +10,6 @@ function range(n) {
 }
 
 function zip(x, y) {
-    //TODO: add checks
     let z = []
     for (let i = 0; i < x.length; i++) {
         z.push([x[i], y[i]]);
@@ -30,6 +29,14 @@ function basename(fp) {
     return fp.replace(/^.*[\\\/]/, '');
 }
 
+function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
+
 class InformativeInput extends React.Component {
     constructor(props) {
         super(props);
@@ -46,16 +53,18 @@ class InformativeInput extends React.Component {
 
         return (
             <div>
-                <label onClick={this.onLabelClick} >{labelText}</label>
-                <input type="text" value={this.props.value} onChange={this.props.handleChange} />
+                <div className="informative">
+                    <label onClick={this.onLabelClick} >{labelText}</label>
+                    <input type="text" value={this.props.value} onChange={this.props.handleChange} />
+                </div>
                 {
                     this.state.clicked &&
-                        <div>
+                        <div className="hint">
                             {this.props.hint}
                         </div>
                 }
                 {   this.props.error &&
-                        <div>
+                        <div className="error">
                             {this.props.error}
                         </div>
                 }
@@ -79,18 +88,18 @@ class InformativeLabel extends React.Component {
         const labelText = this.props.optional ? <i>{this.props.name}</i> : this.props.name;
 
         return (
-            <div>
+            <div className="informative">
                 <label onClick={this.onLabelClick} >{labelText}</label>
                 {
                     this.props.children
                 }
                 {
                     this.state.clicked &&
-                        <div>{this.props.hint}</div>
+                        <div className="hint">{this.props.hint}</div>
                 }
                 {
                     this.props.error &&
-                        <div>{this.props.error}</div>
+                        <div className="error">{this.props.error}</div>
                 }
             </div>
         )
@@ -140,8 +149,7 @@ class SidePanel extends React.Component {
 
         return (
             <div className="sideTab">
-                <label>{p.label}</label>
-                <hr/>
+                <div className="addModelPartLabel">{p.label}</div>
                 {keys}
             </div>
         );

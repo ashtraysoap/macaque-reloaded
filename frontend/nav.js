@@ -7,19 +7,21 @@ export { Navigation, NavElement };
 function Navigation(props) {
     const callback = props.onSelectedChange;
 
-    let navElems = ['About'];
-    if (!props.public)
-        navElems = navElems.concat(['Configure', 'Datasets']);
+    let navElems = ['Home', 'About'];
+    // if (!props.public)
+    //     navElems = navElems.concat(['Configure', 'Datasets']);
+    navElems = navElems.concat(['Configure', 'Datasets']);
+    navElems.push('Models');
 
     navElems = navElems.map((e) => <NavElement 
         key={e}
         text={e}
-        class={props.selected === e ? "navElementSel" : "navElement"}
+        class={props.selected === e ? "selectedNav" : null}
         handleClick={callback}
     />);
 
     return (
-        <div className="nav" >{navElems}</div>
+        <div className="navigation">{navElems}</div>
     );
 }
 
@@ -38,6 +40,6 @@ Navigation.propTypes = {
 
 NavElement.propTypes = {
     text: PropTypes.string.isRequired,
-    class: PropTypes.string.isRequired,
     handleClick: PropTypes.func.isRequired,
+    class: PropTypes.string,
 };

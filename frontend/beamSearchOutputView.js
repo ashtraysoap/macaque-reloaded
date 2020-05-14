@@ -12,38 +12,44 @@ class BeamSearchOutputView extends React.Component {
         super(props);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.componentDidUpdate = this.componentDidUpdate.bind(this);
+        this.buildGraph = this.buildGraph.bind(this);
         this.handleNodeClick = this.handleNodeClick.bind(this);
+
+        this.state = {
+            graphLoaded: false,
+            selectedNodeId: null
+        };
+
+        this.props.graphPromise.then(g => {
+            this.setState({ graphLoaded: true, graph: g });
+        });
     }
 
     render() {
-        return (
-            <div className="background">
-                {
-                    this.props.graph === null &&
+
+        if (this.state.graphPromise === null)
+            return (
+                <div>
                     <div>Beam search output graph not detected.</div>
-                }
-                {
-                    this.props.graph !== null &&
+                </div>
+            );
+
+        return (
+            <div>
                     <svg id="BSGraph"></svg>
-                }
             </div>
         );
     }
 
-    componentDidMount() {
-        if (this.props.graph === null)
-            return;
-
-        const root = this.props.graph;
-
+    buildGraph(root) {
         let d3Tree = d3.layout.tree()
             .size([1000, 1000]);
 
         d3.select("svg").selectAll("*").remove();
 
         let svg = d3.select("svg")
-            .attr("width", 1500)
-            .attr("height", 1500)
+            .attr("width", "1200px")
+            .attr("height", "1200px")
             .append("g")
             .attr("transform", "translate(" + 100 + "," + 20 + ")");
 
@@ -95,31 +101,46 @@ class BeamSearchOutputView extends React.Component {
 
         link.enter().insert("path", "g")
             .attr("class", "link")
-            .attr("d", diagonal);
+            .attr("d", diagonal);        
     }
 
-    componentDidUpdate() {
-        this.componentDidMount();
+    componentDidUpdate(prevProps) {
+        if (this.props.graphPromise !== prevProps.graphPromise) {
+            this.props.graphPromise.then(g => {
+                this.setState({ graphLoaded: true, graph: g });
+            });
+        }
+
+        if (this.state.graphLoaded && this.state.graph !== null) {
+            console.log("building graph");
+            this.buildGraph(this.state.graph);
+        }
+    }
+
+    componentDidMount() {
+        if (this.state.graphLoaded)
+            this.buildGraph(this.state.graph);
     }
 
     handleNodeClick(node) {
-        if (!node.displayed) {
+        if (node.id !== this.state.selectedNodeId) {
             if (node.alignment === null || node.alignment === undefined) {
                 // No alignment present, will display original image.
                 this.props.displayAlignment(null);
+                this.setState({ selectedNodeId: null });
             } else {
                 this.props.displayAlignment(node.alignment);
-                node.displayed = true;
+                this.setState({ selectedNodeId: node.id });
             }
         } else {
             // Already displaying node's alignment; display the original image.
-            node.displayed = false;
             this.props.displayAlignment(null);
+            this.setState({ selectedNodeId: null });
         }
     }
 }
 
 BeamSearchOutputView.propTypes = {
-    graph: PropTypes.object.isRequired,
+    graphPromise: PropTypes.object.isRequired,
     displayAlignment: PropTypes.func.isRequired
 };

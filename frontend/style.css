@@ -1,32 +1,162 @@
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Regular.ttf);
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Bold.ttf);
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Black.ttf);
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Medium.ttf);
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Light.ttf);
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(fonts/Roboto-Thin.ttf);
+    font-weight: 100;
+}
+
+:root {
+    --c1: #EDF5E1;
+    --c2: #C5CBE3;
+    --c3: #9198e534;
+    --c4: rgb(0, 68, 255)
+}
+
 * {
     margin: 0;
     padding: 0;
 }
 
 body {
-    font-family: sans-serif;
-    font-size: 14pt;
+    font-family: Roboto;
 }
 
+/* Styles for utils.js */
+
+.informative {
+    cursor: pointer;
+    padding-left: 5px;
+}
+
+.informative:hover label {
+    color: var(--c4);
+}
+
+.informative label {
+    display: inline-block;
+    width: 30%;
+    cursor: pointer;
+}
+
+.hint {
+    margin-left: 1vw;
+    font-size: 80%;
+    padding: 3px 5px 3px 5px;
+    background-color: rgba(31, 199, 1, 0.712);
+    border: 1px solid rgb(18, 129, 3);
+    border-radius: 12px;
+}
+
+.error {
+    margin-left: 1vw;
+    font-size: 80%;
+    padding: 3px 5px 3px 5px;
+    background-color: rgba(255, 0, 0, 0.712);
+    border: 1px solid rgb(200, 5, 5);
+    border-radius: 12px;
+}
+
+/* Status Tabs */
+
+.pendingTab {
+    border: 2px solid orange;
+    background-color: rgba(255, 238, 0, 0.705);
+    padding: 8vh 3vw 8vh 3vw;
+    margin-top: 5vh;
+    text-align: center;
+    border-radius: 18px
+}
+
+.errorTab {
+    background-color: rgba(255, 0, 0, 0.712);
+    border: 2px solid rgb(200, 5, 5);
+    border-radius: 18px;
+
+    padding: 8vh 3vw 8vh 3vw;
+    margin-top: 5vh;
+    text-align: center;
+}
+
+.successTab {
+    background-color: rgba(31, 199, 1, 0.712);
+    border: 2px solid rgb(18, 129, 3);
+    border-radius: 18px;
+
+    padding: 8vh 3vw 8vh 3vw;
+    margin-top: 5vh;
+    text-align: center;
+}
+
+/* About Tab */
 
 .aboutTab {
     width: 55vw;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 2vw;
+    margin-top: 5vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .addModelPartLabel {
     border-bottom: solid 1px #ccc;
     margin-bottom: 1vw;
+    line-height: 2;
+    font-size: 120%;
 }
 
 .addSomethingTab {
+    width: 30vw;
     line-height: 2;
 }
 
+.addSomethingTab div {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.addSomethingTab input, .addSomethingTab select {
+    margin-left: 10px;
+}
+
+.addSomethingTab button {
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+
+
 .background {
-    background-color: #9198e534;
+    background-color: var(--c3);
     line-height: 2.5;
 }
 
@@ -34,54 +164,31 @@ body {
     margin-bottom: 3vh;
 }
 
+/* DataEntriesList */
+
 .dataEntry {
     width: auto;
     border-bottom: solid 1px #ccc;
     padding-left: 1vw;
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    cursor: pointer;
+
 }
 
 .dataEntry:hover {
-    background-color: #9198e580;
+    background-color: var(--c3);
+    border-bottom: none;
+    padding-bottom: 5px;
+    border-radius: 15px;
 }
 
 .dataList {
     line-height: 3;
-}
-
-.header {
-    /* background: linear-gradient(#e66465, #9198e5); */
-    background: linear-gradient(#eb5e55, #9198e5);
-    height: 10vh;
-    width: 100%;
-    box-shadow: 0px 5px 5px grey;
-    line-height: 10vh;
-    display: table;
-    position: sticky;
-    top: 0;
-}
-
-.header div {
-    display: table-cell;
-    text-align: center;
-}
-
-.homeTab {
-    width: 55vw;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 3vh;
-    line-height: 2.5;
-}
-
-.instanceView {
-    background-color: white;
-    display: inline-block;
-    border: solid 4px black;
-    border-radius: 15px;
-    line-height: 3;
-    width: 66vw;
-    margin-left: auto;
-    margin-right: auto;
+    padding-left: 2vw;
+    border-left: 1px solid #ccc;
+    overflow: auto;
 }
 
 .listHeader {
@@ -92,15 +199,6 @@ body {
     display: table-cell;
 }
 
-.logo {
-    width: 20%;
-    cursor: pointer;
-}
-
-.logoSelected {
-    border-bottom: solid black 2px;
-}
-
 .mainTab {
     width: 55vw;
     margin-left: auto;
@@ -108,127 +206,87 @@ body {
     margin-top: 2vw;
 }
 
-/*  */
-
-.multiSel {
-    line-height: 2;
-}
-
-.multiSel  div {
-    color: grey;
-}
-
-.multiSel  div.selected {
-    color: black;
-}
-
-.multiSel > label {
-    color: grey;
-}
-
-.multiSel > label.selected {
-    color: black;
-}
-
-.pendingTab {
-    background-color: orange;
-    border-style: 3px solid;
-    border-radius: 5px;
-    padding-left: 10px;
-}
-
-.errorTab {
-    background-color: red;
-    border-style: 3px solid;
-    border-radius: 5px;
-    padding-left: 10px;
-}
-
-.successTab {
-    background-color: green;
-    border-style: 3px solid;
-    border-radius: 5px;
-    padding-left: 10px;
-}
-
 .sideTab {
-    float: left;
-    width: 12vw;
-    margin-left: 6vw;
-    margin-right: auto;
+    width: 15vw;
     line-height: 2;
+    margin-right: 3vw;
+    margin-bottom: 3vh;
 }
 
-.sideTab > div {
+.sideTab div:not(:first-child) {
     color: grey;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 5px;
+}
+
+.sideTab div:not(:first-child):hover {
+    background-color: var(--c3);
+    border-radius: 10px;
 }
 
 .sideTab > div.selected {
     color: black;
 }
 
-.sideTab > div:hover {
+.sideTab div:not(:first-child):hover {
     cursor: pointer;
-}
-
-.centerTab {
-    width: 55vw;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .configTab {
-    margin-top: 2vw;
-}
-
-.datasetCenter {
-    width: 55vw;
-    margin-left: auto;
+    width: 80vw;
+    margin-left: 20vw;
     margin-right: auto;
-}
-
-.datasetRight {
-    float: right;
-    width: 12vw;
-    margin-left: auto;
-    margin-right: 6vw;
-    line-height: 2;
-}
-
-.datasetRight > div > div {
-    margin-bottom: 2vw;
+    margin-top: 5vw;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
 .datasetsTab {
-    margin-top: 2vw;
+    width: 80vw;
+    margin-left: 20vw;
+    margin-right: auto;
+    margin-top: 5vw;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
-/*  */
-
-.nav {
-    width: 80%;
+.datasetTab {
+    width: 40vw;
 }
 
-.navElement {
-    padding-left: 3vw;
-    padding-right: 3vw;
-    cursor: pointer;
+.datasetTabLabel {
+    margin-bottom: 10px;
+    font-size: 150%;
+    padding-left: 2vw;
 }
 
-.navElementSel {
-    padding-left: 3vw;
-    padding-right: 3vw;
-    cursor: pointer;
-    border-bottom: solid black 2px;
+.datasetSidePanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 3vw;
+}
+
+.datasetSidePanel .sideTab {
+    margin-right: auto;
 }
 
 .resultsSpan {
-    border-bottom: solid 1px #ccc;
+    font-size: 120%;
+    cursor: pointer;
+    margin-bottom: 10px;
 }
 
-.runToggle {
+.resultsSpan:hover {
+    color: rgb(0, 68, 255);
+}
+
+/* .runToggle {
     display: inline;
-    border: solid #9198e534;
+    border: solid var(--c3);
     border-radius: 4px;
     margin: 10px;
 }
@@ -238,7 +296,7 @@ body {
 }
 
 .runToggle > span ~ span {
-    border-left: solid #9198e534;
+    border-left: solid var(--c3);
 }
 
 .sidePanel {
@@ -247,24 +305,22 @@ body {
     padding-right: 5vw;
 }
 
-.transparentLayer {
-    width: 100vw;
-    height: 100vh;
-    background: rgba(128, 128, 128, 0.1);
-    position: absolute;
-    top: 0;
-    left: 0;
-    text-align: center;
-}
-
 #runsBar {
-    /* display: table; */
     text-align: center;
-}
+} */
 
-#BSGraph {
-    
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* Beam search visualizations */
@@ -298,4 +354,528 @@ body {
     fill: none;
     stroke: #ccc;
     stroke-width: 2px;
+}
+
+/* Navigation */
+
+.navigation {
+    top: 0;
+	left: 0;
+    position: fixed;
+    background-color: var(--c1);
+    background-repeat: no-repeat;
+    background-position: 20px 20px;
+    width: 64px;
+    height: 64px;
+    margin-top: 30px;
+    margin-left: 30px;
+    border: 2px solid var(--c2);
+    border-radius: 5px;
+    background-image: url("icons8-menu-24.png");
+    transition: all 0.4s ease;
+    transition-delay: 0.1s;
+}
+
+.navigation:hover {
+    background-color: white;
+
+    background-position: -24px 20px;
+    transition: all 0.4s ease;
+    transition-delay: 0s;
+
+    width: 180px;
+    height: 132px;
+	box-shadow: 5px 0px 8px #666;
+}
+
+.navigation>.selectedNav {
+    background-color: var(--c2);
+}
+
+.navigation div {
+    display: block;
+    height: 20px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+.navigation div:hover {
+    background-color: var(--c1);
+}
+
+.navigation>* {
+    text-align: center;
+
+    opacity: 0;
+    white-space: nowrap;
+	transition: opacity 0.2s ease;
+    transition-delay: 0s;
+}
+
+.navigation:hover>* {
+    opacity: 1.0;
+    transition: opacity 0.4s ease;
+    transition-delay: 0.2s;
+}
+
+.navigation > div:first-child {
+    margin-top: 8px;
+}
+
+/* 
+    Footer styling 
+*/
+
+#Footer {
+    bottom: 15px;
+    left: 30px;
+    position: fixed;
+}
+
+/* Misc */
+
+#Year {
+    bottom: 15px;
+    right: 30px;
+    position: fixed;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+a:focus {
+	outline:none;
+}
+
+/* Home Tab */
+
+.customFileUpload {
+    padding: 6px 12px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.customFileUpload:hover {
+    background-color: var(--c1);
+    cursor: pointer;
+}
+
+.customFileUpload:active {
+    background-color: var(--c2);
+    cursor: pointer;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.homeTabBase {
+    top: 80px;
+    left: 35vw;
+    position: fixed;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    width: 30vw;
+    z-index: -1;
+    transition: all 2.0s ease;
+}
+
+.homeTabBase > * {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.homeTabBase > div {
+    display: flex;
+    flex-direction: row;
+}
+
+.homeTabBase > div > div {
+    display: inherit;
+}
+
+.homeTabBaseClicked {
+    top: 100px;
+    left: 30px;
+}
+
+.homeTabImg {
+    width: 100%;
+    height: auto;
+    padding: 6px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+.homeTabProcessing {
+    position: fixed;
+    top: 120px;
+    left: 35vw;
+    width: 30vw;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 7px;
+    text-align: center;
+    color: white;
+    background-color: green;
+
+    opacity: 0;
+    transition: opacity 2.0s ease 0.5s;
+}
+
+/* Runner Selection */
+
+.runnerMenu > div {
+    opacity: 0;
+}
+
+.runnerMenu:hover > div {
+    opacity: 1;
+}
+
+.runnerMenu:hover > label {
+    opacity: 0;
+}
+
+/* Results View */
+
+.homeTabResultsView {
+    z-index: -2;
+    position: fixed;
+    top: 20px;
+    bottom: 20px;
+    left: 35vw;
+    width: 60vw;
+
+    /* background-color: rgba(255, 166, 0, 0.534); */
+    /* border-radius: 10px; */
+    border-left: 2px solid #ccc;
+    padding-left: 1vw;
+
+    /* opacity: 0; */
+    transition: opacity 2.0s ease 0.5s;
+
+    overflow: auto;
+}
+
+#captions, #alignments, #beamSearch {
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 2vh;
+    padding-bottom: 5px;
+    line-height: 1.5;
+}
+
+/* Captions Bar */
+
+.captionsBar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.captionRow {
+    display: block;
+    line-height: 2;
+
+    width: 100%;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.captionRow div {
+    display: inline-block;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.tokens {
+    width: 60%;
+}
+
+.tokens .selectedToken {
+    color: var(--c4);
+}
+
+.typeBeam {
+    width: 20%;
+    padding-left: 20px;
+    font-style: italic;
+    color: rgb(194, 60, 60);
+}
+
+.typeGreedy {
+    width: 20%;
+    padding-left: 20px;
+    font-style: italic;
+    color: green;
+}
+
+.tokens div {
+    margin-right: 10px;
+}
+
+.blueOnHover div {
+    cursor: pointer;
+}
+
+.blueOnHover div:hover {
+    color: var(--c4);
+}
+
+.captionRow:hover {
+    border-radius: 15px 15px 15px 15px;
+    background-color: var(--c3);
+    /* border: 1px solid var(--c3); */
+    border-bottom: none;
+    margin-bottom: 11px;
+}
+
+.captionRow:last-child {
+    margin-bottom: 0px;
+    border-bottom: none;
+}
+
+
+/* Runners Selection */
+
+.runnersMenuBack {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(100, 100, 100, 0.2);
+}
+
+.runnersMenu {
+    background-color: white;
+    width: 20vw;
+    margin-top: 20vw;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--c2);
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+.runnersMenu > div {
+    cursor: pointer;
+    display: block;
+    height: 20px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    width: 100%;
+    text-align: center;
+}
+
+.runnersMenu > div:hover {
+    background-color: var(--c1);
+}
+
+.runnersMenu > div:active {
+    background-color: var(--c2);
+}
+
+.runnersMenu > div#selected {
+    background-color: var(--c2);
+}
+
+/* Alignments Tab */
+
+.attnLabelShowing {
+    cursor: pointer;
+    width: 100%;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 20px;
+    margin-bottom: 12px;
+    line-height: 2.5;
+    font-style: italic;
+}
+
+.attnLabelShowing:hover {
+    color: var(--c4);
+}
+
+.attnLabelHidden {
+    cursor: pointer;
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    line-height: 2.5;
+    font-style: italic;
+}
+
+.attnLabelHidden:hover {
+    color: var(--c4);
+}
+
+.attn > div:last-child div.attnLabelHidden {
+    cursor: pointer;
+    width: 100%;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 20px;
+    margin-bottom: 12px;
+    line-height: 2.5;
+    font-style: italic;
+    border-bottom: none;
+}
+
+/* Data Instance View */
+
+.transparentLayer {
+    width: 100vw;
+    height: 100vh;
+    background: rgba(128, 128, 128, 0.1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* text-align: center; */
+}
+
+.instanceViewNoResults {
+    background-color: white;
+    border: solid 2px #ccc;
+    border-radius: 15px;
+    line-height: 3;
+    width: 50vw;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3vh;
+}
+
+.instanceViewNoResults div:first-child {
+    margin-top: 2vh;
+}
+
+.instanceViewNoResults .sourceCaption {
+    width: auto;
+    text-align: center;
+}
+
+.instanceView {
+    background-color: white;
+    border: solid 2px #ccc;
+    border-radius: 15px;
+    line-height: 3;
+    width: 85vw;
+    height: 90vh;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.instanceInfo {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: 2vh;
+    overflow: auto;
+}
+
+.instanceInfo div {
+    margin-bottom: 2vh;
+}
+
+.transparentLayer img {
+    width: 95%;
+    height: auto;
+    padding: 6px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+.instanceViewResults {
+    width: 60%;
+    overflow: auto;
+    margin-top: 2vh;
+}
+
+.sourceCaption {
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 2vh;
+    padding-bottom: 5px;
+    line-height: 1.5;
+    width: 100%;
+}
+
+.sourceCaptionLabel {
+    font-size: 120%;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.sourceCaptionLabel:hover {
+    color: var(--c4);
+}
+
+.sourceCaptionText {
+    line-height: 2;
+}
+
+.filename {
+    line-height: 2;
+    font-size: 120%;
+    font-style: italic;
+
+    background-color: var(--c3);
+    border-radius: 15px;
+    border: 2px solid var(--c2);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 15px;
+    width: max-content;
+    margin-bottom: 4vh;
+
+}
+
+/* DatasetsTab */
+
+.processingTab {
+    background-color: rgba(255, 238, 0, 0.705);
+    padding: 8vh 3vw 8vh 3vw;
+    margin-top: 5vh;
+    text-align: center;
+    border-radius: 18px;
+}
+
+.incompatibleTab {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10vw;
+}
+
+.incompatibleTab p {
+    text-align: center;
+    font-size: 14pt;
 }
