@@ -1,3 +1,5 @@
+import os
+
 from preprocessing import create_preprocessor, PreproMode
 from model_wrappers import create_model_wrapper
 from feature_extractors import create_feature_extractor
@@ -38,10 +40,16 @@ def create_runner(macaque_state, runner_config):
     else:
         raise RuntimeError("A model has to be provided in the runner.")
 
+    if 'about' in runner_config:
+        about_fp = runner_config['about']
+    else:
+        about_fp = None
+
     return Runner(name=name,
         model=model,
         feature_extractor=encoder,
-        prepro=prepro)
+        prepro=prepro,
+        about_fp=about_fp)
 
 class Runner():
     """Class which allows performing inference on datasets.
@@ -58,7 +66,8 @@ class Runner():
         model,
         feature_extractor=None,
         prepro=None,
-        name=None):
+        name=None,
+        about_fp=None):
         """Initializes the Runner."""
 
         self._name = name
@@ -66,6 +75,11 @@ class Runner():
         self._feature_extractor = feature_extractor
         self._model = model
         self._idx = None
+        self.about = None
+
+        if about_fp is not None and os.path.isfile(about_fp):
+            self.about = open(about_fp, mode='r', encoding='utf-8').read().strip().split('\n\n')
+            
 
     @property
     def name(self):
@@ -167,6 +181,8 @@ class Runner():
             d['preprocessor'] = self.preprocessor.name
         if self.feature_extractor is not None:
             d['encoder'] = self.feature_extractor.name
+        if self.about is not None:
+            d['about'] = self.about
         return d
 
 # def create_demo_runner():
