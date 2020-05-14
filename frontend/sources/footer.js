@@ -2,6 +2,7 @@ import React from 'react';
 
 export { Footer };
 
+
 function Footer(props) {
     return (
         <div>

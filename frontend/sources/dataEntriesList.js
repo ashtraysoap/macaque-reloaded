@@ -36,8 +36,6 @@ class DataEntriesList extends React.Component {
 }
 
 DataEntriesList.propTypes = {
-    entries: PropTypes.shape({
-
-    }).isRequired,
+    entries: PropTypes.object.isRequired,
     handleEntryClick: PropTypes.func
 };
