@@ -6,6 +6,22 @@ import { SidePanel, range } from './utils.js';
 
 export { DatasetsTab };
 
+
+/**
+ * Component responsible for displaying the dataset tab.
+ * 
+ * Component State:
+ *      selectedDataset: Number. Identifier of the currently selected dataset.
+ *      selectedRunner: Number. Identifier of the currently selected runner.
+ *      processing: Boolean. Whether the component is currently expecting
+ *              a response from the server.
+ * 
+ * Component Props:
+ *      datasets: Array. An array of dataset objects.
+ *      results: Array. An array of results objects.
+ *      runners: Array. An array of runner objects.
+ *      onResultsResponse: Function. Handles arriving results from the server.
+ */
 class DatasetsTab extends React.Component {
     constructor(props) {
         super(props);

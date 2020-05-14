@@ -7,6 +7,18 @@ import { DataEntriesList } from './dataEntriesList.js';
 export { DatasetTab };
 
 
+/**
+ * Component responsible for displaying the contents of a
+ * dataset and results for individual elements.
+ * 
+ * Component State:
+ *      elemIdx: Number. The number of the currently displayed element.
+ * 
+ * Component Props:
+ *      dataset: Object. The dataset object.
+ *      results: Object. Results of running a runner on the selected instance.
+ *      runners: Array. An array of runners.
+ */
 class DatasetTab extends React.Component {
     constructor(props) {
         super(props);

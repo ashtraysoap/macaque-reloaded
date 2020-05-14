@@ -7,6 +7,22 @@ import { basename } from './utils.js';
 export { DataInstanceView };
 
 
+/**
+ * Component displaying information about a single dataset instance along
+ * with its associated results.
+ * 
+ * Component State:
+ *      imgSrc: String. A string URL to the instance image source.
+ *      tokenId: Number. A number identifier of the selected token.
+ * 
+ * Component Props:
+ *      dataInstance: Object. Object representing the data instance.
+ *      results: Array. Array of results associated with the instance.
+ *      dataset: Object. An object reperesenting the source dataset.
+ *      onClick: Function. Handles user clicks on caption tokens.
+ *      runners: Array. An array of runners.
+ *      onInstanceChange: Function. Handles changing between dataset instances.
+ */
 class DataInstanceView extends React.Component {
     constructor(props) {
         super(props);
@@ -183,6 +199,16 @@ class DataInstanceView extends React.Component {
     }
 }
 
+
+/**
+ * Component displaying the source caption.
+ * 
+ * Component State:
+ *      show: Boolean. Whether the caption should be shown.
+ * 
+ * Component Props:
+ *      caption: Array. The source caption. An array of string tokens.
+ */
 class SourceCaption extends React.Component {
     constructor(props) {
         super(props);
@@ -235,4 +261,8 @@ DataInstanceView.propTypes = {
     onClick: PropTypes.func.isRequired,
     runners: PropTypes.arrayOf(PropTypes.object).isRequired,
     onInstanceChange: PropTypes.func.isRequired
+};
+
+SourceCaption.propTypes = {
+    caption: PropTypes.arrayOf(PropTypes.string)
 };
