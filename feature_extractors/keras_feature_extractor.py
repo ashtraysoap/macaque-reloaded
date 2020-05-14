@@ -2,9 +2,6 @@ from collections import namedtuple
 from importlib import import_module
 import os
 
-from keras.preprocessing import image
-from keras import Model
-from keras import backend as K
 import numpy as np
 
 from .feature_extractor import FeatureExtractor
@@ -57,6 +54,10 @@ class KerasFeatureExtractor(FeatureExtractor):
         Raises:
             ValueError: Unsupported network.
         """
+
+        from keras.preprocessing import image
+        from keras import Model
+        from keras import backend as K
 
         super(KerasFeatureExtractor, self).__init__(name)
         

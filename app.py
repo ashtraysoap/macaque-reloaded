@@ -13,7 +13,7 @@ def main(port=5000, public=False):
         public: Optional argument, if specified the application will
             listen on all public IPs. Otherwise, it runs only locally.
     """
-    
+
     from flask_server import start_server
     from macaque_state import MacaqueState
 
