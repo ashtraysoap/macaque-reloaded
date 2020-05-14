@@ -94,7 +94,7 @@ class AddDatasetTab extends React.Component {
         } else if (s.status === "ok") {
             statusTab = <SuccessTab text="Dataset successfully created."/>;
         } else if (s.status === "error") {
-            statusTab = <ErrorTab text="Error. Unable to create dataset."/>
+            statusTab = <ErrorTab text="Error. Unable to create dataset."/>;
         }
 
         return (
@@ -146,9 +146,6 @@ class AddDatasetTab extends React.Component {
                             to be used. Each line should contain one caption."
                         handleChange={(e) => this.handleChange("srcCaps", e.target.value)}
                     />
-                    {/* {refs} */}
-                    {/* <button onClick={this.addReference}>Add reference</button> */}
-                    {/* <br/> */}
                     <button onClick={this.handleDatasetSubmit}>Add dataset</button>
 
                     {statusTab}

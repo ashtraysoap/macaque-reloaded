@@ -5,6 +5,7 @@ import { zip, wait } from './utils.js';
 
 export { AlignmentsTab };
 
+
 class AlignmentsTab extends React.Component {
     constructor(props) {
         super(props);

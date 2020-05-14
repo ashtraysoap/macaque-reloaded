@@ -12,5 +12,5 @@ function AboutTab() {
                 <i>Created by Samuel Michalik</i>
             </div>
         </div>
-    )
+    );
 }

@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 
 export { PendingTab, SuccessTab, ErrorTab };
+
 
 function PendingTab(props) {
     return (
