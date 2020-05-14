@@ -3,21 +3,17 @@ __pycache__/
 
 *.pyc
 
+backend/__pycache__/
 feature_extractors/__pycache__/
 model_wrappers/__pycache__/
 preprocessing/__pycache__/
 
-experimental/
-data.ini
-list.txt
-macaque.ini
-react-ex-3/
 tensorflow-models
 wrappers/
 tests/data/output/
 
-node_modules/
-dist/
+frontend/node_modules/
+frontend/dist/
 
 .vscode/
 
