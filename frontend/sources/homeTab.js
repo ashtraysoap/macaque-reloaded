@@ -90,7 +90,7 @@ class HomeTab extends React.Component {
     render() {
         if (this.props.runners.length === 0) {
             return (
-                <div className="homeTab">
+                <div className="aboutTab">
                     No runners available. Add a runner to enable single image captioning.
                 </div>
             );

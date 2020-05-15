@@ -179,13 +179,13 @@ class App extends React.Component {
                     addRunner={this.addRunner}
                 />}
             />
-        } else if (s.public && (id === "Configure" || id === "Datasets" )) {
+        } else if (id === "Configure" && s.public) {
 
             mainTab = <div className="incompatibleTab">
                 <p>This feature is currently incompatible with running online.</p>
             </div>;
         
-        } else if (id === "Datasets" && !s.public) {
+        } else if (id === "Datasets") {
 
             mainTab = <DatasetsTab
                 datasets={s.datasets}
