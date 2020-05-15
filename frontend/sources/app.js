@@ -17,6 +17,35 @@ import { AddRunnerTab } from './addRunnerTab.js';
 import style from './assets/style.css';
 
 
+/**
+ * The root component of the application.
+ * 
+ * The DOM element tree returned by this component's `render` method is
+ * injected into the body of the HTML entrypoint at the application launch.
+ * 
+ * It is responsible for the entire user interface and its frontend functionality.
+ * 
+ * The component's state is the central application state. The central entities -
+ * models, encoders, preprocessors, runners, datasets, results, are stored in it.
+ * These entities are subsequently passed as props to other, lower components.
+ * 
+ * This component has no props. Upon launching, it fetches its initial state from
+ * the server.
+ * 
+ * 
+ * Component State:
+ *      datasets: Array. Array of dataset objects.
+ *      preprocessors: Array. Array of preprocessor objects.
+ *      encoders: Array. Array of encoder objects.
+ *      models: Array. Array of model objects.
+ *      runners: Array. Array of runner objects. 
+ *      results: Array. Array of results objects.
+ *      selectedTab: String. Identifier of the currently active tab.
+ *      homeTabResults: Object. Results for single image datasets originating
+ *              from the Home tab.
+ *      public: Boolean. Whether the application is listening on public IP
+ *              addresses.
+ */
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -40,7 +69,6 @@ class App extends React.Component {
             runners: [],
             results: [],
             selectedTab: "Home",
-            demoResults: null,
             homeTabResults: null,
             public: false
         };
