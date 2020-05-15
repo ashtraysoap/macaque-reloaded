@@ -6,6 +6,21 @@ import { zip, wait } from './utils.js';
 export { AlignmentsTab };
 
 
+/**
+ * This component is used to uniformly display all greedy and beam search
+ * produced attention alignments.
+ * 
+ * Component Props:
+ *      greedyCaption: Array. Array of string tokens.
+ *      beamSearchCaptions: Array. Array of captions. Each caption is an array
+ *              of string tokens.
+ *      runId: Number. Identifier of the current run.
+ *      instanceId: Number. Identifier of the current instance.
+ *      hasAttnGreedy: Boolean. Whether the greedy caption has an attention
+ *              alignment.
+ *      hasAttnBeamSearch: Boolean. Whether the beam search captions have
+ *              attention alignments.
+ */
 class AlignmentsTab extends React.Component {
     constructor(props) {
         super(props);
@@ -62,6 +77,25 @@ class AlignmentsTab extends React.Component {
     }
 }
 
+
+/**
+ * This component displays alignments for a single caption.
+ * 
+ * Its state holds information whether the alignments should be
+ * shown or not (controlled by clicking on the component's header),
+ * whether the URLs holding attention alignment pictures are loaded,
+ * and finally, these URLs.
+ * 
+ * Component State:
+ *      urls: Array. Array holding URLs to the attention maps.
+ *      show: Boolean. Whether to display the alignments.
+ *      hasURLs: Boolean. Whether the alignments have been loaded.
+ * 
+ * Component Props:
+ *      caption: Array. Array of string tokens.
+ *      fetchAttentionURL: Function. Fetches the attention map from the server.
+ *      label: String. A label captioning the caption.
+ */
 class AlignmentSegment extends React.Component {
     constructor(props) {
         super(props);
@@ -123,6 +157,15 @@ class AlignmentSegment extends React.Component {
     }
 }
 
+
+/**
+ * This function component displays a single token of the caption
+ * along with its attention alignment.
+ * 
+ * Component Props:
+ *      token: String. The token associated with the attention map.
+ *      src: String. URL to the attention map image.
+ */
 function ImageWithCaptionFrame(props) {
     return (
         <div style={{display: "inline-block", padding: "5px", marginRight: "20px"}}>
@@ -146,4 +189,9 @@ AlignmentSegment.propTypes = {
     caption: PropTypes.arrayOf(PropTypes.string),
     fetchAttentionURL: PropTypes.func,
     label: PropTypes.string
-}
+};
+
+ImageWithCaptionFrame.propTypes = {
+    token: PropTypes.string,
+    src: PropTypes.string
+};

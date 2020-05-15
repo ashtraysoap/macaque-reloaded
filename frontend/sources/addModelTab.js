@@ -8,6 +8,24 @@ import { SuccessTab, ErrorTab, PendingTab } from './statusTabs.js';
 export { AddModelTab };
 
 
+/**
+ * This class represents the input form for adding a model.
+ * 
+ * Its state consists merely of the user defined configuration
+ * along with error logs returned from the server.
+ * 
+ * Component State:
+ *      name: String. Name of the model.
+ *      type: String. Type of the model. One of: "plugin", "neuralmonkey".
+ *      input: String. Type of input. One of "features", "images".
+ *      plugin: Object. The configuration of the plugin model.
+ *      neuralmonkey: Object. The configuration of the NeuralMonkey model.
+ *      errorLog: Object. Holds error messages from the server.
+ * 
+ * Component Props:
+ *      addModel: Function. Registers the new model in the central application
+ *              state.
+ */
 class AddModelTab extends React.Component {
 
     constructor(props) {
@@ -131,6 +149,24 @@ class AddModelTab extends React.Component {
     }
 }
 
+
+/**
+ * Function Component for an input form to instantiate a Neural Monkey model.
+ * 
+ * Component Props:
+ *      cfg: String. Path to the configuration file.
+ *      vars: String. Path to the variables checkpoint.
+ *      dataSeries: String. Name of the model's input image / features
+ *               data series.
+ *      srcCaptionSeries: String. Name of the model's input source captions
+ *              series.
+ *      greedySeries: String. Name of the greedy caption output data series.
+ *      attnSeries: String. Name of the attention alignments output data 
+ *              series.
+ *      bsSeries: String. Name of the beam search output data series.
+ *      handleChange: Function. Handles changes in input values.
+ *      errorLog: Object. Holds error messages incoming from the server.
+ */
 function NeuralMonkeyModel(props) {
     const el = props.errorLog === undefined ? {} : props.errorLog;
     return (

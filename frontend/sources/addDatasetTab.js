@@ -8,6 +8,25 @@ import { PendingTab, SuccessTab, ErrorTab } from './statusTabs.js';
 export { AddDatasetTab };
 
 
+/**
+ * This component represents the input form for adding a dataset.
+ * 
+ * Its state simply holds the configuration input by the user and
+ * error logs returned by the server.
+ * 
+ * Component State:
+ *      name: String. Name of the dataset.
+ *      prefix: String. Path to the directory of the dataset.
+ *      sources: String. File containing a list of dataset items.
+ *      srcCaps: String. File containing a list of source captions.
+ *      references: Array. An array of string file paths, each for
+ *              one set of reference captions.
+ *      batchSize: String. The batch size.
+ *      errorLog: Object. Holds error messages from the server.
+ * 
+ * Component Props:
+ *      onServerResponse: Function. Handles responses from the server.
+ */
 class AddDatasetTab extends React.Component {
     constructor(props) {
         super(props);

@@ -7,6 +7,27 @@ import { PendingTab, ErrorTab, SuccessTab } from './statusTabs.js';
 
 export { AddPreproTab };
 
+
+/**
+ * This class represents the input form for adding a preprocessor.
+ * 
+ * Its state consists merely of the user defined configuration
+ * of the preprocessor along with error logs returned by the
+ * server.
+ * 
+ * Component State:
+ *      name: String. Name of the preprocessor.
+ *      targetWidth: String. The target width of the image in pixels
+ *              after preprocessing.
+ *      targetHeight: String. The target height of the image in pixels
+ *              after preprocessing.
+ *      mode: String. String identifier of the type of preprocessing to apply.
+ *      errorLog: Object. Holds error messages returned from the server.
+ * 
+ * Component Props:
+ *      addPrepro: Function. Registers the new preprocessor in the central
+ *              application state.
+ */
 class AddPreproTab extends React.Component {
 
     constructor(props) {

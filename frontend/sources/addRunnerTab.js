@@ -8,6 +8,26 @@ import { InformativeInput, InformativeLabel } from './utils.js';
 export { AddRunnerTab };
 
 
+/**
+ * This class represents the input form for adding a runner.
+ * 
+ * Its state merely holds information about the name, preprocessor,
+ * encoder and model, used in the runner along with error logs
+ * returned by the server.
+ * 
+ * Component State:
+ *      name: String. Name of the runner.
+ *      prepro: Number. Id of the selected preprocessor.
+ *      encoder: Number. Id of the selected encoder.
+ *      model: Number. Id of the selected model.
+ *      errorLog: Object. Holds error messages from the server.
+ * 
+ * Component Props:
+ *      preprocessors: Array. Array of preprocessor names.
+ *      encoders: Array. Array of encoder names.
+ *      models: Array. Array of model names.
+ *      addRunner: Function. Registers the new runner in the central state.
+ */
 class AddRunnerTab extends React.Component {
     constructor(props) {
         super(props);

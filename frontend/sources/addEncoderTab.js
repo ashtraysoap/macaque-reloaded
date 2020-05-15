@@ -8,6 +8,24 @@ import { PendingTab, ErrorTab, SuccessTab } from './statusTabs.js';
 export { AddEncoderTab };
 
 
+/**
+ * This class represents the input form for adding an encoder.
+ * 
+ * Its state consists merely of holding the user defined configuration
+ * of the encoder along with error logs returned from the server.
+ * 
+ * Component State:
+ *      name: String. Name of the encoder.
+ *      type: String. Type of the encoder. One of "keras", "tfSlim", "plugin".
+ *      plugin: Object. Stores the plugin encoder configuration.
+ *      keras: Object. Stores the keras encoder configuration.
+ *      tfSlim: Object. Stores the tfSlim encoder configuration.
+ *      errorLog: Object. Holds the error messages from the server.
+ * 
+ * Component Props:
+ *      addEncoder: Function. Registers the new encoder in the central
+ *              application state.
+ */
 class AddEncoderTab extends React.Component {
 
     constructor(props) {
@@ -136,6 +154,18 @@ class AddEncoderTab extends React.Component {
     }
 }
 
+
+/**
+ * Keras encoder instantiation input form component.
+ * 
+ * Component Props:
+ *      network: String. Name of the network.
+ *      layerSpec: String. The name of the model's layer that is desired as 
+ *              output layer.
+ *      ckptPath: String. The path to the model variables checkpoint.
+ *      handleChange: Function. Handles changes in input values.
+ *      errorLog: Object. Holds error messages from the server.
+ */
 class KerasEncoder extends React.Component {
 
     constructor(props) {
@@ -186,6 +216,20 @@ class KerasEncoder extends React.Component {
     }
 }
 
+
+/**
+ * Neural Monkey (TensorFlow Slim) encoder instantiation input form component.
+ * 
+ * Component Props:
+ *      network: String. Name of the network.
+ *      checkpoint: String. Path to the model variables checkpoint.
+ *      featureMap: String. Name of the layer which should be used as the 
+ *              output layer.
+ *      handleNetChange: Function. Handles changes of network.
+ *      handleCheckpointChange: Function. Handles checkpoint changes.
+ *      handleFeatureMapChange: Function. Handles feature map changes.
+ *      errorLog: Object. Holds error messages incoming from the server.
+ */
 class NeuralMonkeyEncoder extends React.Component {
 
     constructor(props) {
@@ -267,6 +311,8 @@ AddEncoderTab.propTypes = {
 
 KerasEncoder.propTypes = {
     network: PropTypes.string.isRequired,
+    layerSpec: PropTypes.string.isRequired,
+    ckptPath: PropTypes.string.isRequired,
     handleChange: PropTypes.func.isRequired,
     errorLog: PropTypes.object
 };
