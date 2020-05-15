@@ -77,6 +77,7 @@ class App extends React.Component {
         fetch('/initial_state').then(response => response.json())
         .then(result => {
             this.setState({
+                datasets: result.datasets,
                 preprocessors: result.preprocessors,
                 encoders: result.encoders,
                 models: result.models,

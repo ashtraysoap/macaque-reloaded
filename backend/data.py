@@ -234,7 +234,7 @@ class Dataset:
             sources = [s.rstrip() for s in sources]
 
         if not sources and not fp:
-            sources = os.listdir(self.prefix) 
+            sources = os.listdir(self.prefix)
         
         if fp is not None:
             with open(fp, 'r') as f:
@@ -257,6 +257,16 @@ class Dataset:
         """
 
         return json.dumps(self, cls=DatasetEncoder)
+
+    def default(self):
+        """Transform the dataset into a JSON-serializable object.
+
+        Returns:
+            A JSON-serializable dictionary representation of the
+            dataset.
+        """
+        
+        return DatasetEncoder().default(self)
 
     def load_images(self):
         """Loads the image data into the dataset.

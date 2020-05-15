@@ -154,7 +154,6 @@ body {
     margin-bottom: 1vh;
 }
 
-
 .background {
     background-color: var(--c3);
     line-height: 2.5;
@@ -189,14 +188,6 @@ body {
     padding-left: 2vw;
     border-left: 1px solid #ccc;
     overflow: auto;
-}
-
-.listHeader {
-    display: table;
-}
-
-.listHeader > div {
-    display: table-cell;
 }
 
 .mainTab {
@@ -284,55 +275,10 @@ body {
     color: rgb(0, 68, 255);
 }
 
-/* .runToggle {
-    display: inline;
-    border: solid var(--c3);
-    border-radius: 4px;
-    margin: 10px;
-}
-
-.runToggle > span {
-    padding: 2px;
-}
-
-.runToggle > span ~ span {
-    border-left: solid var(--c3);
-}
-
-.sidePanel {
-    width: 15vw;
-    padding-left: 5vw;
-    padding-right: 5vw;
-}
-
-#runsBar {
-    text-align: center;
-} */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Beam search visualizations */
 
 .node {
     cursor: pointer;
-}
-  
-.node circle {
-    fill: #fff;
-    stroke: #ac4142;
-    stroke-width: 3px;
 }
   
 .node rect {
@@ -532,20 +478,6 @@ input[type="file"] {
 
     opacity: 0;
     transition: opacity 2.0s ease 0.5s;
-}
-
-/* Runner Selection */
-
-.runnerMenu > div {
-    opacity: 0;
-}
-
-.runnerMenu:hover > div {
-    opacity: 1;
-}
-
-.runnerMenu:hover > label {
-    opacity: 0;
 }
 
 /* Results View */
@@ -857,16 +789,6 @@ input[type="file"] {
     width: max-content;
     margin-bottom: 4vh;
 
-}
-
-/* DatasetsTab */
-
-.processingTab {
-    background-color: rgba(255, 238, 0, 0.705);
-    padding: 8vh 3vw 8vh 3vw;
-    margin-top: 5vh;
-    text-align: center;
-    border-radius: 18px;
 }
 
 .incompatibleTab {

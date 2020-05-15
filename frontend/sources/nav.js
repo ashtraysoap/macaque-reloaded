@@ -14,12 +14,11 @@ export { Navigation };
  *              address.
  */
 function Navigation(props) {
-    const cb = props.onSelectedChange;
     let navElems = ['Home', 'About', 'Configure', 'Datasets', 'Models'];
 
     navElems = navElems.map((e) => 
         <div className={props.selected === e ? "selectedNav" : null}
-            handleClick={() => cb(e)}>
+            onClick={() => props.onSelectedChange(e)}>
             {e}
         </div>);
 

@@ -1,12 +1,12 @@
 import os
 
 from config_parser import find_configs, create_configs
+from data import create_dataset
 from preprocessing import create_preprocessor
 from feature_extractors import create_feature_extractor
 from model_wrappers import create_model_wrapper
 from runner import create_runner
 
-MODELS_DIR = "./models"
 
 class MacaqueState():
     """Class responsible for holding global application state.
@@ -20,8 +20,14 @@ class MacaqueState():
         run_results: A list of run results.
     """
 
-    def __init__(self, public=False):
-        """Initialize MacaqueState with initial empty values."""
+    def __init__(self, public=False, config_dir='./models'):
+        """Initialize MacaqueState with initial empty values.
+        
+        Args:
+            public: Whether the application runs on public IP addresses or not.
+            config_dir: A string path to the directory containing configuration
+                files.
+        """
 
         self._datasets = []
         self._preprocessors = []
@@ -30,6 +36,7 @@ class MacaqueState():
         self._runners = []
         self._run_results = []
         self.public = public
+        self.config_dir = config_dir
         
         # initialize models from configuration files
         self.create_from_configs()
@@ -106,11 +113,33 @@ class MacaqueState():
         return
 
     def create_from_configs(self):
-        cfgs = find_configs(MODELS_DIR)
-        cfgs = [os.path.join(MODELS_DIR, c) for c in cfgs]
+        
+        # If the directory does not exist, inform the user and return.
+        if not os.path.isdir(self.config_dir):
+            print("Config directory {} does not exist. \
+                No configs read.".format(self.config_dir))
+            return
+        
+        cfgs = find_configs(self.config_dir)
+        cfgs = [os.path.join(self.config_dir, c) for c in cfgs]
         cfgs = create_configs(cfgs)
 
         for cfg in cfgs:
+
+            if 'dataset' in cfg:
+                dataset_cfg = cfg['dataset']
+                if 'name' not in dataset_cfg:
+                    raise RuntimeWarning("Dataset name has to be specified. \
+                        Skipping conifg.")
+                    continue
+                name = dataset_cfg['name']
+                if self.contains_dataset(name):
+                    pass # todo
+                else:
+                    dataset = create_dataset(dataset_cfg)
+                    if dataset is not None:
+                        self.add_dataset(dataset)
+
             if 'prepro' in cfg:
                 prepro_cfg = cfg['prepro']
                 if 'name' not in prepro_cfg:
@@ -160,6 +189,10 @@ class MacaqueState():
                     runner = create_runner(self, r_cfg)
                     if runner is not None:
                         self.add_runner(runner)
+
+    def contains_dataset(self, name):
+        ds = self.datasets
+        return [d for d in ds if d.name == name] != []
 
     def contains_prepro(self, name):
         ps = self.preprocessors

@@ -13,8 +13,11 @@ export { DataEntriesList };
  *              list entries.
  */
 function DataEntriesList(props) {
-    let elems = props.entries.map(e => { return { name: e.source, id: e.id } });
-    elems = elems.forEach(e => { e.name = e.name.replace(/^.*[\\\/]/, '') });
+    let elems = props.entries.map(e => { return { 
+        name: e.source.replace(/^.*[\\\/]/, ''), 
+        id: e.id 
+    }});
+
     elems = elems.map(e => <div 
         className="dataEntry"
         onClick={() => props.handleEntryClick(e.id)} 

@@ -77,11 +77,13 @@ def init():
 
 @APP.route('/initial_state', methods=['GET'])
 def initial_state():
+    ds = [d.default() for d in STATE.datasets]
     ps = [p.to_json() for p in STATE.preprocessors]
     es = [e.to_json() for e in STATE.feature_extractors]
     ms = [m.to_json() for m in STATE.models]
     rs = [r.to_json() for r in STATE.runners]
     return json.dumps({
+        'datasets': ds,
         'preprocessors': ps,
         'encoders': es,
         'models': ms,
