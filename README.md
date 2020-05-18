@@ -44,6 +44,10 @@ After that, go to http://127.0.0.1:5000 in your browser to enjoy the application
 We use Webpack to bundle JavaScript files into a single source file. 
 To apply changes made in the frontend of the application run `./build.sh`.
 
+![](resources/backend.png)
+
+The picture above shows a simplified scheme of the backend execution.
+
 ![](resources/frontend.png)
 
-A graph of the frontend's central components relationships.
+The picture above shows a graph of the frontend's central components relationships.
