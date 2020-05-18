@@ -119,6 +119,7 @@ class DataInstanceView extends React.Component {
     }
 
     componentDidMount() {
+        // Element has to be in focus for key-press handlers to work.
         document.getElementById("X").focus();
     }
 
