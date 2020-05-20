@@ -1,3 +1,4 @@
+import pdb
 import numpy as np
 from PIL import Image, ImageFilter
 
@@ -18,7 +19,9 @@ def attention_map_jpg(alphas, image=None, target_w=None, target_h=None):
         A PIL Image representing the input image with the visualized attention.
     """
 
-    alphas = np.asarray(alphas).astype('uint8')
+    alphas = np.asarray(alphas)
+    alphas = _normalize_alignments(alphas)
+    alphas = alphas.astype('uint8')
     att_map = Image.fromarray(alphas)
 
     if image is None:
@@ -173,3 +176,8 @@ def attention_map_for_original_img(alphas, image, prepro, alpha_channel=0.8):
         cp = image.copy()
         cp.paste(mask, (o_w, o_h), mask)
         return cp
+
+def _normalize_alignments(a):
+    maximum = np.amax(a)
+    a = a / maximum
+    return np.uint8(255 * a)
