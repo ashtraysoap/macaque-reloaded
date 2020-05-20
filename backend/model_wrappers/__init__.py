@@ -86,7 +86,6 @@ def create_model_wrapper(model_config, from_response=True):
         else:
             plugin_config = model_config
         src_path = plugin_config['path']
-        
         model = PluginModelWrapper(plugin_path=src_path, 
                 runs_on_features=runs_on_features,
                 name=name)

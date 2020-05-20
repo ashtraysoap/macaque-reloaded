@@ -102,7 +102,6 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
             bs_caps = [None] * n_elems
             bs_attns = [None] * n_elems
 
-        
         results = []
         for c, a, bs_g, bs_c, bs_a in zip(captions, alignments, graphs, bs_caps, bs_attns):
             r = {}
@@ -141,7 +140,6 @@ def _transform_alignments(alignments):
     """
     res = []
     for a in alignments:
-        a = _normalize_alignments(a)
         ndim = len(a.shape)
         if ndim == 2:
             res.append(a)
@@ -149,8 +147,3 @@ def _transform_alignments(alignments):
             x = int(sqrt(a.shape[0]))
             res.append(np.reshape(a, [x, x]))
     return res
-
-def _normalize_alignments(a):
-    max = np.amax(a)
-    a = a / max
-    return np.uint8(225 * a)

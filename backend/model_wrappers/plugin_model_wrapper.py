@@ -81,7 +81,7 @@ class PluginModelWrapper(ModelWrapper):
         Returns:
             A list of dictionaries holding the results.
         """
+
         y = self._run(inputs)
-        # validate results
 
         return y
