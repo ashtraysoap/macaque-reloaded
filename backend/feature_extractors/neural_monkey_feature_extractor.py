@@ -43,6 +43,7 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
             model_checkpoint: A path to the model checkpoint.
             conv_map: The string identifier of the convolutional
                 map which should be extracted as features.
+            name: A string name of the encoder.
         """
 
         import numpy as np

@@ -51,6 +51,7 @@ class KerasFeatureExtractor(FeatureExtractor):
             net_id: A string identifier of the network.
             layer: The name of the layer to use for feature extraction.
             ckpt_path: A path to the stored model checkpoint.
+            name: A string name of the network.
         Raises:
             ValueError: Unsupported network.
         """

@@ -5,7 +5,7 @@ from .keras_feature_extractor import KerasFeatureExtractor
 from .neural_monkey_feature_extractor import NeuralMonkeyFeatureExtractor
 from .plugin_feature_extractor import PluginFeatureExtractor
 
-SLIM_PATH = "/home/sam/Documents/CodeBox/BC/code/lib/tensorflow-models/research/slim"
+SLIM_PATH = "./lib/tensorflow-models/research/slim"
 
 class FeatureExtractorId(Enum):
     """Class enumerating supported feature extractor types."""

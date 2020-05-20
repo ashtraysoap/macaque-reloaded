@@ -25,6 +25,7 @@ class PluginFeatureExtractor(FeatureExtractor):
         
         Args:
             plugin_path: A string path to the plugin module.
+            name: A string name of the network.
         Raises:
             ValueError: The file in `plugin_path` does not exist.
             ValueError: The file in `plugin_path` does not end in .py.
