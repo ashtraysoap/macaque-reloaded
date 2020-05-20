@@ -8,7 +8,8 @@ def validate_cfg(cfg,
     prepro=False, 
     encoder=False, 
     model=False, 
-    runner=False):
+    runner=False,
+    from_response=True):
     """
     """
 
@@ -17,9 +18,9 @@ def validate_cfg(cfg,
     elif prepro:
         return validate_preprocessor_cfg(cfg, state)
     elif encoder:
-        return validate_encoder_cfg(cfg, state)
+        return validate_encoder_cfg(cfg, state, from_response=from_response)
     elif model:
-        return validate_model_cfg(cfg, state)
+        return validate_model_cfg(cfg, state, from_response=from_response)
     elif runner:
         return validate_runner_cfg(cfg, state)
     raise RuntimeError("")
@@ -82,7 +83,7 @@ def validate_preprocessor_cfg(cfg, state):
     
     return log
 
-def validate_encoder_cfg(cfg, state):
+def validate_encoder_cfg(cfg, state, from_response=True):
     encoders = map(lambda x: x.name, state.feature_extractors)
     log = {}
 
@@ -94,63 +95,70 @@ def validate_encoder_cfg(cfg, state):
 
     # Plugin encoder
     if cfg['type'] == 'plugin':
-        if cfg['plugin']['path'] == "":
+        plugin_cfg = cfg if not from_response else cfg['plugin']
+        if plugin_cfg['path'] == "":
             log['plugin'] = {}
             log['plugin']['pluginPath'] = "The plugin source has to be specified."
-        if cfg['plugin']['path'] != "" and not os.path.isfile(cfg['plugin']['path']):
+        if plugin_cfg['path'] != "" and not os.path.isfile(plugin_cfg['path']):
             log['plugin'] = {}
             log['plugin']['pluginPath'] = "The file does not exist."
 
     # Keras encoder
     if cfg['type'] == 'keras':
+        keras_cfg = cfg if not from_response else cfg['keras']
         # handle checkpoint path
-        if cfg['keras']['ckptPath'] != "" and not os.path.isfile(cfg['keras']['ckptPath']):
+        if keras_cfg['ckptPath'] != "" and not os.path.isfile(keras_cfg['ckptPath']):
             log['keras'] = {}
             log['keras']['ckptPath'] = "The file does not exist."
 
     # TFSlim / NeuralMonkey encoder
     if cfg['type'] == 'tfSlim':
+        slim_cfg = cfg if not from_response else cfg['tfSlim']
         # handle checkpoint path
-        if cfg['tfSlim']['ckptPath'] == "":
+        if slim_cfg['ckptPath'] == "":
             log['tfSlim'] = {}
             log['tfSlim']['ckptPath'] = "The checkpoint path has to be specified."
-        if cfg['tfSlim']['ckptPath'] != "" and not os.path.isfile(cfg['tfSlim']['ckptPath']):
+        if slim_cfg['ckptPath'] != "" and not os.path.isfile(slim_cfg['ckptPath']):
             log['tfSlim'] = {}
             log['tfSlim']['ckptPath'] = "The file does not exist."
     
     return log
 
-def validate_model_cfg(cfg, state):
+def validate_model_cfg(cfg, state, from_response=True):
     models = map(lambda x: x.name, state.models)
     log = {}
 
     if cfg['name'] == "":
         log['name'] = "Model name has to be specified."
+    if cfg['name'] in models:
+        log['name'] = "A model with this name already exists."
 
     # Plugin model
     if cfg['type'] == 'plugin':
-        if cfg['plugin']['path'] == "":
+        plugin_cfg = cfg if not from_response else cfg['plugin']
+        if plugin_cfg['path'] == "":
             log['plugin'] = {}
             log['plugin']['pluginPath'] = "The path to the plugin source has to be specified."
-        if cfg['plugin']['path'] != "" and not os.path.isfile(cfg['plugin']['path']):
+        if plugin_cfg['path'] != "" and not os.path.isfile(plugin_cfg['path']):
             log['plugin'] = {}
             log['plugin']['pluginPath'] = "The file does not exist."
 
     # NeuralMonkey model
     if cfg['type'] == 'neuralmonkey':
+        nm_cfg = cfg if not from_response else cfg['neuralmonkey']
         # handle configuration file
-        if cfg['neuralmonkey']['configPath'] == "":
+        if nm_cfg['configPath'] == "":
             log['neuralmonkey'] = {}
             log['neuralmonkey']['configPath'] = "The configuration file has to be specified."
-        if cfg['neuralmonkey']['configPath'] != "" and not os.path.isfile(cfg['neuralmonkey']['configPath']):
+        if nm_cfg['configPath'] != "" and not os.path.isfile(nm_cfg['configPath']):
             log['neuralmonkey'] = {}
             log['neuralmonkey']['configPath'] = "The file does not exist."
         # handle variables file
-        if cfg['neuralmonkey']['varsPath'] == "":
+        if nm_cfg['varsPath'] == "":
             if 'neuralmonkey' not in log:
                 log['neuralmonkey'] = {}
             log['neuralmonkey']['varsPath'] = "The configuration file has to be specified."
-        if cfg['neuralmonkey']['varsPath'] != "" and not os.path.isfile(cfg['neuralmonkey']['varsPath']):
+        if nm_cfg['varsPath'] != "" and not os.path.isfile(nm_cfg['varsPath'] + ".index"):
             if 'neuralmonkey' not in log:
                 log['neuralmonkey'] = {}
             log['neuralmonkey']['varsPath'] = "The file does not exist."

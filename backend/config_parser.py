@@ -6,6 +6,7 @@ from preprocessing import create_preprocessor
 from feature_extractors import create_feature_extractor
 from model_wrappers import create_model_wrapper
 from runner import create_runner
+from validation import validate_cfg
 
 
 def find_configs(path="."):
@@ -42,8 +43,8 @@ def instantiate_configs(state):
 
     # If the directory does not exist, inform the user and return.
     if not os.path.isdir(state.config_dir):
-        print("Config directory {} does not exist. \
-            No configs read.".format(state.config_dir))
+        print(("Config directory {} does not exist. " \
+            "No configs read.").format(state.config_dir))
         return
         
     cfgs = find_configs(state.config_dir)
@@ -118,23 +119,21 @@ def _create_from_config(state, cfg, fp, dataset=False, prepro=False,
         string = "runner"
         String = "Runner"
 
-    if 'name' not in cfg:
-        raise RuntimeWarning("{0} name has to be specified. \
-            Skipping section in {1}.".format(String, fp))
-        return
+    error_log = validate_cfg(cfg, state, dataset, prepro, encoder,
+        model, runner, from_response=False)
 
-    name = cfg['name']
-        
-    if contains(name):
-        raise RuntimeWarning("A {0} named {1} already exists. \
-            Skipping section in {2}.".format(string, name, fp))
-    else:
+    if error_log == {}:
         inst = create(cfg)
-
         if inst is not None:
             add(inst)
             return
-        print("Unable to create {0}. An error in the \
-            configuration occured. Skipping section in \
-            {1}.".format(string, fp))
+        print(("Unable to create {0}. An error in the " \
+            "configuration occured. Skipping section in " \
+            "{1}.").format(string, fp))
+    else:
+        for v in error_log.values():
+            print(v)
+        print(("Unable to create {0}. An error in the " \
+            "configuration occured. Skipping section in " \
+            "{1}.").format(string, fp))
     return
