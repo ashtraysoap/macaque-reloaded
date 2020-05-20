@@ -1,11 +1,6 @@
 import os
 
-from config_parser import find_configs, create_configs
-from data import create_dataset
-from preprocessing import create_preprocessor
-from feature_extractors import create_feature_extractor
-from model_wrappers import create_model_wrapper
-from runner import create_runner
+from config_parser import instantiate_configs
 
 
 class MacaqueState():
@@ -39,7 +34,7 @@ class MacaqueState():
         self.config_dir = config_dir
         
         # initialize models from configuration files
-        self.create_from_configs()
+        instantiate_configs(self)
 
     @property
     def datasets(self):
@@ -112,84 +107,6 @@ class MacaqueState():
         self.demo_runner = create_demo_runner()
         return
 
-    def create_from_configs(self):
-        
-        # If the directory does not exist, inform the user and return.
-        if not os.path.isdir(self.config_dir):
-            print("Config directory {} does not exist. \
-                No configs read.".format(self.config_dir))
-            return
-        
-        cfgs = find_configs(self.config_dir)
-        cfgs = [os.path.join(self.config_dir, c) for c in cfgs]
-        cfgs = create_configs(cfgs)
-
-        for cfg in cfgs:
-
-            if 'dataset' in cfg:
-                dataset_cfg = cfg['dataset']
-                if 'name' not in dataset_cfg:
-                    raise RuntimeWarning("Dataset name has to be specified. \
-                        Skipping conifg.")
-                    continue
-                name = dataset_cfg['name']
-                if self.contains_dataset(name):
-                    pass # todo
-                else:
-                    dataset = create_dataset(dataset_cfg)
-                    if dataset is not None:
-                        self.add_dataset(dataset)
-
-            if 'prepro' in cfg:
-                prepro_cfg = cfg['prepro']
-                if 'name' not in prepro_cfg:
-                    raise RuntimeWarning("Preprocessor name has to be specified. \
-                        Skipping config.")
-                    continue
-                name = prepro_cfg['name']
-                if self.contains_prepro(name):
-                    pass # todo
-                else:
-                    prepro = create_preprocessor(prepro_cfg)
-                    if prepro is not None:
-                        self.add_preprocessor(prepro)
-
-            if 'encoder' in cfg:
-                e_cfg = cfg['encoder']
-                if 'name' not in e_cfg:
-                    pass # todo
-                name = e_cfg['name']
-                if self.contains_encoder(name):
-                    pass # todo
-                else:
-                    encoder = create_feature_extractor(e_cfg, from_response=False)
-                    if encoder is not None:
-                        self.add_feature_extractor(encoder)
-
-            if 'model' in cfg:
-                m_cfg = cfg['model']
-                if 'name' not in m_cfg:
-                    pass # todo
-                name = m_cfg['name']
-                if self.contains_model(name):
-                    pass # todo
-                else:
-                    model = create_model_wrapper(m_cfg, from_response=False)
-                    if model is not None:
-                        self.add_model(model)
-
-            if 'runner' in cfg:
-                r_cfg = cfg['runner']
-                if 'name' not in r_cfg:
-                    pass # todo
-                name = r_cfg['name']
-                if self.contains_runner(name):
-                    pass # todo
-                else:
-                    runner = create_runner(self, r_cfg)
-                    if runner is not None:
-                        self.add_runner(runner)
-
     def contains_dataset(self, name):
         ds = self.datasets
         return [d for d in ds if d.name == name] != []
@@ -198,7 +115,7 @@ class MacaqueState():
         ps = self.preprocessors
         return [p for p in ps if p.name == name] != []
 
-    def contains_encoder(self, name):
+    def contains_feature_extractor(self, name):
         es = self.feature_extractors
         return [e for e in es if e.name == name] != []
 
