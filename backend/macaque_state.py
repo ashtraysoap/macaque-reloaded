@@ -33,8 +33,13 @@ class MacaqueState():
         self.public = public
         self.config_dir = config_dir
         
-        # initialize models from configuration files
+        # Initialize models from configuration files.
         instantiate_configs(self)
+
+        # Create directory that stores user uploaded images.
+        # It is deleted on exit by Ctrl-C.
+        if not os.path.isdir("imgs"):
+            os.mkdir("imgs")
 
     @property
     def datasets(self):
