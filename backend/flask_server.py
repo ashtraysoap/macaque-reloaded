@@ -95,12 +95,13 @@ def initial_state():
 def single_image_upload():
     # Access the user-sent image from the request object.
     fname = request.files['input-file'].filename
-    request.files['input-file'].save(fname)
+    fpath = os.path.join("imgs", fname)
+    request.files['input-file'].save(fpath)
 
     # Create a dataset to contain the image.
     ds = Dataset(
         name='dataset_' + str(int(random() * 1000000)),
-        prefix='./',
+        prefix='./imgs',
         batch_size=1,
         images=True)
     ds.initialize(sources=[fname])
