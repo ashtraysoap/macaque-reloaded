@@ -38,13 +38,13 @@ class AddEncoderTab extends React.Component {
             },
             keras: {
                 network: "VGG16",
-                layerSpec: "block5_conv3",
-                ckptPath: ""
+                layer: "block5_conv3",
+                checkpoint: ""
             },
             tfSlim: {
                 network: "VGG16",
-                ckptPath: "",
-                featureMap: ""
+                checkpoint: "",
+                layer: ""
             },
             errorLog: {}
         };
@@ -99,19 +99,19 @@ class AddEncoderTab extends React.Component {
         } else if (type === 'keras') {
             innerForm = <KerasEncoder
                 network={this.state.keras.network}
-                layerSpec={this.state.keras.layerSpec}
-                ckptPath={this.state.keras.ckptPath}
+                layer={this.state.keras.layer}
+                checkpoint={this.state.keras.checkpoint}
                 handleChange={this.handleKerasChange}
                 errorLog={this.state.errorLog.keras}
             />;
         } else if (type === 'tfSlim') {
             innerForm = <NeuralMonkeyEncoder 
                 network={this.state.tfSlim.network}
-                checkpoint={this.state.tfSlim.ckptPath}
-                featureMap={this.state.tfSlim.featureMap}
+                checkpoint={this.state.tfSlim.checkpoint}
+                layer={this.state.tfSlim.layer}
                 handleNetChange={(e) => {this.setState({ tfSlim: { network: e.target.value }});}}
-                handleCheckpointChange={(e) => { this.setState({ tfSlim: { ckptPath: e.target.value }}); }}
-                handleFeatureMapChange={(e) => { this.setState({ tfSlim: { ckptPath: e.target.value }}); }}
+                handleCheckpointChange={(e) => { this.setState({ tfSlim: { checkpoint: e.target.value }}); }}
+                handleLayerChange={(e) => { this.setState({ tfSlim: { layer: e.target.value }}); }}
                 errorLog={this.state.errorLog.tfSlim}
             />;
         }
@@ -160,9 +160,9 @@ class AddEncoderTab extends React.Component {
  * 
  * Component Props:
  *      network: String. Name of the network.
- *      layerSpec: String. The name of the model's layer that is desired as 
+ *      layer: String. The name of the model's layer that is desired as 
  *              output layer.
- *      ckptPath: String. The path to the model variables checkpoint.
+ *      checkpoint: String. The path to the model variables checkpoint.
  *      handleChange: Function. Handles changes in input values.
  *      errorLog: Object. Holds error messages from the server.
  */
@@ -194,8 +194,8 @@ class KerasEncoder extends React.Component {
 
                 <InformativeInput
                     name="layer"
-                    value={this.props.layerSpec}
-                    handleChange={e => this.props.handleChange("layerSpec", e.target.value)}
+                    value={this.props.layer}
+                    handleChange={e => this.props.handleChange("layer", e.target.value)}
                     hint="An identifier of the layer whose output is extracted as features."
                     optional={false}
                     error={el.layer}
@@ -203,13 +203,13 @@ class KerasEncoder extends React.Component {
 
                 <InformativeInput
                     name="checkpoint path"
-                    value={this.props.ckptPath}
+                    value={this.props.checkpoint}
                     optional={true}
                     hint="A path to the model's weights. If not provided, Keras' default is used.
                     Note, that if the weight checkpoint is not found at Keras' default location
                     it is downloaded automatically to this location."
-                    handleChange={e => this.props.handleChange("ckptPath", e.target.value)}
-                    error={el.ckptPath}
+                    handleChange={e => this.props.handleChange("checkpoint", e.target.value)}
+                    error={el.checkpoint}
                 />
             </div>
         )
@@ -223,11 +223,11 @@ class KerasEncoder extends React.Component {
  * Component Props:
  *      network: String. Name of the network.
  *      checkpoint: String. Path to the model variables checkpoint.
- *      featureMap: String. Name of the layer which should be used as the 
+ *      layer: String. Name of the layer which should be used as the 
  *              output layer.
  *      handleNetChange: Function. Handles changes of network.
  *      handleCheckpointChange: Function. Handles checkpoint changes.
- *      handleFeatureMapChange: Function. Handles feature map changes.
+ *      handleLayerChange: Function. Handles feature map changes.
  *      errorLog: Object. Holds error messages incoming from the server.
  */
 class NeuralMonkeyEncoder extends React.Component {
@@ -239,25 +239,25 @@ class NeuralMonkeyEncoder extends React.Component {
                 id: 'VGG16',
                 maps: [
                     'vgg16/conv5/conv5_3',
-                    'a',
-                    'b'
                 ]
             },
             {
                 id: 'VGG19',
-                maps: ['x', 'y']
+                maps: [
+                    'vgg19/conv5/conv5_4',
+                ]
             },
             {
                 id: 'ResNet50V2',
-                maps: ['z']
+                maps: []
             },
             {
                 id: 'ResNet101V2',
-                maps: ['c', 'd']
+                maps: []
             },
             {
                 id: 'ResNet152V2',
-                maps: ['h', 'g']
+                maps: []
             }
         ]
     }
@@ -285,16 +285,16 @@ class NeuralMonkeyEncoder extends React.Component {
                     handleChange={this.props.handleCheckpointChange}
                     hint="The path to the model's serialized weights." 
                     optional={false}
-                    error={el.ckptPath}
+                    error={el.checkpoint}
                 />
 
                 <InformativeLabel name="feature map" 
                     hint="An identifier of the layer whose output is used as features." 
                     optional={false}>
                     <select 
-                        name="featureMap" 
-                        value={this.props.featureMap} 
-                        onChange={this.props.handleFeatureMapChange}>
+                        name="layer" 
+                        value={this.props.layer} 
+                        onChange={this.props.handleLayerChange}>
                         {maps}
                     </select>
                 </InformativeLabel>
@@ -311,8 +311,8 @@ AddEncoderTab.propTypes = {
 
 KerasEncoder.propTypes = {
     network: PropTypes.string.isRequired,
-    layerSpec: PropTypes.string.isRequired,
-    ckptPath: PropTypes.string.isRequired,
+    layer: PropTypes.string.isRequired,
+    checkpoint: PropTypes.string.isRequired,
     handleChange: PropTypes.func.isRequired,
     errorLog: PropTypes.object
 };
@@ -320,10 +320,10 @@ KerasEncoder.propTypes = {
 NeuralMonkeyEncoder.propTypes = {
     network: PropTypes.string.isRequired,
     checkpoint: PropTypes.string.isRequired,
-    featureMap: PropTypes.string.isRequired,
+    layer: PropTypes.string.isRequired,
     handleNetChange: PropTypes.func.isRequired,
     handleCheckpointChange: PropTypes.func.isRequired,
-    handleFeatureMapChange: PropTypes.func.isRequired,
+    handleLayerChange: PropTypes.func.isRequired,
     errorLog: PropTypes.object
 };
 
