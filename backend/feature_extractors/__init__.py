@@ -39,8 +39,8 @@ def create_feature_extractor(extractor_config, from_response=True):
         else:
              slim_config = extractor_config
         net_type = slim_config['network']
-        model_ckpt = slim_config['ckptPath']
-        feature_map = slim_config['featureMap']
+        model_ckpt = slim_config['checkpoint']
+        feature_map = slim_config['layer']
         extractor = NeuralMonkeyFeatureExtractor(net=net_type,
                     slim_models=SLIM_PATH,
                     model_checkpoint=model_ckpt,
@@ -53,9 +53,9 @@ def create_feature_extractor(extractor_config, from_response=True):
         else:
             keras_config = extractor_config
         net_type = keras_config['network']
-        layer_spec = keras_config['layerSpec']
-        if 'ckptPath' in keras_config:
-            ckpt_path = keras_config['ckptPath']
+        layer_spec = keras_config['layer']
+        if 'checkpoint' in keras_config:
+            ckpt_path = keras_config['checkpoint']
         else:
             ckpt_path = ""
         extractor = KerasFeatureExtractor(net_id=net_type,
