@@ -457,7 +457,8 @@ input[type="file"] {
 }
 
 .homeTabImg {
-    width: 100%;
+    max-width: 100%;
+    max-height: 70vh;
     height: auto;
     padding: 6px;
     border: 2px solid #ccc;
