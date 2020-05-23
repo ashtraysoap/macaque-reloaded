@@ -56,6 +56,7 @@ def instantiate_configs(state):
     print()
 
     cfg_fps = [os.path.join(state.config_dir, c) for c in cfgs]
+    cfg_fps = sorted(cfg_fps)
     cfgs = create_configs(cfg_fps)
 
     for cfg, fp in zip(cfgs, cfg_fps):
