@@ -79,6 +79,9 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
 
         if self._alignments_series:
             alignments = output_series[self._alignments_series]
+            # WordAlignmentRunner is incompatible with beam search decoding.
+            if self._bs_graph_series:
+                alignments = None
         else:
             alignments = [None] * n_elems
 
@@ -105,7 +108,7 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         results = []
         for c, a, bs_g, bs_c, bs_a in zip(captions, alignments, graphs, bs_caps, bs_attns):
             r = {}
-            for x in [(c, 'caption'), (a, 'alignment')]:
+            for x in [(c, 'caption'), (a, 'alignments')]:
                 if x[0] is not None:
                     if 'greedy' not in r:
                         r['greedy'] = {}
@@ -116,17 +119,6 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
                         r['beam_search'] = {}
                     r['beam_search'][x[1]] = x[0]
             results.append(r)
-            # results.append({
-            #     'greedy': {
-            #         'caption': c,
-            #         'alignments': a
-            #     },
-            #     'beam_search': {
-            #         'captions': bs_c,
-            #         'alignments': bs_a,
-            #         'graph': bs_g
-            #     }
-            # })
         return results
 
 def _transform_alignments(alignments):

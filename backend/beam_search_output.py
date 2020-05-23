@@ -3,7 +3,22 @@ from neuralmonkey.vocabulary import START_TOKEN, END_TOKEN, PAD_TOKEN
 
 
 class BeamSearchOutputGraphNode():
+    """
+    Class representing a node in the tree of beam search
+    generated hypotheses.
+    """
+
     def __init__(self, score, token, alignment, children = None):
+        """Creates the BeamSearchOutputGraph
+
+        Args:
+            score: The loss associated with the hypothesis up to this token.
+            token: The string token.
+            alignment: A two dimensional Numpy array holding the attention map.
+            children: A list of BeamSearchGraphNodes representing the next 
+                tokens in extending hypotheses.
+        """
+
         self._score = score
         self._token = token
         self._alignment = alignment
@@ -72,12 +87,38 @@ class BeamSearchOutputGraphNode():
         return res
 
 class BeamSearchOutputGraph():
+    """
+    Class representing the tree of hypotheses generated during 
+    beam search decoding.
+    """
+
     def __init__(self,
-                 scores,
-                 tokens,
-                 parent_ids,
-                 alignments):
+                tokens,
+                parent_ids,
+                alignments=None,
+                scores=None):
+        """Creates the BeamSearchOutputGraph.
+
+        Args:
+            scores: Numpy array of shape [max_len, beam_size] of partial 
+                hypothesis losses.
+            tokens: A list of lists of string tokens. First list length equals
+                maximum hyp. length, second dimension equals number of 
+                hypotheses.
+            parent_ids: Numpy array of shape [max_len, beam_size] of parent 
+                ids.
+            alignments: A list of list of Numpy arrays of token attention
+                alignments. The first list's length equals maximum hyp.
+                length. The second list's length equals number of beams. 
+        """
+
         self._root = BeamSearchOutputGraphNode(0, "<s>", None)
+
+        if scores is None:
+            scores = [[None] * len(tokens)[0]] * len(tokens)
+
+        if alignments is None:
+            alignments = [[None] * len(tokens)[0]] * len(tokens)
 
         # Get rid of start tokens from all hypotheses.
         scores = scores[1:]
@@ -106,7 +147,8 @@ class BeamSearchOutputGraph():
         return self._root
 
     def collect_all_hypotheses(self):
-        """Traverses the graph, collecting all hypotheses; finished
+        """
+        Traverses the graph, collecting all hypotheses; finished
         and unfinished.
         """
 
@@ -153,6 +195,9 @@ class BeamSearchOutputGraph():
 
 
 class BeamSearchOutputGraphEncoder(JSONEncoder):
+    """Class for JSON-encoding the BeamSearchOutputGraph.
+    """
+
     def default(self, graph):
         return self._encode_node(graph.root)
 
