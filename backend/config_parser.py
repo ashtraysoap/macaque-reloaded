@@ -48,7 +48,8 @@ def instantiate_configs(state):
         return
         
     cfgs = find_configs(state.config_dir)
-    
+    cfgs = sorted(cfgs)
+
     print("Found {0} configuration files in {1}:".format(len(cfgs), \
         state.config_dir))
     for cfg in cfgs:
@@ -56,7 +57,6 @@ def instantiate_configs(state):
     print()
 
     cfg_fps = [os.path.join(state.config_dir, c) for c in cfgs]
-    cfg_fps = sorted(cfg_fps)
     cfgs = create_configs(cfg_fps)
 
     for cfg, fp in zip(cfgs, cfg_fps):
