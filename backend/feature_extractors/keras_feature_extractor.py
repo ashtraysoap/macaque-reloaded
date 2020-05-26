@@ -3,6 +3,8 @@ from importlib import import_module
 import os
 
 import numpy as np
+from keras import backend as K
+import tensorflow as tf
 
 from .feature_extractor import FeatureExtractor
 
@@ -58,30 +60,36 @@ class KerasFeatureExtractor(FeatureExtractor):
 
         from keras.preprocessing import image
         from keras import Model
-        from keras import backend as K
 
         super(KerasFeatureExtractor, self).__init__(name)
         
-        K.clear_session()
-
         if not net_id in MODELS:
             raise ValueError("Unsupported network %s." % net_id)
 
-        weights = 'imagenet' if not ckpt_path else ckpt_path
-        enc_spec = MODELS[net_id]
-        module = import_module('keras.applications.' + enc_spec.module)
-        model_constr = getattr(module, enc_spec.net)
-        self._model = model_constr(weights=weights, include_top=False, pooling=None)
-        
-        if layer_spec:
-            layer = self._model.get_layer(layer_spec)
-            self._model = Model(inputs=self._model.input, outputs=layer.output)
+        #K.clear_session()
 
-        # A Keras bug requires calling this function. 
-        # See https://github.com/keras-team/keras/issues/6462.
-        self._model._make_predict_function()            
-        self._preprocess_input = getattr(module, 'preprocess_input')
-        self._input_size = enc_spec.input_size
+        self.graph = tf.Graph()
+        self.session = tf.Session(graph=self.graph)
+        K.set_session(self.session)
+
+        with self.graph.as_default():
+
+            weights = 'imagenet' if not ckpt_path else ckpt_path
+            enc_spec = MODELS[net_id]
+            module = import_module('keras.applications.' + enc_spec.module)
+            model_constr = getattr(module, enc_spec.net)
+            self._model = model_constr(weights=weights, include_top=False, pooling=None)
+        
+            if layer_spec:
+                layer = self._model.get_layer(layer_spec)
+                self._model = Model(inputs=self._model.input, outputs=layer.output)
+
+            # A Keras bug requires calling this function. 
+            # See https://github.com/keras-team/keras/issues/6462.
+            self._model._make_predict_function()            
+            self._preprocess_input = getattr(module, 'preprocess_input')
+            self._input_size = enc_spec.input_size
+
 
     def extract_features(self, images):
         """Extracts features from the images.
@@ -92,7 +100,10 @@ class KerasFeatureExtractor(FeatureExtractor):
             A Numpy Array of extracted features.
         """
 
+        K.set_session(self.session)
+
         xs = [self._preprocess_input(x) for x in images]
         xs = np.asarray(xs)
+        ys = self._model.predict(xs)
 
-        return self._model.predict(xs)
+        return ys
