@@ -2,7 +2,13 @@
 
 ![](resources/trailer.gif)
 
-Macaque is a client-server application for analyzing inference resutls of models on the tasks of image captioning and multimodal translation, as well as for creating intuitions about the inner workings of such models through visualization and organized presentation of information.
+Macaque is a client-server application for analyzing inference resutls of models on the tasks of image captioning and multimodal translation, as well as for creating intuitions about the inner workings of such models through visualization and organized presentation of information. Macaque can:
+
+- visualize attention distributions over images
+- display the tree of beam search generated hypotheses
+- run user-provided models that satisfy a common interface
+- run models on images or datasets
+- run both image captioning and multimodal translation models
 
 ### Prerequisite software
 - Python3
