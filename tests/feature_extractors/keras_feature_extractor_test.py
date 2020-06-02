@@ -2,11 +2,12 @@ import numpy as np
 
 from feature_extractors import KerasFeatureExtractor
 from data import Dataset
+from preprocessing import Preprocessor
 
 TEST_NET_ID = "VGG19"
 
-TEST_PREFIX = "./tests/data/flickr8k_sample_imgs"
-TEST_SOURCES = "./tests/data/flickr8k_sample_imgs.txt"
+TEST_PREFIX = "../tests/data/flickr8k_sample_imgs"
+TEST_SOURCES = "../tests/data/flickr8k_sample_imgs.txt"
 TEST_NAME = "test_ds"
 
 def test_keras_feature_extractor_constructor():
@@ -20,7 +21,13 @@ def test_keras_feature_extractor_extract_features():
                 prefix=TEST_PREFIX,
                 batch_size=8)
     ds.initialize(fp=TEST_SOURCES)
+    ds.load_images()
+    imgs = [e.image for e in ds.elements]
+    
+    prepro = Preprocessor()
 
-    result = ext.extract_features(dataset=ds)
+    imgs = prepro.preprocess_images(imgs)
+
+    result = ext.extract_features(images=imgs)
     assert isinstance(result, np.ndarray) == True
     assert len(result) == ds.count

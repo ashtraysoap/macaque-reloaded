@@ -3,45 +3,23 @@ import os
 import numpy as np
 
 from feature_extractors import PluginFeatureExtractor
-from tests.data_test import make_initialized_test_dataset
+from data_test import make_initialized_test_dataset
 
-TEST_PLUGIN_PATH_DATASETS = "tests/data/plugin_feature_extractor_on_dataset.py"
-TEST_PLUGIN_PATH_DATASETS_2 = "./tests/data/plugin_feature_extractor_on_dataset.py"
-TEST_PLUGIN_PATH_IMAGES = "tests/data/plugin_feature_extractor_on_images.py"
-TEST_PLUGIN_PATH_PATHS = "tests/data/plugin_feature_extractor_on_paths.py"
+TEST_PLUGIN_PATH = "../tests/data/plugin_feature_extractor.py"
+
 
 def test_plugin_feature_extractor_construct_relative_path():
-    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH_DATASETS)
-    assert isinstance(ext, PluginFeatureExtractor) == True
-
-def test_plugin_feature_extractor_construct_relative_path_2():
-    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH_DATASETS_2)
+    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH)
     assert isinstance(ext, PluginFeatureExtractor) == True
 
 def test_plugin_feature_extractor_construct_absolute_path():
     path = os.getcwd()
-    path = os.path.join(path, TEST_PLUGIN_PATH_DATASETS)
+    path = os.path.join(path, TEST_PLUGIN_PATH)
     ext = PluginFeatureExtractor(plugin_path=path)
     assert isinstance(ext, PluginFeatureExtractor) == True
 
 def test_plugin_feature_extractor_run_on_dataset():
-    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH_DATASETS)
-    ds = make_initialized_test_dataset()
-
-    results = ext.extract_features(dataset=ds)
-    assert isinstance(results, np.ndarray)
-
-def test_plugin_feature_extractor_run_on_images():
-    # TODO: dataset lacks required functionality
-    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH_IMAGES)
-    ds = make_initialized_test_dataset()
-
-    results = ext.extract_features(dataset=ds)
-    assert isinstance(results, np.ndarray)
-
-def test_plugin_feature_extractor_run_on_paths():
-    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH_PATHS)
-    ds = make_initialized_test_dataset()
-
-    results = ext.extract_features(dataset=ds)
-    assert isinstance(results, np.ndarray)
+    ext = PluginFeatureExtractor(plugin_path=TEST_PLUGIN_PATH)
+    data = np.zeros(1)
+    results = ext.extract_features(data)
+    assert results == data
