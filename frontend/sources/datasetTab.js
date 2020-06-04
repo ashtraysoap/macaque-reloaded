@@ -95,10 +95,11 @@ class DatasetTab extends React.Component {
         const count = this.props.dataset.elements.length;
         
         let newIdx;
+        // Left or Down arrow pressed.
         if (keyCode == "37" || keyCode == "40") {
             newIdx = idx === 0 ? (count - 1) : (idx - 1);
         }
-
+        // Right or Up arrow pressed.
         if (keyCode == "38" || keyCode == "39") {
             newIdx = idx === count - 1 ? 0 : (idx + 1);
         }

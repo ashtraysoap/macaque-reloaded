@@ -104,6 +104,8 @@ class DatasetsTab extends React.Component {
         const r = this.state.selectedRunner;
         const rs = this.props.runners;
 
+        // Check if the runner expects source captions and whether
+        // the datasets provides them; if not, raise a warning.
         if (d.elements[0].sourceCaption === null && rs[r].multimodal) {
             this.setState({ err: true });
             return;

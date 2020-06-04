@@ -58,8 +58,9 @@ class HomeTab extends React.Component {
     }
 
     get runners() {
+        // Filter only image captioning models.
         const r = this.props.runners;
-        return r.filter(x => x.multimodal === true);
+        return r.filter(x => x.multimodal !== true);
     }
 
     onImageSubmit() {
@@ -269,10 +270,11 @@ function RunnersMenu(props) {
         props.select(sel);
     }
 
-    let rs = enumerate(props.runners).filter(r => r[1].multimodal === false ).map(r => 
-    <div key={r[1].name} onClick={() => props.select(r[0])} id={sel === r[0] ? "selected" : ""}>
-        {r[1].name}
-    </div>);
+    let rs = enumerate(props.runners).filter(r => r[1].multimodal === false );
+    rs = rs.map(r => 
+        <div key={r[1].name} onClick={() => props.select(r[0])} id={sel === r[0] ? "selected" : ""}>
+            {r[1].name}
+        </div>);
 
     return (
         <div onClick={props.hide} className="runnersMenuBack">
