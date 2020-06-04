@@ -34,10 +34,10 @@ class AddModelTab extends React.Component {
             name: "model_1",
             type: "neuralmonkey",
             input: "features",
-            plugin: { path: "./tests/mock_plugin_model.py" },
+            plugin: { path: "./models/pytorch_image_captioning/plugin_model_0_additive.py" },
             neuralmonkey: {
-                configPath: "/home/sam/thesis-code/NeuralMonkeyModels/experiment.ini",
-                varsPath: "/media/sam/Kafka/190424-1/avg-0",
+                configPath: "./models/plugin_resources/neural_monkey_bs/experiment.ini",
+                varsPath: "./models/plugin_resources/neural_monkey_bs/avg-0",
                 dataSeries: "images",
                 srcCaptionSeries: "",
                 greedySeries: "greedy_caption",
