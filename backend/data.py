@@ -136,7 +136,7 @@ class Dataset:
             feature maps.
     """
 
-    def __init__(self, name, prefix, batch_size, images=False, features=False, prepro=False):
+    def __init__(self, name, prefix, batch_size, images=False, features=False, prepro=False, src_caps=False):
         """Creates a Dataset instance.
 
         Args:
@@ -159,6 +159,8 @@ class Dataset:
         self._feature_maps = features
         self._preprocessed_imgs = prepro
         self._idx = None
+
+        self.has_source_captions = src_caps
 
         if not os.path.isdir(prefix):
             raise ValueError("Directory {} does not exist.".format(prefix))
@@ -215,6 +217,7 @@ class Dataset:
     @property
     def preprocessed_imgs(self):
         return self._preprocessed_imgs
+    
 
     def initialize(self, sources=None, fp=None):
         """Initialize the dataset.
@@ -414,7 +417,21 @@ class Dataset:
 
         for e, c in zip(self.elements, src_caps):
             e.source_caption = c
+
+        self.has_source_captions = True
         return
+
+    def get_source_captions(self):
+        """Returns source captions.
+
+        Returns a list of string source captions or None if 
+        source captions are not attached to the dataset.
+        """
+
+        if not self.has_source_captions:
+            return None
+        else:
+            return [' '.join(e.source_caption) for e in self.elements]
 
     def _create_offspring(self):
         return Dataset(name=self.name,
@@ -422,7 +439,8 @@ class Dataset:
                     batch_size=self.batch_size,
                     images=self._images,
                     features=self._feature_maps,
-                    prepro=self._preprocessed_imgs)
+                    prepro=self._preprocessed_imgs,
+                    src_caps=self.has_source_captions)
 
     def _set_elements(self, elements):
         self._elements = elements

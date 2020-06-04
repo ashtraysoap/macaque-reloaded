@@ -1,6 +1,7 @@
 from importlib import import_module
 import os
 import sys
+from inspect import signature
 
 from .model_wrapper import ModelWrapper
 
@@ -68,20 +69,33 @@ class PluginModelWrapper(ModelWrapper):
 
         if hasattr(wrapper_class, IFC_METHOD):
             self._method = getattr(self._model_wrapper, IFC_METHOD)
-            self._run = lambda x: self._method(x)
+            
+            sig = signature(self._method)
+            print(len(sig.parameters))
+            if len(sig.parameters) > 1:
+                self._mmt = True
+                self._run = lambda x, y: self._method(x, y)
+            else:
+                self._mmt = False
+                self._run = lambda x: self._method(x)
         else:
             raise ValueError("The class {} in {} does not provide the `run` method."
                 .format(IFC_CLASS, plugin_path))
 
-    def run(self, inputs):
+    def run(self, inputs, source_captions=None):
         """Run the model on inputs.
 
         Args:
-            inputs: A Numpy Array of inputs.
+            inputs: A Numpy Array of inputs (image or feature arrays).
+            source_captions: A list of string source captions.
         Returns:
             A list of dictionaries holding the results.
         """
 
-        y = self._run(inputs)
+        print(source_captions)
+        if self._mmt:
+            y = self._run(inputs, source_captions)
+        else:
+            y = self._run(inputs)
 
         return y

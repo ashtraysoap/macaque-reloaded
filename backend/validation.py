@@ -244,6 +244,9 @@ def validate_runner_cfg(cfg, state):
             log['name'] = "A runner with this name already exists."
         if cfg['name'] == "":
             log['name'] = "Runner name has to be specified."
+    if 'model' in cfg:
+        if not state.contains_model(cfg['model']):
+            log['model'] = "The model {0} was not found.".format(cfg['model'])
 
     return log
 

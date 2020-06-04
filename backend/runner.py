@@ -17,24 +17,18 @@ def create_runner(macaque_state, runner_config):
     name = runner_config['name'] if runner_config['name'] else None
 
     if runner_config['prepro'] is not None:
-        # prepro_id = int(runner_config['prepro'])
-        # prepro = macaque_state.preprocessors[prepro_id]
         prepro = runner_config['prepro']
         prepro = macaque_state.get_prepro(prepro)
     else:
         prepro = None
 
     if runner_config['encoder'] is not None:
-        # encoder_id = int(runner_config['encoder'])
-        # encoder = macaque_state.feature_extractors[encoder_id]
         encoder = runner_config['encoder']
         encoder = macaque_state.get_encoder(encoder)
     else:
         encoder = None
 
     if runner_config['model'] is not None:
-        # model_id = int(runner_config['model'])
-        # model = macaque_state.models[model_id]
         model = runner_config['model']
         model = macaque_state.get_model(model)
     else:
@@ -115,26 +109,32 @@ class Runner():
         """
 
         res = []
+
         if dataset.feature_maps:
             if not self._model.runs_on_features:
-                raise RuntimeError()
+                raise RuntimeError(("The dataset consists of feature maps " \
+                    "but the runner expects images."))
             for batch in dataset:
                 f = batch.get_features()
-                r = self._model.run(f)
+                c = batch.get_source_captions()
+                r = self._model.run(f, c)
                 res.extend(r)
         else:
             if not self._feature_extractor and self._model.runs_on_features:
-                raise RuntimeError()
+                raise RuntimeError(("The model expects feature maps as input " \
+                    "but images were provided."))
             for batch in dataset:
                 if not self._prepro:
                     imgs = batch.load_images()
                 else:
                     imgs = self._prepro.preprocess(batch)
+                
+                src_captions = batch.get_source_captions()
                 if self._feature_extractor:
                     f = self._feature_extractor.extract_features(imgs)
-                    r = self._model.run(f)
+                    r = self._model.run(f, src_captions)
                 else:
-                    r = self._model.run(imgs)
+                    r = self._model.run(imgs, src_captions)
                 nr = [
                 {
                     'greedy': e['greedy'] if 'greedy' in e else None,

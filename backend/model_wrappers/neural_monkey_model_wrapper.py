@@ -1,5 +1,3 @@
-import pdb
-
 import os
 import numpy as np
 from math import sqrt
@@ -44,10 +42,11 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         self._exp.build_model()
         self._exp.load_variables([vars_path])
 
-    def run(self, inputs):
+    def run(self, inputs, src_captions=None):
         """
         Args:
-            inputs: A Numpy Array of inputs.
+            inputs: A Numpy Array of inputs (feature, or image arrays).
+            src_captions: A list of string source captions.
         Returns:
             A list of dictionaries. Each dictionary contains the keys
             `caption`, `alignments`, `beam_search_output_graph`.
@@ -72,12 +71,12 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
 
         _, output_series = self._exp.run_model(dataset=ds, write_out=False)
 
-        if self._caption_series:
+        if self._caption_series and self._caption_series in output_series:
             captions = output_series[self._caption_series]
         else:
             captions = [None] * n_elems
 
-        if self._alignments_series:
+        if self._alignments_series and self._alignments_series in output_series:
             alignments = output_series[self._alignments_series]
             # WordAlignmentRunner is incompatible with beam search decoding.
             if self._bs_graph_series:
@@ -85,7 +84,7 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         else:
             alignments = [None] * n_elems
 
-        if self._bs_graph_series:
+        if self._bs_graph_series and self._bs_graph_series in output_series:
             bs_out = output_series[self._bs_graph_series]
             graphs = []
             for b in bs_out:

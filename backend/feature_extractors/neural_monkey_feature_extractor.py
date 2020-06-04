@@ -1,6 +1,9 @@
 from collections import namedtuple
 import os
 
+import numpy as np
+from neuralmonkey.dataset import Dataset
+
 from data import Dataset as MacaqueDataset
 from .feature_extractor import FeatureExtractor
 
@@ -77,7 +80,7 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
                 slim_models_path=slim_models,
                 load_checkpoint=model_checkpoint,
                 spatial_layer=conv_map,
-                encoded_layer=vector)
+                encoded_layer=None)
 
         self._fetch = self._imagenet.spatial_states
         self._net_spec = net_spec
@@ -96,13 +99,13 @@ class NeuralMonkeyFeatureExtractor(FeatureExtractor):
 
         width = self._net_spec.input_size[0]
         height = self._net_spec.input_size[1]
-        assert images[1:].shape == (width, height, 3)
+        assert images.shape[1:] == (width, height, 3)
 
         def vgg_norm(img):
-            return i - VGG_RGB_MEANS
+            return img - VGG_RGB_MEANS
 
         def zero_one_norm(img):
-            return i / 255
+            return img / 255
 
         if self._vgg_normalization:
             images = [vgg_norm(i) for i in images]
