@@ -72,6 +72,7 @@ class DatasetTab extends React.Component {
                 onClick={this.closeView}
                 runners={p.runners}
                 onInstanceChange={this.instanceChange}
+                selectedRunner={this.props.selectedRunner}
             /> : null;
 
         const list = <DataEntriesList
@@ -127,4 +128,5 @@ DatasetTab.propTypes = {
         )})
     ).isRequired,
     runners: PropTypes.array.isRequired,
+    selectedRunner: PropTypes.number.isRequired
 };

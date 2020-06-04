@@ -43,6 +43,7 @@ class AlignmentsTab extends React.Component {
                 caption={p.greedyCaption}
                 fetchAttentionURL={(t) => this.fetchAttentionMap(0, t)}
                 label="greedy"
+                instanceId={p.instanceId}
             />);
         }
 
@@ -53,6 +54,7 @@ class AlignmentsTab extends React.Component {
                     caption={bsc[j]}
                     fetchAttentionURL={(t) => this.fetchAttentionMap(j + 1, t)}
                     label={"beam " + (j + 1)}
+                    instanceId={p.instanceId}
                 />);
             }
         }
@@ -106,7 +108,9 @@ class AlignmentSegment extends React.Component {
             urls: Array(len),
             show: false,
             hasURLs: false
-        }
+        };
+
+        this.currentInstanceId = null;
 
     }
 
@@ -116,8 +120,10 @@ class AlignmentSegment extends React.Component {
 
         const len = p.caption.length;
 
-        if (len !== s.urls.length)
+        if (p.instanceId != this.currentInstanceId) {
+            this.currentInstanceId = p.instanceId;
             this.setState({ urls: Array(len ), hasURLs: false });
+        }
         
         if (s.show && !s.hasURLs) {
             for (let i = 0; i < len; i++) {
@@ -182,13 +188,14 @@ AlignmentsTab.propTypes = {
     runId: PropTypes.number,
     instanceId: PropTypes.number,
     hasAttnGreedy: PropTypes.bool,
-    hasAttnBeamSearch: PropTypes.bool    
+    hasAttnBeamSearch: PropTypes.bool,
 };
 
 AlignmentSegment.propTypes = {
     caption: PropTypes.arrayOf(PropTypes.string),
     fetchAttentionURL: PropTypes.func,
-    label: PropTypes.string
+    label: PropTypes.string,
+    instanceId: PropTypes.number
 };
 
 ImageWithCaptionFrame.propTypes = {

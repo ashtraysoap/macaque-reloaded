@@ -83,6 +83,7 @@ class DatasetsTab extends React.Component {
                         onResultsResponse={p.onResultsResponse}
                         runners={p.runners}
                         results={p.results.filter(r => r.datasetId === this.props.datasets[ds].id)}
+                        selectedRunner={this.state.selectedRunner}
                     />
                 </div>
 

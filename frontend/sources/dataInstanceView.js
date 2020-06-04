@@ -54,7 +54,8 @@ class DataInstanceView extends React.Component {
         const r = this.props.results;
         if (r === undefined || r === null || r.length === 0)
             return null;
-        return r[0].runId;
+        //return r[0].runId;
+        return r.filter(x => x.runnerId === this.props.selectedRunner)[0].runId
     }
 
     get sourceCaption() {
@@ -261,7 +262,8 @@ DataInstanceView.propTypes = {
     dataset: PropTypes.number.isRequired,
     onClick: PropTypes.func.isRequired,
     runners: PropTypes.arrayOf(PropTypes.object).isRequired,
-    onInstanceChange: PropTypes.func.isRequired
+    onInstanceChange: PropTypes.func.isRequired,
+    selectedRunner: PropTypes.number.isRequired
 };
 
 SourceCaption.propTypes = {
