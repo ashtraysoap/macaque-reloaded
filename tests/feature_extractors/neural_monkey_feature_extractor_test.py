@@ -7,9 +7,8 @@ from data_test import make_initialized_test_dataset
 from preprocessing import Preprocessor
 
 TEST_NET_ID = "VGG19"
-#TEST_SLIM_PATH = "lib/tensorflow-models/research/slim/"
 TEST_SLIM_PATH = "lib/slim/"
-TEST_MODEL_CKPT = "/media/sam/Karenin/vgg_19.ckpt"
+TEST_MODEL_CKPT = "../models/plugin_resources/vgg_19.ckpt"
 TEST_CONV_MAP = "vgg_19/conv5/conv5_3"
 
 def create_neural_monkey_feature_extractor():
