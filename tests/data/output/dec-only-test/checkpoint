@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/sam/thesis-code/macaque/tests/output/dec-only-test/variables.data.final"
+all_model_checkpoint_paths: "/home/sam/thesis-code/macaque/tests/output/dec-only-test/variables.data.final"

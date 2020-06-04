@@ -1,0 +1,1 @@
+./bin/neuralmonkey-train ../../macaque/tests/data/dec-only.ini
