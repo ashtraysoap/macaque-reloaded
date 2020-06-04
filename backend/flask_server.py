@@ -70,9 +70,6 @@ def init():
         A HTML document in a string.
     """
 
-    # TODO: tu poriesit reload
-    # macaque_state ma property `initialised`
-    # pri dalsich requestoch vrati home-page
     return render_template('index.html')
 
 @APP.route('/initial_state', methods=['GET'])
@@ -344,47 +341,6 @@ def load_bs_graph(run, instance):
         return o
     else:
         return None
-
-# @APP.route('/evaluate_metric/<int:dataset>/<string:metric>', methods=['GET'])
-# def evaluate_metric(dataset, metric):
-#     """Evaluates a metric on the results of all runs on a given dataset.
-
-#     Args:
-#         dataset: The integral ID of the dataset.
-#         metric: The string name of the metric.
-#     Returns:
-#         A JSON serialized dictionary of the resulting scores.
-#     """
-
-#     # TODO: check that the dataset has reference captions
-#     run_res = filter(lambda x: x.datasetId == dataset, STATE.run_results)
-#     ds = STATE.datasets[dataset]
-#     refs = [e.references for e in ds.elements]
-#     results = {}
-
-#     for r in run_res:
-#         results[r.runId] = {}
-#         # evaluate greedy captions
-#         gr_caps, bs_caps = _collect_hyps(r)
-        
-#         # do something with this
-#         bs_caps = _transpose_bs_hyps(bs_caps)
-
-#         scores, mean = evaluate(metric, gr_caps, refs)
-#         results[r.runId]['greedy'] = {
-#             'scores': scores,
-#             'mean': mean
-#         }
-#         # evaluate beam search captions from all beams
-#         results[r.runId]['beamSearch'] = []
-#         for hyps in bs_caps:
-#             scores, mean = evaluate(metric, hyps, refs)
-#             results[r.runId]['beamSearch'].append({
-#                 'scores': scores,
-#                 'mean': mean
-#             })
-
-#     return json.dumps(results)
 
 def _get_json_from_request():
     return request.get_json(force=True)

@@ -71,7 +71,6 @@ class PluginModelWrapper(ModelWrapper):
             self._method = getattr(self._model_wrapper, IFC_METHOD)
             
             sig = signature(self._method)
-            print(len(sig.parameters))
             if len(sig.parameters) > 1:
                 self._mmt = True
                 self._run = lambda x, y: self._method(x, y)
@@ -92,7 +91,6 @@ class PluginModelWrapper(ModelWrapper):
             A list of dictionaries holding the results.
         """
 
-        print(source_captions)
         if self._mmt:
             y = self._run(inputs, source_captions)
         else:

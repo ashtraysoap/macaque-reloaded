@@ -76,6 +76,7 @@ class RunResultsView extends React.Component {
         };
 
         const r = this.props.results;
+        const hasBSGraph = r.beamSearch.hasGraph;
 
         let captionTab = !this.state.showCaption ? null :
             <CaptionsTab
@@ -96,7 +97,7 @@ class RunResultsView extends React.Component {
                 hasAttnBeamSearch={this.props.results.beamSearch.hasAttn}
             />;
 
-        let bsView = !this.state.showBSOut ? null :
+        let bsView = (!this.state.showBSOut || !hasBSGraph) ? null :
             <BeamSearchOutputView 
                 graphPromise={this.bsGraph}
                 displayAlignment={a => this.props.fetchAttentionMapForBSToken(a)}
@@ -118,12 +119,15 @@ class RunResultsView extends React.Component {
                     {attTab}
                 </div>
                 
-                <div id="beamSearch">
-                    <div className="resultsSpan" onClick={() => switchState('showBSOut')}>
-                        Beam Search Output Graph
+                {
+                    hasBSGraph &&
+                    <div id="beamSearch">
+                        <div className="resultsSpan" onClick={() => switchState('showBSOut')}>
+                            Beam Search Output Graph
+                        </div>
+                    {   bsView}
                     </div>
-                    {bsView}
-                </div>
+                }
 
             </div>
         );
