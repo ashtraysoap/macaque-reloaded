@@ -55,7 +55,7 @@ class DatasetsTab extends React.Component {
                         label="Datasets"
                         keys={range(dsNames.length)}
                         values={dsNames}
-                        callback={(key) => this.setState({selectedDataset: key})}
+                        callback={(key) => this.setState({selectedDataset: key, err: false })}
                         selectedKey={ds}
                     />
 
@@ -63,7 +63,7 @@ class DatasetsTab extends React.Component {
                         label="Runners"
                         keys={range(p.runners.length)}
                         values={p.runners.map(r => r.name)}
-                        callback={(key) => {this.setState({ selectedRunner: key })}}
+                        callback={(key) => {this.setState({ selectedRunner: key, err: false })}}
                         selectedKey={this.state.selectedRunner}
                     />
 
@@ -74,6 +74,13 @@ class DatasetsTab extends React.Component {
                     {
                         this.state.processing &&
                         <div className="pendingTab">Processing dataset.</div>
+                    }
+
+                    {
+                        this.state.err &&
+                        <div className="errorTab" style={{ maxWidth: '9vw' }}>
+                            The runner expects source captions which are not attached to the dataset.
+                        </div>
                     }
                 </div>
 
@@ -93,11 +100,18 @@ class DatasetsTab extends React.Component {
     }
 
     runOnDataset() {
-        const d = this.props.datasets[this.state.selectedDataset].id;
-        const r = this.state.selectedRunner
+        const d = this.props.datasets[this.state.selectedDataset];
+        const r = this.state.selectedRunner;
+        const rs = this.props.runners;
+
+        if (d.elements[0].sourceCaption === null && rs[r].multimodal) {
+            this.setState({ err: true });
+            return;
+        }
+
         this.setState({ processing: true });
 
-        fetch(`/run_on_dataset/${d}/${r}`)
+        fetch(`/run_on_dataset/${d.id}/${r}`)
         .then(res => res.json())
         .then(response => {
             this.setState({ processing: false });
