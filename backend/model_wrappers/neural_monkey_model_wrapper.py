@@ -42,6 +42,11 @@ class NeuralMonkeyModelWrapper(ModelWrapper):
         self._exp.build_model()
         self._exp.load_variables([vars_path])
 
+        if self._src_caption_series:
+            self.multimodal = True
+        else:
+            self.multimodal = False
+
     def run(self, inputs, src_captions=None):
         """
         Args:

@@ -175,7 +175,8 @@ class Runner():
     def to_json(self):
         d = {
             'name': self.name,
-            'model': self.model.name
+            'model': self.model.name,
+            'multimodal': self.model.multimodal
         }
         if self.preprocessor is not None:
             d['preprocessor'] = self.preprocessor.name

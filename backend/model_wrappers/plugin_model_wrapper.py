@@ -72,10 +72,10 @@ class PluginModelWrapper(ModelWrapper):
             
             sig = signature(self._method)
             if len(sig.parameters) > 1:
-                self._mmt = True
+                self.multimodal = True
                 self._run = lambda x, y: self._method(x, y)
             else:
-                self._mmt = False
+                self.multimodal = False
                 self._run = lambda x: self._method(x)
         else:
             raise ValueError("The class {} in {} does not provide the `run` method."
@@ -91,7 +91,7 @@ class PluginModelWrapper(ModelWrapper):
             A list of dictionaries holding the results.
         """
 
-        if self._mmt:
+        if self.multimodal:
             y = self._run(inputs, source_captions)
         else:
             y = self._run(inputs)

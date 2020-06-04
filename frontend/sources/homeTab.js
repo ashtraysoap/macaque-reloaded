@@ -43,7 +43,7 @@ class HomeTab extends React.Component {
             imgSrc: this.imgSrc,
             tokenId: null,
             waiting: false,
-            selectedRunner: pr === null ? 0 : Object.values(pr)[0].runnerId,
+            selectedRunner: pr === null ? null : Object.values(pr)[0].runnerId,
             imgDatasetId: pr === null ? null : Object.values(pr)[0].datasetId,
             showRunners: false
         };
@@ -55,6 +55,11 @@ class HomeTab extends React.Component {
         this.onImageSubmit = this.onImageSubmit.bind(this);
         this.processImage = this.processImage.bind(this);
         this.showRunners = this.showRunners.bind(this);
+    }
+
+    get runners() {
+        const r = this.props.runners;
+        return r.filter(x => x.multimodal === true);
     }
 
     onImageSubmit() {
@@ -88,7 +93,7 @@ class HomeTab extends React.Component {
     }
 
     render() {
-        if (this.props.runners.length === 0) {
+        if (this.runners.length === 0) {
             return (
                 <div className="aboutTab">
                     No runners available. Add a runner to enable single image captioning.
@@ -257,8 +262,15 @@ class HomeTab extends React.Component {
  *      selected: Number. Id of the currently selected runner.
  */
 function RunnersMenu(props) {
-    let rs = enumerate(props.runners).map(r => 
-    <div key={r[1].name} onClick={() => props.select(r[0])} id={props.selected === r[0] ? "selected" : ""}>
+    let sel = props.selected
+    
+    if (sel === null) {
+        sel = enumerate(props.runners).filter(r => !r[1].multimodal)[0][0];
+        props.select(sel);
+    }
+
+    let rs = enumerate(props.runners).filter(r => r[1].multimodal === false ).map(r => 
+    <div key={r[1].name} onClick={() => props.select(r[0])} id={sel === r[0] ? "selected" : ""}>
         {r[1].name}
     </div>);
 
