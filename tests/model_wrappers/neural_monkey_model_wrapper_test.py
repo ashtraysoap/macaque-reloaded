@@ -8,8 +8,8 @@ TEST_SOURCES = "../tests/data/flickr8k_sample_feats.txt"
 
 def create_neural_monkey_model_wrapper_enc_dec():
     return NeuralMonkeyModelWrapper(
-        config_path="../tests/data/enc-dec-test.ini",
-        vars_path="../tests/data/output/enc-dec-test/variables.data.final",
+        config_path="../models/plugin_resources/enc-dec-test/enc-dec-test.ini",
+        vars_path="../models/plugin_resources/enc-dec-test/variables.data.final",
         runs_on_features=False,
         data_series="images")
 
